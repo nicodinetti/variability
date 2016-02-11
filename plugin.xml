@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<?eclipse version="3.4"?>
+<plugin>
+   <extension
+         point="org.eclipse.bpmn2.modeler.runtime">
+      
+      <runtime
+            class="uy.edu.fing.modeler.variability.VariabilityRuntimeExtension"
+            id="uy.edu.fing.modeler.variability"
+            name="VariabilityRuntimeExtension">
+      </runtime>
+      
+      <customTask
+            category="Variants"
+            featureContainer="uy.edu.fing.modeler.variability.task.VTaskElementFeatureContainer"
+            icon="V.png"
+            id="vTask"
+            name="vTask"
+            runtimeId="uy.edu.fing.modeler.variability"
+            type="Task">
+            <property name="type" value="vTask" />
+      </customTask>
+      
+      <customTask
+            category="VarPoints"
+            featureContainer="uy.edu.fing.modeler.variability.task.VPTaskElementFeatureContainer"
+            icon="VP.png"
+            id="VPTask"
+            name="VPTask"
+            runtimeId="uy.edu.fing.modeler.variability"
+            type="Task">
+            <property name="type" value="VPTask" />
+      </customTask>
+      
+   </extension>
+
+	
+</plugin>
