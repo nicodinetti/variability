@@ -1,4 +1,4 @@
-package uy.edu.fing.modeler.variability.task;
+package uy.edu.fing.modeler.variability.container;
 
 import org.eclipse.bpmn2.modeler.core.features.CustomShapeFeatureContainer;
 import org.eclipse.bpmn2.modeler.core.features.ShowPropertiesFeature;
@@ -8,23 +8,18 @@ import org.eclipse.emf.ecore.EStructuralFeature;
 import org.eclipse.graphiti.features.IFeatureProvider;
 import org.eclipse.graphiti.features.custom.ICustomFeature;
 
-public class VTaskElementFeatureContainer extends CustomShapeFeatureContainer {
+public class VariabilityFeatureContainer extends CustomShapeFeatureContainer {
 
-	// these values must match what's in the plugin.xml
-	private final static String TYPE = "VTask";
-	private final static String ID = "VTask";
-
-	public VTaskElementFeatureContainer() {
+	public VariabilityFeatureContainer() {
 
 	}
 
 	@Override
 	public String getId(EObject object) {
-		EStructuralFeature f = ModelDecorator.getAnyAttribute(object, "type");
+		EStructuralFeature f = ModelDecorator.getAnyAttribute(object, "variability");
 		if (f != null) {
 			Object id = object.eGet(f);
-			if (TYPE.equals(id))
-				return ID;
+			return id.toString();
 		}
 
 		return null;

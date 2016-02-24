@@ -12,24 +12,66 @@
       
       <customTask
             category="Variants"
-            featureContainer="uy.edu.fing.modeler.variability.task.VTaskElementFeatureContainer"
+            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
             icon="V.png"
-            id="vTask"
-            name="vTask"
+            id="VExclusiveGateway"
+            name="VExclusiveGateway"
             runtimeId="uy.edu.fing.modeler.variability"
-            type="Task">
-            <property name="type" value="vTask" />
+            type="ExclusiveGateway">
+            <property name="variability" value="Variability" />
       </customTask>
       
       <customTask
             category="VarPoints"
-            featureContainer="uy.edu.fing.modeler.variability.task.VPTaskElementFeatureContainer"
+            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+            icon="VP.png"
+            id="VPExclusiveGateway"
+            name="VPExclusiveGateway"
+            runtimeId="uy.edu.fing.modeler.variability"
+            type="ExclusiveGateway">
+            <property name="variability" value="Variability" />
+      </customTask>
+      
+      <customTask
+            category="VarPoints"
+            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
             icon="VP.png"
             id="VPTask"
             name="VPTask"
             runtimeId="uy.edu.fing.modeler.variability"
             type="Task">
-            <property name="type" value="VPTask" />
+            <property name="variability" value="Variability" />
+      </customTask>
+      
+      <customTask
+            category="VarPoints"
+            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+            icon="VP.png"
+            id="VPLane"
+            name="VPLane"
+            runtimeId="uy.edu.fing.modeler.variability"
+            type="Lane">
+            <property name="variability" value="Variability" />
+      </customTask>
+      <customTask
+            category="VarPoints"
+            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+            icon="VP.png"
+            id="VPParticipant"
+            name="VPParticipant"
+            runtimeId="uy.edu.fing.modeler.variability"
+            type="Participant">
+            <property name="variability" value="Variability" />
+      </customTask>
+      <customTask
+            category="VarPoints"
+            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+            icon="VP.png"
+            id="VPSubProcess"
+            name="VPSubProcess"
+            runtimeId="uy.edu.fing.modeler.variability"
+            type="SubProcess">
+            <property name="variability" value="Variability" />
       </customTask>
       
    </extension>
