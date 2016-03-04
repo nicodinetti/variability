@@ -10,6 +10,18 @@
             name="VariabilityRuntimeExtension">
       </runtime>
       
+      <!-- Variants -->
+      
+      <customTask
+            category="Variants"
+            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+            icon="V.png"
+            id="VInclusiveGateway"
+            name="VInclusiveGateway"
+            runtimeId="uy.edu.fing.modeler.variability"
+            type="InclusiveGateway">
+            <property name="variability" value="Variability" />
+      </customTask>
       <customTask
             category="Variants"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
@@ -20,7 +32,89 @@
             type="ExclusiveGateway">
             <property name="variability" value="Variability" />
       </customTask>
+      <customTask
+            category="Variants"
+            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+            icon="V.png"
+            id="VParallelGateway"
+            name="VParallelGateway"
+            runtimeId="uy.edu.fing.modeler.variability"
+            type="ParallelGateway">
+            <property name="variability" value="Variability" />
+      </customTask>
+      <customTask
+            category="Variants"
+            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+            icon="V.png"
+            id="VEventBasedGateway"
+            name="VEventBasedGateway"
+            runtimeId="uy.edu.fing.modeler.variability"
+            type="EventBasedGateway">
+            <property name="variability" value="Variability" />
+      </customTask>
+      <customTask
+            category="Variants"
+            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+            icon="V.png"
+            id="VComplexGateway"
+            name="VComplexGateway"
+            runtimeId="uy.edu.fing.modeler.variability"
+            type="ComplexGateway">
+            <property name="variability" value="Variability" />
+      </customTask>
+      <customTask
+            category="Variants"
+            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+            icon="V.png"
+            id="VTask"
+            name="VTask"
+            runtimeId="uy.edu.fing.modeler.variability"
+            type="Task">
+            <property name="variability" value="Variability" />
+      </customTask>
+      <customTask
+            category="Variants"
+            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+            icon="V.png"
+            id="VLane"
+            name="VLane"
+            runtimeId="uy.edu.fing.modeler.variability"
+            type="Lane">
+            <property name="variability" value="Variability" />
+      </customTask>
+      <customTask
+            category="Variants"
+            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+            icon="V.png"
+            id="VParticipant"
+            name="VParticipant"
+            runtimeId="uy.edu.fing.modeler.variability"
+            type="Participant">
+            <property name="variability" value="Variability" />
+      </customTask>
+      <customTask
+            category="Variants"
+            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+            icon="V.png"
+            id="VSubProcess"
+            name="VSubProcess"
+            runtimeId="uy.edu.fing.modeler.variability"
+            type="SubProcess">
+            <property name="variability" value="Variability" />
+      </customTask>
       
+      <!-- Variation Points -->
+      
+      <customTask
+            category="VarPoints"
+            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+            icon="VP.png"
+            id="VPInclusiveGateway"
+            name="VPInclusiveGateway"
+            runtimeId="uy.edu.fing.modeler.variability"
+            type="InclusiveGateway">
+            <property name="variability" value="Variability" />
+      </customTask>
       <customTask
             category="VarPoints"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
@@ -31,7 +125,36 @@
             type="ExclusiveGateway">
             <property name="variability" value="Variability" />
       </customTask>
-      
+      <customTask
+            category="VarPoints"
+            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+            icon="VP.png"
+            id="VPParallelGateway"
+            name="VPParallelGateway"
+            runtimeId="uy.edu.fing.modeler.variability"
+            type="ParallelGateway">
+            <property name="variability" value="Variability" />
+      </customTask>
+      <customTask
+            category="VarPoints"
+            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+            icon="VP.png"
+            id="VPEventBasedGateway"
+            name="VPEventBasedGateway"
+            runtimeId="uy.edu.fing.modeler.variability"
+            type="EventBasedGateway">
+            <property name="variability" value="Variability" />
+      </customTask>
+      <customTask
+            category="VarPoints"
+            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+            icon="VP.png"
+            id="VPComplexGateway"
+            name="VPComplexGateway"
+            runtimeId="uy.edu.fing.modeler.variability"
+            type="ComplexGateway">
+            <property name="variability" value="Variability" />
+      </customTask>
       <customTask
             category="VarPoints"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
@@ -41,8 +164,7 @@
             runtimeId="uy.edu.fing.modeler.variability"
             type="Task">
             <property name="variability" value="Variability" />
-      </customTask>
-      
+      </customTask>      
       <customTask
             category="VarPoints"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
