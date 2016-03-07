@@ -20,7 +20,7 @@
             name="VInclusiveGateway"
             runtimeId="uy.edu.fing.modeler.variability"
             type="InclusiveGateway">
-            <property name="variability" value="Variability" />
+            <property name="variability" value="VInclusiveGateway" />
       </customTask>
       <customTask
             category="Variants"
@@ -30,7 +30,7 @@
             name="VExclusiveGateway"
             runtimeId="uy.edu.fing.modeler.variability"
             type="ExclusiveGateway">
-            <property name="variability" value="Variability" />
+            <property name="variability" value="VExclusiveGateway" />
       </customTask>
       <customTask
             category="Variants"
@@ -40,7 +40,7 @@
             name="VParallelGateway"
             runtimeId="uy.edu.fing.modeler.variability"
             type="ParallelGateway">
-            <property name="variability" value="Variability" />
+            <property name="variability" value="VParallelGateway" />
       </customTask>
       <customTask
             category="Variants"
@@ -50,7 +50,7 @@
             name="VEventBasedGateway"
             runtimeId="uy.edu.fing.modeler.variability"
             type="EventBasedGateway">
-            <property name="variability" value="Variability" />
+            <property name="variability" value="VEventBasedGateway" />
       </customTask>
       <customTask
             category="Variants"
@@ -60,7 +60,7 @@
             name="VComplexGateway"
             runtimeId="uy.edu.fing.modeler.variability"
             type="ComplexGateway">
-            <property name="variability" value="Variability" />
+            <property name="variability" value="VComplexGateway" />
       </customTask>
       <customTask
             category="Variants"
@@ -70,7 +70,7 @@
             name="VTask"
             runtimeId="uy.edu.fing.modeler.variability"
             type="Task">
-            <property name="variability" value="Variability" />
+            <property name="variability" value="VTask" />
       </customTask>
       <customTask
             category="Variants"
@@ -80,7 +80,7 @@
             name="VLane"
             runtimeId="uy.edu.fing.modeler.variability"
             type="Lane">
-            <property name="variability" value="Variability" />
+            <property name="variability" value="VLane" />
       </customTask>
       <customTask
             category="Variants"
@@ -90,7 +90,7 @@
             name="VParticipant"
             runtimeId="uy.edu.fing.modeler.variability"
             type="Participant">
-            <property name="variability" value="Variability" />
+            <property name="variability" value="VParticipant" />
       </customTask>
       <customTask
             category="Variants"
@@ -100,7 +100,7 @@
             name="VSubProcess"
             runtimeId="uy.edu.fing.modeler.variability"
             type="SubProcess">
-            <property name="variability" value="Variability" />
+            <property name="variability" value="VSubProcess" />
       </customTask>
       
       <!-- Variation Points -->
@@ -113,7 +113,7 @@
             name="VPInclusiveGateway"
             runtimeId="uy.edu.fing.modeler.variability"
             type="InclusiveGateway">
-            <property name="variability" value="Variability" />
+            <property name="variability" value="VPInclusiveGateway" />
       </customTask>
       <customTask
             category="VarPoints"
@@ -123,7 +123,7 @@
             name="VPExclusiveGateway"
             runtimeId="uy.edu.fing.modeler.variability"
             type="ExclusiveGateway">
-            <property name="variability" value="Variability" />
+            <property name="variability" value="VPExclusiveGateway" />
       </customTask>
       <customTask
             category="VarPoints"
@@ -133,7 +133,7 @@
             name="VPParallelGateway"
             runtimeId="uy.edu.fing.modeler.variability"
             type="ParallelGateway">
-            <property name="variability" value="Variability" />
+            <property name="variability" value="VPParallelGateway" />
       </customTask>
       <customTask
             category="VarPoints"
@@ -143,7 +143,7 @@
             name="VPEventBasedGateway"
             runtimeId="uy.edu.fing.modeler.variability"
             type="EventBasedGateway">
-            <property name="variability" value="Variability" />
+            <property name="variability" value="VPEventBasedGateway" />
       </customTask>
       <customTask
             category="VarPoints"
@@ -153,7 +153,7 @@
             name="VPComplexGateway"
             runtimeId="uy.edu.fing.modeler.variability"
             type="ComplexGateway">
-            <property name="variability" value="Variability" />
+            <property name="variability" value="VPComplexGateway" />
       </customTask>
       <customTask
             category="VarPoints"
@@ -163,7 +163,7 @@
             name="VPTask"
             runtimeId="uy.edu.fing.modeler.variability"
             type="Task">
-            <property name="variability" value="Variability" />
+            <property name="variability" value="VPTask" />
       </customTask>      
       <customTask
             category="VarPoints"
@@ -173,7 +173,7 @@
             name="VPLane"
             runtimeId="uy.edu.fing.modeler.variability"
             type="Lane">
-            <property name="variability" value="Variability" />
+            <property name="variability" value="VPLane" />
       </customTask>
       <customTask
             category="VarPoints"
@@ -183,7 +183,7 @@
             name="VPParticipant"
             runtimeId="uy.edu.fing.modeler.variability"
             type="Participant">
-            <property name="variability" value="Variability" />
+            <property name="variability" value="VPParticipant" />
       </customTask>
       <customTask
             category="VarPoints"
@@ -193,7 +193,7 @@
             name="VPSubProcess"
             runtimeId="uy.edu.fing.modeler.variability"
             type="SubProcess">
-            <property name="variability" value="Variability" />
+            <property name="variability" value="VPSubProcess" />
       </customTask>
       
    </extension>
