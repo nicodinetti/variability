@@ -158,7 +158,7 @@
       <customTask
             category="VarPoints"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VP.png"
+            icon="VPTask.png"
             id="VPTask"
             name="VPTask"
             runtimeId="uy.edu.fing.modeler.variability"
