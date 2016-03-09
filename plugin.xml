@@ -15,7 +15,7 @@
       <customTask
             category="Variants"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="V.png"
+            icon="VInclusiveGateway.png"
             id="VInclusiveGateway"
             name="VInclusiveGateway"
             runtimeId="uy.edu.fing.modeler.variability"
@@ -25,7 +25,7 @@
       <customTask
             category="Variants"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="V.png"
+            icon="VExclusiveGateway.png"
             id="VExclusiveGateway"
             name="VExclusiveGateway"
             runtimeId="uy.edu.fing.modeler.variability"
@@ -35,7 +35,7 @@
       <customTask
             category="Variants"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="V.png"
+            icon="VParallelGateway.png"
             id="VParallelGateway"
             name="VParallelGateway"
             runtimeId="uy.edu.fing.modeler.variability"
@@ -45,7 +45,7 @@
       <customTask
             category="Variants"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="V.png"
+            icon="VEventBasedGateway.png"
             id="VEventBasedGateway"
             name="VEventBasedGateway"
             runtimeId="uy.edu.fing.modeler.variability"
@@ -55,7 +55,7 @@
       <customTask
             category="Variants"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="V.png"
+            icon="VComplexGateway.png"
             id="VComplexGateway"
             name="VComplexGateway"
             runtimeId="uy.edu.fing.modeler.variability"
@@ -65,7 +65,7 @@
       <customTask
             category="Variants"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="V.png"
+            icon="VTask.png"
             id="VTask"
             name="VTask"
             runtimeId="uy.edu.fing.modeler.variability"
@@ -75,7 +75,7 @@
       <customTask
             category="Variants"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="V.png"
+            icon="VLane.png"
             id="VLane"
             name="VLane"
             runtimeId="uy.edu.fing.modeler.variability"
@@ -85,7 +85,7 @@
       <customTask
             category="Variants"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="V.png"
+            icon="VParticipant.png"
             id="VParticipant"
             name="VParticipant"
             runtimeId="uy.edu.fing.modeler.variability"
@@ -95,7 +95,7 @@
       <customTask
             category="Variants"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="V.png"
+            icon="VSubProcess.png"
             id="VSubProcess"
             name="VSubProcess"
             runtimeId="uy.edu.fing.modeler.variability"
@@ -108,7 +108,7 @@
       <customTask
             category="VarPoints"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VP.png"
+            icon="VPInclusiveGateway.png"
             id="VPInclusiveGateway"
             name="VPInclusiveGateway"
             runtimeId="uy.edu.fing.modeler.variability"
@@ -118,7 +118,7 @@
       <customTask
             category="VarPoints"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VP.png"
+            icon="VPExclusiveGateway.png"
             id="VPExclusiveGateway"
             name="VPExclusiveGateway"
             runtimeId="uy.edu.fing.modeler.variability"
@@ -128,7 +128,7 @@
       <customTask
             category="VarPoints"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VP.png"
+            icon="VPParallelGateway.png"
             id="VPParallelGateway"
             name="VPParallelGateway"
             runtimeId="uy.edu.fing.modeler.variability"
@@ -138,7 +138,7 @@
       <customTask
             category="VarPoints"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VP.png"
+            icon="VPEventBasedGateway.png"
             id="VPEventBasedGateway"
             name="VPEventBasedGateway"
             runtimeId="uy.edu.fing.modeler.variability"
@@ -148,7 +148,7 @@
       <customTask
             category="VarPoints"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VP.png"
+            icon="VPComplexGateway.png"
             id="VPComplexGateway"
             name="VPComplexGateway"
             runtimeId="uy.edu.fing.modeler.variability"
@@ -168,7 +168,7 @@
       <customTask
             category="VarPoints"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VP.png"
+            icon="VPLane.png"
             id="VPLane"
             name="VPLane"
             runtimeId="uy.edu.fing.modeler.variability"
@@ -178,7 +178,7 @@
       <customTask
             category="VarPoints"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VP.png"
+            icon="VPParticipant.png"
             id="VPParticipant"
             name="VPParticipant"
             runtimeId="uy.edu.fing.modeler.variability"
@@ -188,7 +188,7 @@
       <customTask
             category="VarPoints"
             featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VP.png"
+            icon="VPSubProcess.png"
             id="VPSubProcess"
             name="VPSubProcess"
             runtimeId="uy.edu.fing.modeler.variability"
