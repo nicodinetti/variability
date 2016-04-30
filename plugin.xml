@@ -197,6 +197,34 @@
       </customTask>
       
    </extension>
+   
+   
+   
+   <!-- Example 2: Adding a sub-menu to the Navigator view -->
+<extension point="org.eclipse.ui.popupMenus"> 
+	<viewerContribution 
+		id="uy.edu.fing.modeler.variability.ui.popup.navigator"
+		targetID="org.eclipse.ui.views.ResourceNavigator"> 
+		<menu
+			id="uy.edu.fing.modeler.variability.ui.navigator.subMenu"
+			label="BPMN"
+			path="additions">
+			<separator name="group1"/>
+		</menu>
+		<action
+			id="uy.edu.fing.modeler.variability.ui.navigator.substitution" 
+			label="Excecute substitution"
+			icon="icons/red_dot.gif"
+			helpContextId="uy.edu.fing.modeler.variability.ui.navigator.substitution" 
+			menubarPath="uy.edu.fing.modeler.variability.ui.navigator.subMenu/group1" 
+			class="uy.edu.fing.modeler.variability.ui.SubstitutionDelegate"
+			enablesFor="1">
+			
+		</action> 
+	</viewerContribution> 
+</extension> 
+
+   
 
 	
 </plugin>
