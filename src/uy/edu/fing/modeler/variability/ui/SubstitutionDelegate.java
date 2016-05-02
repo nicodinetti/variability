@@ -58,15 +58,15 @@ public class SubstitutionDelegate extends ActionDelegate implements IViewActionD
 				} catch (SAXException | IOException | ParserConfigurationException e) {
 					// FIXME Poner pensaje de error
 					e.printStackTrace();
-					failMessage(parent);
+					failMessage(parent,e.getMessage());
 				}
 
 			} else {
-				failMessage(parent);
+				failMessage(parent,"Please, select a bpmn file");
 			}
 
 		} else {
-			failMessage(parent);
+			failMessage(parent,"Please, select a bpmn file");
 		}
 
 	}
@@ -87,8 +87,12 @@ public class SubstitutionDelegate extends ActionDelegate implements IViewActionD
 		for (Node node : vpListByType) {
 			String vpName = node.getAttributes().getNamedItem("id").getNodeValue();
 			Path vpPath = Paths.get(parentFullPath + java.io.File.separatorChar + vpName);
+			if (!Files.exists(vpPath) || !Files.isDirectory(vpPath)) {
+				throw new RuntimeException("No existen variantes para el VP: " + vpName);
+			}
+
 			Stream<Path> list = Files.list(vpPath);
-			if (!Files.exists(vpPath) || !Files.isDirectory(vpPath) || list.count() == 0) {
+			if (list.count() == 0){
 				throw new RuntimeException("No existen variantes para el VP: " + vpName);
 			}
 
@@ -116,9 +120,9 @@ public class SubstitutionDelegate extends ActionDelegate implements IViewActionD
 		return variationPoints;
 	}
 
-	private void failMessage(Shell parent) {
+	private void failMessage(Shell parent,String message) {
 		MessageBox fail = new MessageBox(parent);
-		fail.setMessage("Please, select a bpmn file");
+		fail.setMessage(message);
 		fail.open();
 	}
 
