@@ -1,16 +1,13 @@
 package uy.edu.fing.modeler.variability.ui;
 
-import java.util.HashMap;
 import java.util.Map;
 
-import org.eclipse.core.internal.resources.File;
 import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Button;
-import org.eclipse.swt.widgets.Combo;
 import org.eclipse.swt.widgets.Composite;
 import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
@@ -28,7 +25,10 @@ public class MyPageTwo extends WizardPage {
 	private Button button;
 
 	private Label lresult;
+	private Label lresultFile;
 	private Label error;
+
+	private boolean finish;
 
 	public MyPageTwo() {
 		super("Ejecutor");
@@ -41,9 +41,6 @@ public class MyPageTwo extends WizardPage {
 
 		// Datos de la página 1
 		MyWizard myWizard = (MyWizard) getWizard();
-		MyPageOne pageOne = myWizard.getOne();
-		Map<String, Combo> selecteds = pageOne.getSelecteds();
-		File file = myWizard.getFile();
 		// Datos de la página 1
 
 		GridLayout layout = new GridLayout();
@@ -53,7 +50,7 @@ public class MyPageTwo extends WizardPage {
 		container.setLayout(layout);
 
 		lConfigName = new Label(container, NONE);
-		lConfigName.setText("Configuration name: ");
+		lConfigName.setText("Nombre de la configuración: ");
 		configSelection = new Label(container, NONE);
 
 		lbutton = new Label(container, NONE);
@@ -62,6 +59,7 @@ public class MyPageTwo extends WizardPage {
 		button.setText("Generar!");
 
 		lresult = new Label(container, NONE);
+		lresultFile = new Label(container, NONE);
 		error = new Label(container, NONE);
 
 		button.addSelectionListener(new SelectionListener() {
@@ -69,25 +67,24 @@ public class MyPageTwo extends WizardPage {
 			@Override
 			public void widgetSelected(SelectionEvent arg0) {
 
-				String basePath = file.getParent().getRawLocation().toString();
-				String baseProcessFileName = file.getName();
-				Map<String, String> selectedVariants = new HashMap<>();
-				for (String key : selecteds.keySet()) {
-					selectedVariants.put(key, selecteds.get(key).getText());
-				}
 				String resultFileName = "result.bpmn";
 
 				try {
-					ReemplazadorMain.replace(basePath, baseProcessFileName, selectedVariants, resultFileName);
 
-					lresult.setText("Se generó la variante correctamente: " + basePath + java.io.File.separatorChar + resultFileName);
+					String basePath = myWizard.getBasePath();
+					String baseProcessFileName = myWizard.getBaseProcessFileName();
+					Map<String, String> selectedVariants = myWizard.getSelectedVariants();
+
+					ReemplazadorMain.replace(basePath, baseProcessFileName, selectedVariants, resultFileName);
+					lresult.setText("Se generó la variante correctamente: ");
+					lresultFile.setText(basePath + java.io.File.separatorChar + resultFileName);
+					setPageComplete(true);
 
 				} catch (Exception e1) {
-					// e1.printStackTrace();
 					error.setText("Falló el proceso de generación: " + e1.getMessage());
-
-					container.pack();
 				}
+
+				container.pack();
 
 			}
 
@@ -105,11 +102,10 @@ public class MyPageTwo extends WizardPage {
 			@Override
 			public void handleEvent(Event arg0) {
 				System.out.println("Estoy en p2!");
-				String configName = pageOne.getConfigName();
+				String configName = myWizard.getConfigName();
 				configSelection.setText(configName + ".conf");
 				error.setText("");
 				container.pack();
-
 			}
 		});
 

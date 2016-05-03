@@ -111,7 +111,12 @@ public class MyPageOne extends WizardPage {
 		return configName.getText();
 	}
 
-	public Map<String, Combo> getSelecteds() {
-		return selecteds;
+	public Map<String, String> getComboSelecteds() {
+		Map<String, String> selectedVariants = new HashMap<>();
+		for (String key : selecteds.keySet()) {
+			selectedVariants.put(key, selecteds.get(key).getText());
+		}
+		return selectedVariants;
 	}
+
 }
