@@ -8,8 +8,6 @@ import org.eclipse.jface.wizard.WizardPage;
 import org.eclipse.swt.SWT;
 import org.eclipse.swt.events.KeyEvent;
 import org.eclipse.swt.events.KeyListener;
-import org.eclipse.swt.events.SelectionEvent;
-import org.eclipse.swt.events.SelectionListener;
 import org.eclipse.swt.layout.GridData;
 import org.eclipse.swt.layout.GridLayout;
 import org.eclipse.swt.widgets.Combo;
@@ -26,15 +24,15 @@ public class MyPageOne extends WizardPage {
 	private Map<String, Combo> selecteds = new HashMap<>();
 
 	public MyPageOne() {
-		super("Configuration");
-		setTitle("Configuration");
-		setDescription("Configuration");
+		super("Configuración");
+		setTitle("Configuration y selección de variantes");
+		setDescription("Seleccione las variantes a utilizar para cada tipo de punto de variación del proceso base seleccionado.");
 	}
 
 	public MyPageOne(Map<String, List<String>> files) {
-		super("Configuration");
-		setTitle("Configuration");
-		setDescription("Configuration");
+		super("Configuración");
+		setTitle("Configuration y selección de variantes");
+		setDescription("Seleccione las variantes a utilizar para cada tipo de punto de variación del proceso base seleccionado.");
 		this.files = files;
 	}
 
@@ -50,10 +48,9 @@ public class MyPageOne extends WizardPage {
 		GridData gd = new GridData(GridData.FILL_HORIZONTAL);
 
 		Label lConfigName = new Label(container, NONE);
-		lConfigName.setText("Configuration name: ");
+		lConfigName.setText("Nombre de la configuración: ");
 
 		configName = new Text(container, SWT.BORDER | SWT.SINGLE);
-		configName.setText("");
 		configName.setLayoutData(gd);
 		configName.addKeyListener(new KeyListener() {
 
@@ -81,21 +78,7 @@ public class MyPageOne extends WizardPage {
 			options.add("DELETE");
 			options.setLayoutData(gd);
 			options.select(0);
-			options.addSelectionListener(new SelectionListener() {
 
-				@Override
-				public void widgetSelected(SelectionEvent arg0) {
-					if (allSelected()) {
-						setPageComplete(true);
-					} else {
-						setPageComplete(false);
-					}
-				}
-
-				@Override
-				public void widgetDefaultSelected(SelectionEvent arg0) {
-				}
-			});
 			selecteds.put(vpOption, options);
 		}
 
@@ -103,7 +86,7 @@ public class MyPageOne extends WizardPage {
 		setControl(container);
 		setPageComplete(false);
 
-		getControl().addListener(SWT.Show, new Listener() {
+		container.addListener(SWT.Show, new Listener() {
 			public void handleEvent(Event e) {
 				System.out.println("Estoy p1!");
 			}
@@ -117,6 +100,11 @@ public class MyPageOne extends WizardPage {
 			return true;
 		}
 		return false;
+	}
+
+	@Override
+	public boolean canFlipToNextPage() {
+		return allSelected();
 	}
 
 	public String getConfigName() {

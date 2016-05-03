@@ -7,7 +7,6 @@ import java.util.Map;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.xml.sax.SAXException;
 
@@ -57,7 +56,7 @@ public class ReemplazadorMain {
 
 	}
 
-	public static boolean replace(String basePath, String baseProcessFileName, Map<String, String> selectedVariants, String resultFileName) {
+	public static void replace(String basePath, String baseProcessFileName, Map<String, String> selectedVariants, String resultFileName) throws Exception {
 
 		try {
 			ActivitySubstitution.activitySubstitution(basePath, baseProcessFileName, selectedVariants, resultFileName);
@@ -65,11 +64,10 @@ public class ReemplazadorMain {
 			ActivitySupression.activitySupression(basePath, resultFileName, selectedVariants, resultFileName);
 
 			System.out.println("Done");
-			return true;
 
-		} catch (TransformerFactoryConfigurationError | Exception e) {
+		} catch (Exception e) {
 			e.printStackTrace();
-			return false;
+			throw e;
 		}
 
 	}
