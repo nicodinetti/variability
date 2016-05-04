@@ -15,35 +15,53 @@ import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 
+import org.eclipse.core.commands.AbstractHandler;
+import org.eclipse.core.commands.ExecutionEvent;
+import org.eclipse.core.commands.ExecutionException;
 import org.eclipse.core.internal.resources.File;
-import org.eclipse.jface.action.IAction;
+import org.eclipse.jface.viewers.ISelection;
 import org.eclipse.jface.viewers.TreeSelection;
 import org.eclipse.jface.window.Window;
 import org.eclipse.jface.wizard.WizardDialog;
 import org.eclipse.swt.widgets.MessageBox;
 import org.eclipse.swt.widgets.Shell;
-import org.eclipse.ui.IViewActionDelegate;
-import org.eclipse.ui.IViewPart;
+import org.eclipse.ui.IWorkbenchPage;
+import org.eclipse.ui.IWorkbenchWindow;
 import org.eclipse.ui.PlatformUI;
-import org.eclipse.ui.actions.ActionDelegate;
-import org.eclipse.ui.internal.ViewPluginAction;
+import org.eclipse.ui.handlers.HandlerUtil;
 import org.w3c.dom.Document;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-public class SubstitutionDelegate extends ActionDelegate implements IViewActionDelegate {
+/**
+ * Our sample handler extends AbstractHandler, an IHandler base class.
+ * @see org.eclipse.core.commands.IHandler
+ * @see org.eclipse.core.commands.AbstractHandler
+ */
+@SuppressWarnings("restriction")
+public class SubstitutionDelegate extends AbstractHandler {
+	/**
+	 * The constructor.
+	 */
+	public SubstitutionDelegate() {
+	}
 
-	@SuppressWarnings("restriction")
-	@Override
-	public void run(IAction action) {
-
+	/**
+	 * the command has been executed, so extract extract the needed information
+	 * from the application context.
+	 */
+	public Object execute(ExecutionEvent event) throws ExecutionException {
+		
 		Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+		
+		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+	    IWorkbenchPage activePage = window.getActivePage();
+	    ISelection selection = activePage.getSelection();
+	    Object firstElement = ((TreeSelection) selection).getFirstElement();
 
-		Object firstElement = ((TreeSelection) ((ViewPluginAction) action).getSelection()).getFirstElement();
-
-		if (firstElement instanceof File) {
+	    if (firstElement instanceof File) {
 			File file = (File) firstElement;
 			if ("bpmn".equals(file.getFileExtension())) {
 				Map<String, List<String>> files;
@@ -68,10 +86,10 @@ public class SubstitutionDelegate extends ActionDelegate implements IViewActionD
 		} else {
 			failMessage(parent,"Please, select a bpmn file");
 		}
-
+	    return null;
 	}
-
-	@SuppressWarnings({ "restriction", "resource" })
+	
+	@SuppressWarnings("resource")
 	private Map<String, List<String>> searchFiles(File file) throws SAXException, IOException, ParserConfigurationException {
 		Map<String, List<String>> res = new HashMap<>();
 
@@ -125,10 +143,4 @@ public class SubstitutionDelegate extends ActionDelegate implements IViewActionD
 		fail.setMessage(message);
 		fail.open();
 	}
-
-	@Override
-	public void init(IViewPart view) {
-		System.out.println("soy el " + SubstitutionDelegate.class);
-	}
-
 }

@@ -1,230 +1,131 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <?eclipse version="3.4"?>
 <plugin>
-   <extension
-         point="org.eclipse.bpmn2.modeler.runtime">
-      
-      <runtime
-            class="uy.edu.fing.modeler.variability.VariabilityRuntimeExtension"
-            id="uy.edu.fing.modeler.variability"
-            name="VariabilityRuntimeExtension">
-      </runtime>
-      
-      <!-- Variants -->
-      
-      <customTask
-            category="Variants"
-            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VInclusiveGateway.png"
-            id="VInclusiveGateway"
-            name="VInclusiveGateway"
-            runtimeId="uy.edu.fing.modeler.variability"
-            type="InclusiveGateway">
-            <property name="variability" value="VInclusiveGateway" />
-      </customTask>
-      <customTask
-            category="Variants"
-            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VExclusiveGateway.png"
-            id="VExclusiveGateway"
-            name="VExclusiveGateway"
-            runtimeId="uy.edu.fing.modeler.variability"
-            type="ExclusiveGateway">
-            <property name="variability" value="VExclusiveGateway" />
-      </customTask>
-      <customTask
-            category="Variants"
-            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VParallelGateway.png"
-            id="VParallelGateway"
-            name="VParallelGateway"
-            runtimeId="uy.edu.fing.modeler.variability"
-            type="ParallelGateway">
-            <property name="variability" value="VParallelGateway" />
-      </customTask>
-      <customTask
-            category="Variants"
-            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VEventBasedGateway.png"
-            id="VEventBasedGateway"
-            name="VEventBasedGateway"
-            runtimeId="uy.edu.fing.modeler.variability"
-            type="EventBasedGateway">
-            <property name="variability" value="VEventBasedGateway" />
-      </customTask>
-      <customTask
-            category="Variants"
-            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VComplexGateway.png"
-            id="VComplexGateway"
-            name="VComplexGateway"
-            runtimeId="uy.edu.fing.modeler.variability"
-            type="ComplexGateway">
-            <property name="variability" value="VComplexGateway" />
-      </customTask>
-      <customTask
-            category="Variants"
-            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VTask.png"
-            id="VTask"
-            name="VTask"
-            runtimeId="uy.edu.fing.modeler.variability"
-            type="Task">
-            <property name="variability" value="VTask" />
-      </customTask>
-      <customTask
-            category="Variants"
-            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VLane.png"
-            id="VLane"
-            name="VLane"
-            runtimeId="uy.edu.fing.modeler.variability"
-            type="Lane">
-            <property name="variability" value="VLane" />
-      </customTask>
-      <customTask
-            category="Variants"
-            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VParticipant.png"
-            id="VParticipant"
-            name="VParticipant"
-            runtimeId="uy.edu.fing.modeler.variability"
-            type="Participant">
-            <property name="variability" value="VParticipant" />
-      </customTask>
-      <customTask
-            category="Variants"
-            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VSubProcess.png"
-            id="VSubProcess"
-            name="VSubProcess"
-            runtimeId="uy.edu.fing.modeler.variability"
-            type="SubProcess">
-            <property name="variability" value="VSubProcess" />
-      </customTask>
-      
-      <!-- Variation Points -->
-      
-      <customTask
-            category="VarPoints"
-            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VPInclusiveGateway.png"
-            id="VPInclusiveGateway"
-            name="VPInclusiveGateway"
-            runtimeId="uy.edu.fing.modeler.variability"
-            type="InclusiveGateway">
-            <property name="variability" value="VPInclusiveGateway" />
-      </customTask>
-      <customTask
-            category="VarPoints"
-            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VPExclusiveGateway.png"
-            id="VPExclusiveGateway"
-            name="VPExclusiveGateway"
-            runtimeId="uy.edu.fing.modeler.variability"
-            type="ExclusiveGateway">
-            <property name="variability" value="VPExclusiveGateway" />
-      </customTask>
-      <customTask
-            category="VarPoints"
-            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VPParallelGateway.png"
-            id="VPParallelGateway"
-            name="VPParallelGateway"
-            runtimeId="uy.edu.fing.modeler.variability"
-            type="ParallelGateway">
-            <property name="variability" value="VPParallelGateway" />
-      </customTask>
-      <customTask
-            category="VarPoints"
-            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VPEventBasedGateway.png"
-            id="VPEventBasedGateway"
-            name="VPEventBasedGateway"
-            runtimeId="uy.edu.fing.modeler.variability"
-            type="EventBasedGateway">
-            <property name="variability" value="VPEventBasedGateway" />
-      </customTask>
-      <customTask
-            category="VarPoints"
-            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VPComplexGateway.png"
-            id="VPComplexGateway"
-            name="VPComplexGateway"
-            runtimeId="uy.edu.fing.modeler.variability"
-            type="ComplexGateway">
-            <property name="variability" value="VPComplexGateway" />
-      </customTask>
-      <customTask
-            category="VarPoints"
-            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VPTask.png"
-            id="VPTask"
-            name="VPTask"
-            runtimeId="uy.edu.fing.modeler.variability"
-            type="Task">
-            <property name="variability" value="VPTask" />
-      </customTask>      
-      <customTask
-            category="VarPoints"
-            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VPLane.png"
-            id="VPLane"
-            name="VPLane"
-            runtimeId="uy.edu.fing.modeler.variability"
-            type="Lane">
-            <property name="variability" value="VPLane" />
-      </customTask>
-      <customTask
-            category="VarPoints"
-            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VPParticipant.png"
-            id="VPParticipant"
-            name="VPParticipant"
-            runtimeId="uy.edu.fing.modeler.variability"
-            type="Participant">
-            <property name="variability" value="VPParticipant" />
-      </customTask>
-      <customTask
-            category="VarPoints"
-            featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-            icon="VPSubProcess.png"
-            id="VPSubProcess"
-            name="VPSubProcess"
-            runtimeId="uy.edu.fing.modeler.variability"
-            type="SubProcess">
-            <property name="variability" value="VPSubProcess" />
-      </customTask>
-      
-   </extension>
+	<extension point="org.eclipse.bpmn2.modeler.runtime">
+	
+		<runtime
+			class="uy.edu.fing.modeler.variability.VariabilityRuntimeExtension"
+			id="uy.edu.fing.modeler.variability"
+			name="VariabilityRuntimeExtension">
+		</runtime>
+	      
+	    <!-- Variation Points -->
+		<customTask
+	    	category="VarPoints"
+			featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+			icon="VPTask.png"
+			id="VPTask"
+			name="VPTask"
+			runtimeId="uy.edu.fing.modeler.variability"
+			type="Task">
+				<property name="variability" value="VPTask" />
+		</customTask>      
+		<customTask
+			category="VarPoints"
+			featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+			icon="VPLane.png"
+			id="VPLane"
+			name="VPLane"
+			runtimeId="uy.edu.fing.modeler.variability"
+			type="Lane">
+				<property name="variability" value="VPLane" />
+	 	</customTask>
+		<customTask
+			category="VarPoints"
+			featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+			icon="VPParticipant.png"
+			id="VPParticipant"
+			name="VPParticipant"
+			runtimeId="uy.edu.fing.modeler.variability"
+			type="Participant">
+				<property name="variability" value="VPParticipant" />
+		</customTask>
+		<customTask
+			category="VarPoints"
+			featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+			icon="VPSubProcess.png"
+			id="VPSubProcess"
+			name="VPSubProcess"
+			runtimeId="uy.edu.fing.modeler.variability"
+			type="SubProcess">
+				<property name="variability" value="VPSubProcess" />
+		</customTask>
+	</extension>
    
    
-   
-   <!-- Example 2: Adding a sub-menu to the Navigator view -->
-<extension point="org.eclipse.ui.popupMenus"> 
-	<viewerContribution 
+	<!-- Sub-menu in Navigator view -->
+	<extension point="org.eclipse.ui.popupMenus"> 
+		<viewerContribution 
 		id="uy.edu.fing.modeler.variability.ui.popup.navigator"
 		targetID="org.eclipse.ui.views.ResourceNavigator"> 
-		<menu
+			<menu
 			id="uy.edu.fing.modeler.variability.ui.navigator.subMenu"
 			label="BPMN"
 			path="additions">
-			<separator name="group1"/>
-		</menu>
-		<action
-			id="uy.edu.fing.modeler.variability.ui.navigator.substitution" 
-			label="Excecute substitution"
-			icon="icons/red_dot.gif"
-			helpContextId="uy.edu.fing.modeler.variability.ui.navigator.substitution" 
-			menubarPath="uy.edu.fing.modeler.variability.ui.navigator.subMenu/group1" 
-			class="uy.edu.fing.modeler.variability.ui.SubstitutionDelegate"
-			enablesFor="1">
-			
-		</action> 
-	</viewerContribution> 
-</extension> 
+				<separator name="group1"/>
+			</menu>
+			<action
+				id="uy.edu.fing.modeler.variability.ui.navigator.substitution" 
+				label="Excecute substitution"
+				icon="icons/red_dot.gif"
+				helpContextId="uy.edu.fing.modeler.variability.ui.navigator.substitution" 
+				menubarPath="uy.edu.fing.modeler.variability.ui.navigator.subMenu/group1" 
+				class="uy.edu.fing.modeler.variability.ui.SubstitutionDelegateOld"
+				enablesFor="1">
+			</action>
+		</viewerContribution> 
+	</extension> 
 
-   
-
+	<extension point="org.eclipse.ui.bindings">
+		<key
+			commandId="variability.commands.substitutionCommand"
+			contextId="org.eclipse.ui.contexts.window"
+			schemeId="org.eclipse.ui.defaultAcceleratorConfiguration"
+			sequence="M1+6">
+		</key>
+	</extension>
 	
+	<extension point="org.eclipse.ui.commands">
+		<category id="variability.commands.category" name="Substitution Category" />
+		<command categoryId="variability.commands.category" id="variability.commands.substitutionCommand" name="Substitution Command" />
+	</extension>
+	
+	<extension point="org.eclipse.ui.handlers">
+		<handler class="uy.edu.fing.modeler.variability.ui.SubstitutionDelegate" commandId="variability.commands.substitutionCommand" />
+	</extension>
+
+
+	<extension point="org.eclipse.core.expressions.definitions">
+		<definition id="uy.edu.fing.modeler.variability.bpmnFile">
+			<iterate ifEmpty="true">
+				<adapt type="org.eclipse.core.resources.IFile">
+	            	<test property="org.eclipse.core.resources.name" value="*.bpmn"/>
+				</adapt>
+			</iterate>
+		</definition>
+	</extension>
+	
+	<extension point="org.eclipse.ui.menus">
+		<menuContribution locationURI="popup:org.eclipse.ui.popup.any?before=additions">
+			<menu id="bpmnSubMenu" label="BPMN">
+				<command 
+					commandId="variability.commands.substitutionCommand"
+					label="Excecute substitution"
+					icon="icons/red_dot.gif"
+		        	style="push">
+				</command>
+				<visibleWhen checkEnabled="false">
+					<or>
+						<with variable="activeMenuSelection">
+							<reference definitionId="uy.edu.fing.modeler.variability.bpmnFile"/>
+						</with>
+						<with variable="activeMenuEditorInput">
+							<reference definitionId="uy.edu.fing.modeler.variability.bpmnFile"/>
+						</with>
+					</or>
+				</visibleWhen>
+			</menu>
+		</menuContribution>
+	</extension>
+
 </plugin>
