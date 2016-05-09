@@ -56,24 +56,29 @@ public class ActivitySupression {
 				Node targetRefFinalNodeIncoming = ((Element) targetRefFinalNode).getElementsByTagName("bpmn2:incoming").item(0);
 				targetRefFinalNodeIncoming.setTextContent(((Element) incomingNode).getAttribute("id"));
 				
+				Node outgoingFlowNodeEdge = 	getTAGNodeByBPMNElement(doc, "bpmndi:BPMNEdge", outgoingFlow);
+				Node incomingFlowNodeEdge = 	getTAGNodeByBPMNElement(doc, "bpmndi:BPMNEdge", incomingFlow);
+				Node vPIDNodeShape = 			getTAGNodeByBPMNElement(doc, "bpmndi:BPMNShape", vPID);
+				Node targetRefFinalNodeShape = 	getTAGNodeByBPMNElement(doc, "bpmndi:BPMNShape", targetRefFinal);
+				
 				// Eliminacion del FIGURE a borrar
-				figureSupression(basePath, doc, baseProcessFileName, "BPMNShape_" + vPID, "bpmndi:BPMNShape", resultFileName);
-				figureSupression(basePath, doc, baseProcessFileName, "BPMNEdge_" + outgoingFlow, "bpmndi:BPMNEdge", resultFileName);
-				changeBPMNEdgeTarget(doc, baseProcessFileName, "BPMNEdge_" + incomingFlow, "BPMNShape_" + targetRefFinal, resultFileName);
+				figureSupression(basePath, doc, baseProcessFileName, (((Element) vPIDNodeShape).getAttribute("id")), "bpmndi:BPMNShape", resultFileName);
+				figureSupression(basePath, doc, baseProcessFileName, (((Element) outgoingFlowNodeEdge).getAttribute("id")), "bpmndi:BPMNEdge", resultFileName);
+				changeBPMNEdgeTarget(doc, baseProcessFileName, (((Element) incomingFlowNodeEdge).getAttribute("id")), (((Element) targetRefFinalNodeShape).getAttribute("id")), resultFileName);
 				
 				// Eliminacion del TAG a borrar
 				Node nodoPadre = vPNode.getParentNode();
-				nodoPadre.removeChild(vPNode);															// vPNode = Task_1 nodo
+				nodoPadre.removeChild(vPNode);																// vPNode = Task_1 nodo
 				
 				nodoPadre = outgoingNode.getParentNode();
-				nodoPadre.removeChild(outgoingNode);													// outgoingNode = SequenceFlow_4 nodo
+				nodoPadre.removeChild(outgoingNode);														// outgoingNode = SequenceFlow_4 nodo
 			}
 		}
 		saveResult(doc, basePath, resultFileName);
 	}
 	
-	private static String getNodeFlowID(Node vPNode, String flowType) {
-		NodeList childNodes = vPNode.getChildNodes();													// vPNode = Task_1 nodo
+	public static String getNodeFlowID(Node vPNode, String flowType) {
+		NodeList childNodes = vPNode.getChildNodes();														// vPNode = Task_1 nodo
 		int length = childNodes.getLength();
 		for (int it = 0; it < length; it++) {
 			Node nodo = childNodes.item(it);
@@ -85,19 +90,33 @@ public class ActivitySupression {
 		return null;
 	}
 	
-	private static Node getTargetRefFinalNode(Document doc, String targetRefFinal) {
-		if (getTAGNodeByID(doc, "bpmn2:task", targetRefFinal) != null) {					// Probamos si el nodo es del tipo TASK.
-			return getTAGNodeByID(doc, "bpmn2:task", targetRefFinal);								// targetRefFinalNode = Task_2 nodo
-		} else if (getTAGNodeByID(doc, "bpmn2:subProcess", targetRefFinal) != null) {		// Probamos si el nodo es del tipo SUBPROCESS.
+	public static Node getTargetRefFinalNode(Document doc, String targetRefFinal) {
+		if (getTAGNodeByID(doc, "bpmn2:task", targetRefFinal) != null) {									// Probamos si el nodo es del tipo TASK.
+			return getTAGNodeByID(doc, "bpmn2:task", targetRefFinal);										// targetRefFinalNode = Task_2 nodo
+		} else if (getTAGNodeByID(doc, "bpmn2:subProcess", targetRefFinal) != null) {						// Probamos si el nodo es del tipo SUBPROCESS.
 			return getTAGNodeByID(doc, "bpmn2:subProcess", targetRefFinal);
-		} else if (getTAGNodeByID(doc, "bpmn2:endEvent", targetRefFinal) != null) {			// Probamos si el nodo es del tipo ENDEVENT.
+		} else if (getTAGNodeByID(doc, "bpmn2:endEvent", targetRefFinal) != null) {							// Probamos si el nodo es del tipo ENDEVENT.
 			return getTAGNodeByID(doc, "bpmn2:endEvent", targetRefFinal);
 		} else {
 			return null;
 		}
 	}
 
-	private static Node getTAGNodeByID(Document doc, String tag, String idTarget) {
+	public static Node getTAGNodeByBPMNElement(Document doc, String tag, String idTarget) {
+		NodeList tagsList;
+		int length;
+		tagsList = doc.getElementsByTagName(tag);
+		length = tagsList.getLength();
+		for (int it = 0; it < length; it++) {
+			Node nodo = tagsList.item(it);
+			if ((((Element) nodo).getAttribute("bpmnElement")).equals(idTarget)) {
+				return nodo;
+			}
+		}
+		return null;
+	}
+	
+	public static Node getTAGNodeByID(Document doc, String tag, String idTarget) {
 		NodeList tagsList;
 		int length;
 		tagsList = doc.getElementsByTagName(tag);
@@ -111,7 +130,7 @@ public class ActivitySupression {
 		return null;
 	}
 	
-	private static void figureSupression(String basePath, Document doc, String baseProcessFileName, String elementId, String tag, String resultFileName) throws ParserConfigurationException, SAXException, IOException, TransformerConfigurationException, TransformerFactoryConfigurationError, TransformerException {
+	public static void figureSupression(String basePath, Document doc, String baseProcessFileName, String elementId, String tag, String resultFileName) throws ParserConfigurationException, SAXException, IOException, TransformerConfigurationException, TransformerFactoryConfigurationError, TransformerException {
 		Node nodoShape = null;
 		NodeList shapes = doc.getElementsByTagName(tag);
 		int length = shapes.getLength();
@@ -130,7 +149,7 @@ public class ActivitySupression {
 		saveResult(doc, basePath, resultFileName);
 	}
 	
-	private static void changeBPMNEdgeTarget(Document doc, String baseProcessFileName, String elementId, String newTargetElement, String resultFileName) throws ParserConfigurationException, SAXException, IOException, TransformerConfigurationException, TransformerFactoryConfigurationError, TransformerException {
+	public static void changeBPMNEdgeTarget(Document doc, String baseProcessFileName, String elementId, String newTargetElement, String resultFileName) throws ParserConfigurationException, SAXException, IOException, TransformerConfigurationException, TransformerFactoryConfigurationError, TransformerException {
 		Node elementNode = null;
 		NodeList bpmnEdges = doc.getElementsByTagName("bpmndi:BPMNEdge");
 		int length = bpmnEdges.getLength();
@@ -138,13 +157,13 @@ public class ActivitySupression {
 			Node nodo = bpmnEdges.item(it);
 			String nodeID = ((Element) nodo).getAttribute("id");
 			if (nodeID.equals(elementId)) {
-				elementNode = nodo;																		// elementNode = BPMNEdge_SequenceFlow_1 nodo
+				elementNode = nodo;																			// elementNode = BPMNEdge_SequenceFlow_1 nodo
 			}
 		}
 		((Element) elementNode).setAttribute("targetElement", newTargetElement);
 	}
 	
-	private static void saveResult(Document doc, String basePath, String fileName) throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
+	public static void saveResult(Document doc, String basePath, String fileName) throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(doc);
@@ -153,7 +172,7 @@ public class ActivitySupression {
 		transformer.transform(source, result);
 	}
 
-	private static List<Node> getVPListByType(Document doc, String type, String variability) {
+	public static List<Node> getVPListByType(Document doc, String type, String variability) {
 		NodeList nodeList = doc.getElementsByTagName(type);
 		List<Node> variationPoints = new ArrayList<Node>();
 		for (int it = 0; it < nodeList.getLength(); it++) {

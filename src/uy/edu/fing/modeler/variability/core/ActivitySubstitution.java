@@ -47,10 +47,12 @@ public class ActivitySubstitution {
 		for (Node vPNode : vPNodes) {
 
 			Node vNode = getVariant(docBuilder, basePath, vPNode, Arrays.asList("bpmn2:startEvent"), selectedVariants);
+			// Es un subProcess
 			if (vNode != null) {
 				vNode = getVariant(docBuilder, basePath, vPNode, Arrays.asList("bpmn2:process"), selectedVariants);
 			}
 
+			// Es una Task
 			if (vNode == null) {
 				vNode = getVariant(docBuilder, basePath, vPNode,
 						Arrays.asList("bpmn2:task", "bpmn2:userTask", "bpmn2:manualTask", "bpmn2:scriptTask", "bpmn2:businessRuleTask", "bpmn2:serviceTask", "bpmn2:sendTask", "bpmn2:receiveTask"),
@@ -129,10 +131,14 @@ public class ActivitySubstitution {
 
 		String vPID = vPNode.getAttributes().getNamedItem("id").getNodeValue();
 
+		if (ReemplazadorMain.DELETE.equals(selectedVariants.get(vPID))){
+			return null;
+		}
+		
 		Path path = Paths.get(basePath + File.separatorChar + vPID);
 		Stream<Path> list = Files.list(path);
 		Node vNode = null;
-		if (!ReemplazadorMain.DELETE.equals(selectedVariants.get(vPID)) && (!Files.exists(path) || !Files.isDirectory(path) || list.count() == 0)) {
+		if ((!Files.exists(path) || !Files.isDirectory(path) || list.count() == 0)) {
 			throw new Exception("No existen variantes para el VP: " + vPID);
 		} else if (!ReemplazadorMain.DELETE.equals(selectedVariants.get(vPID))){
 			vNode = getVariantImpl(docBuilder, path, types, selectedVariants.get(vPID));
