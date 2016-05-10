@@ -179,6 +179,7 @@ public class ReemplazadorMain {
 			if (aux != null) {
 				System.out.println("+++++++++++++++++++++++++++++++++++++++++ ENCONTRE");
 				nodo = aux;
+				break;
 			}
 		}
 		//System.out.println("---Node Name: " + nodo.getNodeName());
