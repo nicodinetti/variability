@@ -120,49 +120,64 @@ public class ReemplazadorMain {
 		String incomingFlow = ActivitySupression.getNodeFlowID(subProcessNode, "bpmn2:incoming");
 		Node incomingNode = ActivitySupression.getTAGNodeByID(doc, "bpmn2:sequenceFlow", incomingFlow);
 		
-		Node subProcessStartEventNode = ActivitySupression.getTAGNodeByID(doc2, "bpmn2:startEvent", "StartEvent_1");
-		Node actualActivitySubProcess = subProcessStartEventNode;
+		Node actualActivitySubProcess = ActivitySupression.getTAGNodeByID(doc2, "bpmn2:startEvent", "StartEvent_10");
 		Node actualActivityProcess = incomingNode;
 		
 		while (!getNodeTAG(doc2, ((Element) getNextNode(doc2, actualActivitySubProcess)).getAttribute("id")).equals("bpmn2:endEvent")) {
+			// ****************************************************************************************************************************
 			Node nextSubProcessNode = getNextNode(doc2, actualActivitySubProcess);
 			System.out.println("--- actualActivityProcess ID: " + ((Element)actualActivityProcess).getAttribute("id"));
 			System.out.println("*** nextSubProcessNode ID: " + ((Element)nextSubProcessNode).getAttribute("id"));
-			// ------------------------------ INCOMPLETO !!!!!!!!
-			/*
-			 * HAY QUE IR COPIANDO DE doc2 A doc LOS ELEMENTOS DEL subProcess AL process
-			 * ACTUALMENTE NO ESTA BIEN ESTE while
-			 */
+
 			doc.importNode(nextSubProcessNode, true);
 			doc.adoptNode(nextSubProcessNode);
 			actualActivityProcess.getParentNode().appendChild(nextSubProcessNode);
+			System.out.println("----------- Agregamos el elemento " + ((Element) nextSubProcessNode).getAttribute("id") + " al Process");
 			
-			((Element) actualActivityProcess).setAttribute("targetRef", ((Element) nextSubProcessNode).getAttribute("id"));
-			System.out.println("*------* SETEAMOS EL targetRef DEL " + ((Element)actualActivityProcess).getAttribute("id") 
-					+ " CON EL " + ((Element)nextSubProcessNode).getAttribute("id") );
+			if (isSequenceFlow(getNodeTAG(doc, ((Element)actualActivityProcess).getAttribute("id")))) {
+				System.out.println("//-------------------- ES SF");
+				((Element) actualActivityProcess).setAttribute("targetRef", ((Element) nextSubProcessNode).getAttribute("id"));
+				System.out.println("*------* SETEAMOS EL targetRef DEL " + ((Element)actualActivityProcess).getAttribute("id") 
+						+ " CON EL " + ((Element)nextSubProcessNode).getAttribute("id") );
+			} else {
+				System.out.println("//-------------------- NO ES SF");
+				// HAY QUE MODIFICAR EL outgoingFlow
+				//((Element) actualActivityProcess).setAttribute("targetRef", ((Element) nextSubProcessNode).getAttribute("id"));
+				System.out.println("*------* SETEAMOS EL outgoingFlow DEL " + ((Element)actualActivityProcess).getAttribute("id") 
+						+ " CON " + ((Element)nextSubProcessNode).getAttribute("id") );
+			};
 			actualActivityProcess = nextSubProcessNode;
 			actualActivitySubProcess = nextSubProcessNode;
+			break;
 		}
 	
 		System.out.println("-------------- Ya copie todo el subProcess !!!");
 		
 		
-		
-		
 		ActivitySupression.saveResult(doc, basePath, resultFileName);
 	}
+	
+	/*
+	public static Node cambiarID(Document doc, Node nodo) {
+		Obtener Nodo ID y agregarle "_0" al ID y devolver el nodo modificado
+	}
+	*/
 	
 	public static Node getNodeByID(Document doc, String nodoID) {
 		return ActivitySupression.getTAGNodeByID(doc, getNodeTAG(doc, nodoID), nodoID);
 	}
 	
 	public static String getNodeTAG(Document doc, String nodoID) {
+		System.out.println("++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++++");
 		Node aux = null;
 		Node nodo = null;
 		List<String> tags = Arrays.asList("bpmn2:task", "bpmn2:userTask", "bpmn2:manualTask", "bpmn2:scriptTask", "bpmn2:businessRuleTask", "bpmn2:serviceTask", "bpmn2:sendTask", "bpmn2:receiveTask", "bpmn2:startEvent", "bpmn2:endEvent", "bpmn2:sequenceFlow", "bpmn2:subProcess", "bpmn2:process", "bpmndi:BPMNDiagram", "bpmndi:BPMNShape", "bpmndi:BPMNEdge");
+		System.out.println("++++ nodoID: " + nodoID);
 		for (String tag : tags) {
+			System.out.println("++++ tag: " + tag);
 			aux = ActivitySupression.getTAGNodeByID(doc, tag, nodoID);
 			if (aux != null) {
+				System.out.println("+++++++++++++++++++++++++++++++++++++++++ ENCONTRE");
 				nodo = aux;
 			}
 		}
@@ -170,16 +185,37 @@ public class ReemplazadorMain {
 		return nodo.getNodeName();
 	}
 	
+	public static boolean isTask(String tag) {
+		List<String> tags = Arrays.asList("bpmn2:task", "bpmn2:userTask", "bpmn2:manualTask", "bpmn2:scriptTask", "bpmn2:businessRuleTask", "bpmn2:serviceTask", "bpmn2:sendTask", "bpmn2:receiveTask");
+		return tags.contains(tag);
+	}
+	
+	public static boolean isSequenceFlow(String tag) {
+		List<String> tags = Arrays.asList("bpmn2:sequenceFlow");
+		return tags.contains(tag);
+	}
+	
 	public static Node getNextNode(Document doc2, Node first) {
 		Node nextNode = null;
+		
+		System.out.println("Node ID: " + ((Element) first).getAttribute("id"));
+		System.out.println("Node TAG: " + getNodeTAG(doc2, ((Element) first).getAttribute("id")));
+		if (isTask(getNodeTAG(doc2, ((Element) first).getAttribute("id")))) {
+			System.out.println("*** Es TASK");
+		} else {
+			System.out.println("*** NO es TASK");
+		};
 		
 		String outgoingFlowName = ActivitySupression.getNodeFlowID(first, "bpmn2:outgoing");
 		Node outgoingFlowNode = getNodeByID(doc2, outgoingFlowName);
 		
 		String nextNodeName = ((Element) outgoingFlowNode).getAttribute("targetRef");
 		nextNode = getNodeByID(doc2, nextNodeName);
+		
 		//System.out.println("---nextNodeNameNode:" + ((Element) nextNode).getAttribute("id"));
+		
 		String nodeTag = getNodeTAG(doc2, ((Element) nextNode).getAttribute("id"));
+		
 		//System.out.println("---nodeTAG: " + nodeTag);
 		
 		return nextNode;
