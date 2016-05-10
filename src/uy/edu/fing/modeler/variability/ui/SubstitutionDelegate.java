@@ -1,6 +1,8 @@
 package uy.edu.fing.modeler.variability.ui;
 
+import java.io.FileReader;
 import java.io.IOException;
+import java.io.Reader;
 import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
@@ -8,6 +10,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
@@ -35,60 +38,64 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
-/**
- * Our sample handler extends AbstractHandler, an IHandler base class.
- * @see org.eclipse.core.commands.IHandler
- * @see org.eclipse.core.commands.AbstractHandler
- */
 @SuppressWarnings("restriction")
 public class SubstitutionDelegate extends AbstractHandler {
-	/**
-	 * The constructor.
-	 */
-	public SubstitutionDelegate() {
-	}
 
-	/**
-	 * the command has been executed, so extract extract the needed information
-	 * from the application context.
-	 */
+	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
-		
-		Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
-		
-		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
-	    IWorkbenchPage activePage = window.getActivePage();
-	    ISelection selection = activePage.getSelection();
-	    Object firstElement = ((TreeSelection) selection).getFirstElement();
 
-	    if (firstElement instanceof File) {
+		Shell parent = PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell();
+
+		IWorkbenchWindow window = HandlerUtil.getActiveWorkbenchWindowChecked(event);
+		IWorkbenchPage activePage = window.getActivePage();
+		ISelection selection = activePage.getSelection();
+		Object firstElement = ((TreeSelection) selection).getFirstElement();
+
+		if (firstElement instanceof File) {
 			File file = (File) firstElement;
 			if ("bpmn".equals(file.getFileExtension())) {
 				Map<String, List<String>> files;
 				try {
 					files = searchFiles(file);
-					WizardDialog wizardDialog = new WizardDialog(parent, new MyWizard(file, files));
+					Map<String, Properties> configs = searchConfigs(file);
+					WizardDialog wizardDialog = new WizardDialog(parent, new MyWizard(file, files, configs));
 					if (wizardDialog.open() == Window.OK) {
 						System.out.println("Ok pressed");
 					} else {
 						System.out.println("Cancel pressed");
 					}
 				} catch (SAXException | IOException | ParserConfigurationException e) {
-					// FIXME Poner pensaje de error
+					// FIXME Poner mensaje de error
 					e.printStackTrace();
-					failMessage(parent,e.getMessage());
+					failMessage(parent, e.getMessage());
 				}
 
 			} else {
-				failMessage(parent,"Please, select a bpmn file");
+				failMessage(parent, "Please, select a bpmn file");
 			}
 
 		} else {
-			failMessage(parent,"Please, select a bpmn file");
+			failMessage(parent, "Please, select a bpmn file");
 		}
-	    return null;
+		return null;
 	}
-	
+
+	private Map<String, Properties> searchConfigs(File file) throws IOException {
+		Map<String, Properties> res = new HashMap<>();
+
+		List<Path> list = Files.list(Paths.get(file.getParent().getRawLocationURI())).collect(Collectors.toList());
+		for (Path path : list) {
+			if (path.toString().endsWith(".conf")) {
+				Reader reader = new FileReader(path.toString());
+				Properties prop = new Properties();
+				prop.load(reader);
+				res.put(path.getFileName().toString(), prop);
+			}
+		}
+
+		return res;
+	}
+
 	@SuppressWarnings("resource")
 	private Map<String, List<String>> searchFiles(File file) throws SAXException, IOException, ParserConfigurationException {
 		Map<String, List<String>> res = new HashMap<>();
@@ -110,7 +117,7 @@ public class SubstitutionDelegate extends AbstractHandler {
 			}
 
 			Stream<Path> list = Files.list(vpPath);
-			if (list.count() == 0){
+			if (list.count() == 0) {
 				throw new RuntimeException("No existen variantes para el VP: " + vpName);
 			}
 
@@ -138,7 +145,7 @@ public class SubstitutionDelegate extends AbstractHandler {
 		return variationPoints;
 	}
 
-	private void failMessage(Shell parent,String message) {
+	private void failMessage(Shell parent, String message) {
 		MessageBox fail = new MessageBox(parent);
 		fail.setMessage(message);
 		fail.open();
