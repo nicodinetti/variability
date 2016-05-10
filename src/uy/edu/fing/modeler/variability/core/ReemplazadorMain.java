@@ -72,8 +72,8 @@ public class ReemplazadorMain {
 			selectedVariants.put("Task_1", DELETE);
 			selectedVariants.put("SubProcess_1", DELETE);
 			*/
-			selectedVariants.put("Task_1", "S1.bpmn");
-			selectedVariants.put("Task_2", DELETE);
+			selectedVariants.put("Task_1", "S2.bpmn");
+			//selectedVariants.put("Task_2", DELETE);
 			
 			String basePath = "/home/abrusco/git/reemplazador/Reemplazador/src";
 			String baseProcessFileName = "process_2.bpmn";
@@ -121,20 +121,29 @@ public class ReemplazadorMain {
 		Node incomingNode = ActivitySupression.getTAGNodeByID(doc, "bpmn2:sequenceFlow", incomingFlow);
 		
 		Node subProcessStartEventNode = ActivitySupression.getTAGNodeByID(doc2, "bpmn2:startEvent", "StartEvent_1");
-		Node actualActivityProcess = incomingNode;
 		Node actualActivitySubProcess = subProcessStartEventNode;
+		Node actualActivityProcess = incomingNode;
+		
 		while (!getNodeTAG(doc2, ((Element) getNextNode(doc2, actualActivitySubProcess)).getAttribute("id")).equals("bpmn2:endEvent")) {
-			Node nextSubProcessNode = getNextNode(doc2, subProcessStartEventNode);
+			Node nextSubProcessNode = getNextNode(doc2, actualActivitySubProcess);
+			System.out.println("--- actualActivityProcess ID: " + ((Element)actualActivityProcess).getAttribute("id"));
+			System.out.println("*** nextSubProcessNode ID: " + ((Element)nextSubProcessNode).getAttribute("id"));
 			// ------------------------------ INCOMPLETO !!!!!!!!
 			/*
 			 * HAY QUE IR COPIANDO DE doc2 A doc LOS ELEMENTOS DEL subProcess AL process
 			 * ACTUALMENTE NO ESTA BIEN ESTE while
 			 */
+			doc.importNode(nextSubProcessNode, true);
+			doc.adoptNode(nextSubProcessNode);
+			actualActivityProcess.getParentNode().appendChild(nextSubProcessNode);
 			
 			((Element) actualActivityProcess).setAttribute("targetRef", ((Element) nextSubProcessNode).getAttribute("id"));
+			System.out.println("*------* SETEAMOS EL targetRef DEL " + ((Element)actualActivityProcess).getAttribute("id") 
+					+ " CON EL " + ((Element)nextSubProcessNode).getAttribute("id") );
 			actualActivityProcess = nextSubProcessNode;
 			actualActivitySubProcess = nextSubProcessNode;
 		}
+	
 		System.out.println("-------------- Ya copie todo el subProcess !!!");
 		
 		
@@ -157,7 +166,7 @@ public class ReemplazadorMain {
 				nodo = aux;
 			}
 		}
-		System.out.println("---Node Name: " + nodo.getNodeName());
+		//System.out.println("---Node Name: " + nodo.getNodeName());
 		return nodo.getNodeName();
 	}
 	
@@ -169,9 +178,9 @@ public class ReemplazadorMain {
 		
 		String nextNodeName = ((Element) outgoingFlowNode).getAttribute("targetRef");
 		nextNode = getNodeByID(doc2, nextNodeName);
-		System.out.println("---nextNodeNameNode:" + ((Element) nextNode).getAttribute("id"));
+		//System.out.println("---nextNodeNameNode:" + ((Element) nextNode).getAttribute("id"));
 		String nodeTag = getNodeTAG(doc2, ((Element) nextNode).getAttribute("id"));
-		System.out.println("---nodeTAG: " + nodeTag);
+		//System.out.println("---nodeTAG: " + nodeTag);
 		
 		return nextNode;
 	}
@@ -193,7 +202,7 @@ public class ReemplazadorMain {
 			LaneSubstitution.substitution(basePath, getResultFileName(), selectedVariants, resultFileName);
 			ActivitySupression.activitySupression(basePath, getResultFileName(), selectedVariants, resultFileName);
 			
-			//insertarSubprocess(BASE_PATH, getResultFileName(), "Task_1", "Task_1.bpmn", RESULT_FILE_NAME);
+			insertarSubprocess(basePath, getResultFileName(), "Task_1", "Task_1.bpmn", resultFileName);
 
 			System.out.println("Done");
 
