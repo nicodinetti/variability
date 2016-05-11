@@ -178,9 +178,11 @@ public class ReemplazadorMain {
 	
 	public static List<Node> getSubTree(Document doc, Node nodo) {
 		List<Node> result = new ArrayList<Node>();
-		while (!getNodeTAG(doc, ((Element) getNextNode(doc, nodo)).getAttribute("id")).equals("bpmn2:endEvent")) {
-			result.add(getNextNode(doc, nodo));
-			nodo = getNextNode(doc, nodo);
+		Node aux = getNextNode(doc, nodo);
+		while (!getNodeTAG(doc, getTAGID(aux)).equals("bpmn2:endEvent")) {
+			System.out.println("---------");
+			result.add(aux);
+			aux = getNextNode(doc, aux);
 		}
 		return result;
 	}
@@ -192,7 +194,7 @@ public class ReemplazadorMain {
 			doc.importNode(node, true);
 			doc.adoptNode(node);
 			parentNode.appendChild(node);
-			System.out.println("------------------------ INSERTAMOS " + ((Element)node).getAttribute("id"));
+			System.out.println("------------------------ INSERTAMOS: " + getTAGID(node));
 		}
 		return doc;
 	}
@@ -228,57 +230,64 @@ public class ReemplazadorMain {
 		return tags.contains(tag);
 	}
 	
+	public static String getTAGID(Node node) {
+		return ((Element) node).getAttribute("id");
+	}
+	
 	public static Node getNextNode(Document doc2, Node first) {
 		Node nextNode = null;
 		
-		System.out.println("Node ID: " + ((Element) first).getAttribute("id"));
-		System.out.println("Node TAG: " + getNodeTAG(doc2, ((Element) first).getAttribute("id")));
+		System.out.println("Node ID: " + getTAGID(first));
+		System.out.println("Node TAG: " + getNodeTAG(doc2, getTAGID(first)));
 		
-		String outgoingFlowName = "";
+		String outgoingName = "";
 		
-		if (isTask(getNodeTAG(doc2, ((Element) first).getAttribute("id")))) {
+		if (isTask(getNodeTAG(doc2, getTAGID(first)))) {
 			System.out.println("*** Es TASK");
-			outgoingFlowName = ActivitySupression.getNodeFlowID(first, "bpmn2:outgoing");
+			outgoingName = ActivitySupression.getNodeFlowID(first, "bpmn2:outgoing");
 			
-			Node outgoingFlowNode = getNodeByID(doc2, outgoingFlowName);
+			Node outgoingFlowNode = getNodeByID(doc2, outgoingName);
 			
+			nextNode = outgoingFlowNode;			
+			/*
 			String nextNodeName = ((Element) outgoingFlowNode).getAttribute("targetRef");
+			System.out.println("***** nextNodeName: " + nextNodeName);
 			nextNode = getNodeByID(doc2, nextNodeName);
 			
-			//System.out.println("---nextNodeNameNode:" + ((Element) nextNode).getAttribute("id"));
+			String nodeTag = getNodeTAG(doc2, getTAGID(nextNode));
+			*/
 			
-			String nodeTag = getNodeTAG(doc2, ((Element) nextNode).getAttribute("id"));
+		} else if (isSequenceFlow(getNodeTAG(doc2, getTAGID(first)))) {
 			
-			//System.out.println("---nodeTAG: " + nodeTag);
-			
-		} else if (isSequenceFlow(getNodeTAG(doc2, ((Element) first).getAttribute("id")))) {
-			
-			// REVISAR
+			// REVISAR -- NO SE ESTAN INSERTANDO LOS SF
 			
 			System.out.println("*** Es SF");
-			outgoingFlowName = ((Element) first).getAttribute("targetRef");
+			outgoingName = ((Element) first).getAttribute("targetRef");
 			
-			Node outgoingFlowNode = getNodeByID(doc2, outgoingFlowName);
+			Node outgoingFlowNode = getNodeByID(doc2, outgoingName);
 			
-			String incomingFlow = ActivitySupression.getNodeFlowID(outgoingFlowNode, "bpmn2:incoming");
-			nextNode = ActivitySupression.getTAGNodeByID(doc2, "bpmn2:sequenceFlow", incomingFlow);	
+			nextNode = outgoingFlowNode;
+			/*			
+			String outgoingFlow = ActivitySupression.getNodeFlowID(outgoingFlowNode, "bpmn2:outgoing");
+			nextNode = ActivitySupression.getTAGNodeByID(doc2, "bpmn2:sequenceFlow", outgoingFlow);
+			*/	
 			
 		} else {
 			System.out.println("*** NO es TASK NI SF");
-			outgoingFlowName = ActivitySupression.getNodeFlowID(first, "bpmn2:outgoing");
+			outgoingName = ActivitySupression.getNodeFlowID(first, "bpmn2:outgoing");
 
-			Node outgoingFlowNode = getNodeByID(doc2, outgoingFlowName);
+			Node outgoingFlowNode = getNodeByID(doc2, outgoingName);
 			
+			nextNode = outgoingFlowNode;
+			/*
 			String nextNodeName = ((Element) outgoingFlowNode).getAttribute("targetRef");
+			System.out.println("***** nextNodeName: " + nextNodeName);
 			nextNode = getNodeByID(doc2, nextNodeName);
 			
-			//System.out.println("---nextNodeNameNode:" + ((Element) nextNode).getAttribute("id"));
-			
-			String nodeTag = getNodeTAG(doc2, ((Element) nextNode).getAttribute("id"));
-			
-			//System.out.println("---nodeTAG: " + nodeTag);
+			String nodeTag = getNodeTAG(doc2, getTAGID(nextNode));
+			*/
 		};
-		
+		System.out.println("---outgoingFlowName: " + outgoingName);
 		
 		return nextNode;
 	}
