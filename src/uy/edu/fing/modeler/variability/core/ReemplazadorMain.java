@@ -131,6 +131,14 @@ public class ReemplazadorMain {
 		Node ultNodoSubprocess = nodos.get(nodos.size() - 1);
 		setFlowNode(ultNodoSubprocess, outgoingFlowID, "bpmn2:outgoing");
 		setFlowRef(doc, outgoingNode, getTAGID(ultNodoSubprocess), "sourceRef");
+		
+		Node incomingFlowNodeEdge = ActivitySupression.getTAGNodeByBPMNElement(doc, "bpmndi:BPMNEdge", incomingFlowID);
+		ActivitySupression.changeBPMNEdgeTarget(doc, getTAGID(incomingFlowNodeEdge), getTAGID(nodos.get(0)), "targetElement");
+		Node outgoingFlowNodeEdge = ActivitySupression.getTAGNodeByBPMNElement(doc, "bpmndi:BPMNEdge", outgoingFlowID);
+		ActivitySupression.changeBPMNEdgeTarget(doc, getTAGID(outgoingFlowNodeEdge), getTAGID(ultNodoSubprocess), "sourceElement");
+		Node vPIDNodeShape = ActivitySupression.getTAGNodeByBPMNElement(doc, "bpmndi:BPMNShape", getTAGID(subProcessNode));
+		ActivitySupression.figureSupression(doc, getTAGID(vPIDNodeShape), "bpmndi:BPMNShape");
+
 
 		doc = insertSubTree(doc, incomingNode, nodos);
 		deleteNode(subProcessNode);
@@ -146,11 +154,10 @@ public class ReemplazadorMain {
 		System.out.println("*-----* SETEAMOS " + getTAGID(source) + ":" + tag + " = " + flowID + " *-----*");
 	}
 	
-	/*
-	public static Node cambiarID(Document doc, Node nodo) {
-		Obtener Nodo ID y agregarle "_0" al ID y devolver el nodo modificado
+	public static void cambiarID(Node nodo) {
+		String nuevoNodoID = getTAGID(nodo) + "_0";
+		((Element) nodo).setAttribute("id", nuevoNodoID);
 	}
-	*/
 	
 	public static void setFlowRef(Document doc, Node source, String refID, String tag) {
 		((Element) source).setAttribute(tag, refID);
@@ -166,9 +173,9 @@ public class ReemplazadorMain {
 			result.add(aux);
 			aux = getNextNode(doc, aux);
 		}
-		System.out.println("\n-- Tamaño subTree: " + result.size() + " --");
-		System.out.println("-- Debemos el primer y último SequenceFlow --");
-		System.out.println("--- REMOVIENDO ---");
+		//System.out.println("\n-- Tamaño subTree: " + result.size() + " --");
+		//System.out.println("-- Debemos borrar el primer y último SequenceFlow --");
+		//System.out.println("--- REMOVIENDO ---");
 		result = removerPrimerYUltimo(result);
 		System.out.println("-- Tamaño subTree: " + result.size() + " --");
 		System.out.println("--- FIN ARMADO DEL ARBOL A EXPORTAR ---\n");

@@ -130,6 +130,24 @@ public class ActivitySupression {
 		return null;
 	}
 	
+	public static void figureSupression(Document doc, String elementId, String tag) {
+		Node nodoShape = null;
+		NodeList shapes = doc.getElementsByTagName(tag);
+		int length = shapes.getLength();
+		for (int it = 0; it < length; it++) {
+			Node nodo = shapes.item(it);
+			if ((((Element) nodo).getAttribute("id")).equals(elementId)) {
+				nodoShape = nodo;
+			}
+		}
+		
+		if (nodoShape != null) {
+			Node nodoPadre = nodoShape.getParentNode();
+			nodoPadre.removeChild(nodoShape);
+		}
+		
+	}
+	
 	public static void figureSupression(String basePath, Document doc, String baseProcessFileName, String elementId, String tag, String resultFileName) throws ParserConfigurationException, SAXException, IOException, TransformerConfigurationException, TransformerFactoryConfigurationError, TransformerException {
 		Node nodoShape = null;
 		NodeList shapes = doc.getElementsByTagName(tag);
@@ -147,6 +165,20 @@ public class ActivitySupression {
 		}
 		
 		saveResult(doc, basePath, resultFileName);
+	}
+	
+	public static void changeBPMNEdgeTarget(Document doc, String elementId, String newTargetElement, String ref) {
+		Node elementNode = null;
+		NodeList bpmnEdges = doc.getElementsByTagName("bpmndi:BPMNEdge");
+		int length = bpmnEdges.getLength();
+		for (int it = 0; it < length; it++) {
+			Node nodo = bpmnEdges.item(it);
+			String nodeID = ((Element) nodo).getAttribute("id");
+			if (nodeID.equals(elementId)) {
+				elementNode = nodo;																			// elementNode = BPMNEdge_SequenceFlow_1 nodo
+			}
+		}
+		((Element) elementNode).setAttribute(ref, newTargetElement);
 	}
 	
 	public static void changeBPMNEdgeTarget(Document doc, String baseProcessFileName, String elementId, String newTargetElement, String resultFileName) throws ParserConfigurationException, SAXException, IOException, TransformerConfigurationException, TransformerFactoryConfigurationError, TransformerException {
