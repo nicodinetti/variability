@@ -157,7 +157,7 @@ public class ActivitySubstitution {
 		Node vNode = null;
 		if ((!Files.exists(path) || !Files.isDirectory(path) || list.count() == 0)) {
 			throw new Exception("No existen variantes para el VP: " + vPID);
-		} else if (!ReemplazadorMain.DELETE.equals(selectedVariants.get(vPID))) {
+		} else if (!ReemplazadorMain.DELETE.equals(selectedVariants.get(vPID)) && selectedVariants.get(vPID) != null){
 			vNode = getVariantImpl(docBuilder, path, types, selectedVariants.get(vPID));
 		}
 		return vNode;

@@ -51,11 +51,11 @@
         <di:waypoint x="375.0" xsi:type="dc:Point" y="118.0"/>
         <bpmndi:BPMNLabel id="BPMNLabel_5" labelStyle="BPMNLabelStyle_1"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_3" id="BPMNEdge_SequenceFlow_3" sourceElement="Task_30" targetElement="BPMNShape_Task_2">
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_3" id="BPMNEdge_SequenceFlow_3" sourceElement="BPMNShape_Task_1" targetElement="BPMNShape_Task_2">
         <di:waypoint x="485.0" xsi:type="dc:Point" y="118.0"/>
         <di:waypoint x="580.0" xsi:type="dc:Point" y="118.0"/>
         <di:waypoint x="580.0" xsi:type="dc:Point" y="118.0"/>
-        <di:waypoint x="690.0" xsi:type="dc:Point" y="118.0"/>
+        <di:waypoint x="990.0" xsi:type="dc:Point" y="118.0"/>
         <bpmndi:BPMNLabel id="BPMNLabel_6" labelStyle="BPMNLabelStyle_1"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge bpmnElement="SequenceFlow_4" id="BPMNEdge_SequenceFlow_4" sourceElement="BPMNShape_Task_2" targetElement="BPMNShape_2">

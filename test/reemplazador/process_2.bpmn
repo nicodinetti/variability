@@ -56,7 +56,7 @@
         <di:waypoint xsi:type="dc:Point" x="485.0" y="118.0"/>
         <di:waypoint xsi:type="dc:Point" x="580.0" y="118.0"/>
         <di:waypoint xsi:type="dc:Point" x="580.0" y="118.0"/>
-        <di:waypoint xsi:type="dc:Point" x="690.0" y="118.0"/>
+        <di:waypoint xsi:type="dc:Point" x="990.0" y="118.0"/>
         <bpmndi:BPMNLabel id="BPMNLabel_6" labelStyle="BPMNLabelStyle_1"/>
       </bpmndi:BPMNEdge>
       <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_4" bpmnElement="SequenceFlow_4" sourceElement="BPMNShape_Task_2" targetElement="BPMNShape_2">

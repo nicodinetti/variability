@@ -23,7 +23,7 @@ import org.xml.sax.SAXException;
 
 public class LaneSubstitution {
 
-	public static void substitution(String basePath, String baseProcessFileName, Map<String, String> selectedVariants, String resultFileName)
+	public static void laneSubstitution(String basePath, String baseProcessFileName, Map<String, String> selectedVariants, String resultFileName)
 			throws IOException, Exception, SAXException, TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
 
 		Map<String, String> filterSelecteds = filterSelecteds(selectedVariants);

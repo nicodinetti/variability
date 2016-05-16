@@ -30,17 +30,19 @@ public class SubprocessInsertion {
 		DocumentBuilderFactory docFactory2 = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder2 = docFactory2.newDocumentBuilder();
 		Document doc2 = docBuilder2.parse(filepathBase2.toString());
-
-		Node subProcessNode = ActivitySupression.getTAGNodeByID(doc, "bpmn2:subProcess", subProcessID);
-		String incomingFlowID = ActivitySupression.getNodeFlowID(subProcessNode, "bpmn2:incoming");
-		Node incomingNode = ActivitySupression.getTAGNodeByID(doc, "bpmn2:sequenceFlow", incomingFlowID);
-		String outgoingFlowID = ActivitySupression.getNodeFlowID(subProcessNode, "bpmn2:outgoing");
-		Node outgoingNode = ActivitySupression.getTAGNodeByID(doc, "bpmn2:sequenceFlow", outgoingFlowID);
-
+		
+		Node subProcessNode = Utils.getTAGNodeByID(doc, "bpmn2:subProcess", subProcessID);
+		String incomingFlowID = Utils.getNodeFlowID(subProcessNode, "bpmn2:incoming");
+		Node incomingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow", incomingFlowID);
+		String outgoingFlowID = Utils.getNodeFlowID(subProcessNode, "bpmn2:outgoing");
+		Node outgoingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow", outgoingFlowID);
+		
 		List<Node> nodos = Utils.getSubTree(doc2);
 		nodos = Utils.removerPrimerYUltimo(nodos);
-		System.out.println("-- Tamaño subTree: " + nodos.size() + " --");
-		System.out.println("--- FIN ARMADO DEL ARBOL A EXPORTAR ---\n");
+		if (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
+			System.out.println("-- Tamaño subTree: " + nodos.size() + " --");
+			System.out.println("--- FIN ARMADO DEL ARBOL A EXPORTAR ---\n");
+		}
 
 		Utils.setFlowRef(doc, incomingNode, Utils.getTAGID(nodos.get(0)), "targetRef");
 		Utils.setFlowNode(nodos.get(0), Utils.getTAGID(incomingNode), "bpmn2:incoming");
@@ -48,19 +50,19 @@ public class SubprocessInsertion {
 		Utils.setFlowNode(ultNodoSubprocess, outgoingFlowID, "bpmn2:outgoing");
 		Utils.setFlowRef(doc, outgoingNode, Utils.getTAGID(ultNodoSubprocess), "sourceRef");
 
-		Node incomingFlowNodeEdge = ActivitySupression.getNodeByTag(doc, "bpmndi:BPMNEdge", incomingFlowID);
-		ActivitySupression.changeBPMNEdgeTarget(doc, Utils.getTAGID(incomingFlowNodeEdge), Utils.getTAGID(nodos.get(0)), "targetElement");
-		Node outgoingFlowNodeEdge = ActivitySupression.getNodeByTag(doc, "bpmndi:BPMNEdge", outgoingFlowID);
-		ActivitySupression.changeBPMNEdgeTarget(doc, Utils.getTAGID(outgoingFlowNodeEdge), Utils.getTAGID(ultNodoSubprocess), "sourceElement");
-		Node vPIDNodeShape = ActivitySupression.getNodeByTag(doc, "bpmndi:BPMNShape", Utils.getTAGID(subProcessNode));
-		ActivitySupression.figureSupression(doc, Utils.getTAGID(vPIDNodeShape), "bpmndi:BPMNShape");
+		Node incomingFlowNodeEdge = Utils.getNodeByTag(doc, "bpmndi:BPMNEdge", incomingFlowID);
+		Utils.changeBPMNEdgeTarget(doc, Utils.getTAGID(incomingFlowNodeEdge), Utils.getTAGID(nodos.get(0)), "targetElement");
+		Node outgoingFlowNodeEdge = Utils.getNodeByTag(doc, "bpmndi:BPMNEdge", outgoingFlowID);
+		Utils.changeBPMNEdgeTarget(doc, Utils.getTAGID(outgoingFlowNodeEdge), Utils.getTAGID(ultNodoSubprocess), "sourceElement");
+		Node vPIDNodeShape = Utils.getNodeByTag(doc, "bpmndi:BPMNShape", Utils.getTAGID(subProcessNode));
+		Utils.figureSupression(doc, Utils.getTAGID(vPIDNodeShape), "bpmndi:BPMNShape");
 
 		doc = Utils.insertSubTree(doc, incomingNode, nodos);
-		Utils.deleteNode(subProcessNode);
+		Utils.deleteNode(doc, subProcessNode);
 
 		System.out.println("-------------- Ya copie todo el subProcess !!!");
 
-		ActivitySupression.saveResult(doc, basePath, resultFileName);
+		Utils.saveResult(doc, basePath, resultFileName);
 	}
 
 }
