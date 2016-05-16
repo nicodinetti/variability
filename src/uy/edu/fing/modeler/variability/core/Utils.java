@@ -244,8 +244,8 @@ public class Utils {
 		if (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
 			System.out.println("*-----* ELIMINAMOS EL NODO " + getTAGID(nodo) + " *-----*");
 		}
-		Node vPIDNodeShape = getNodeByTag(doc, "bpmndi:BPMNShape", Utils.getTAGID(nodo));
-		figureSupression(doc, Utils.getTAGID(vPIDNodeShape), "bpmndi:BPMNShape");
+		/*Node vPIDNodeShape = getNodeByTag(doc, "bpmndi:BPMNShape", Utils.getTAGID(nodo));
+		figureSupression(doc, Utils.getTAGID(vPIDNodeShape), "bpmndi:BPMNShape");*/
 	}
 	
 	public static void saveResult(Document doc, String basePath, String fileName) throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
