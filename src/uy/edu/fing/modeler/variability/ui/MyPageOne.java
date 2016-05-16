@@ -170,6 +170,10 @@ public class MyPageOne extends WizardPage {
 		return newConfigName.getText();
 	}
 
+	public String getResultFileName() {
+		return newConfigName.getText() + ".bpmn";
+	}
+
 	public Map<String, String> getComboSelecteds() {
 		Map<String, String> selectedVariants = new HashMap<>();
 		for (String key : comboSelecteds.keySet()) {

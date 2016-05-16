@@ -1,4 +1,5 @@
 package uy.edu.fing.modeler.variability.core;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Files;
@@ -8,6 +9,7 @@ import java.nio.file.StandardCopyOption;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.Collection;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -32,8 +34,9 @@ import org.xml.sax.SAXException;
 
 public class ActivitySubstitution {
 
-	public static void activitySubstitution(String basePath, String baseProcessFileName, Map<String, String> selectedVariants, String resultFileName)
+	public static Map<String, String> activitySubstitution(String basePath, String baseProcessFileName, Map<String, String> selectedVariants, String resultFileName)
 			throws IOException, Exception, SAXException, TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
+		Map<String, String> res = new HashMap<>();
 
 		Path filepathBase = Paths.get(basePath + File.separatorChar + baseProcessFileName);
 
@@ -44,12 +47,15 @@ public class ActivitySubstitution {
 		List<Node> vPNodes = getVPListByType(doc, "bpmn2:task", "VPTask");
 		vPNodes.addAll(getVPListByType(doc, "bpmn2:subProcess", "VPSubProcess"));
 
+		System.out.println("Nodos VP: " + vPNodes);
+
 		for (Node vPNode : vPNodes) {
 
 			Node vNode = getVariant(docBuilder, basePath, vPNode, Arrays.asList("bpmn2:startEvent"), selectedVariants);
 			// Es un subProcess
 			if (vNode != null) {
 				vNode = getVariant(docBuilder, basePath, vPNode, Arrays.asList("bpmn2:process"), selectedVariants);
+				System.out.println("Es un subproceso: " + vPNode + " a ser reemplazado por " + vNode);
 			}
 
 			// Es una Task
@@ -57,6 +63,7 @@ public class ActivitySubstitution {
 				vNode = getVariant(docBuilder, basePath, vPNode,
 						Arrays.asList("bpmn2:task", "bpmn2:userTask", "bpmn2:manualTask", "bpmn2:scriptTask", "bpmn2:businessRuleTask", "bpmn2:serviceTask", "bpmn2:sendTask", "bpmn2:receiveTask"),
 						selectedVariants);
+				System.out.println("Es una tarea: " + vPNode + " a ser reemplazada por " + vNode);
 			}
 
 			if (vNode != null) {
@@ -67,6 +74,9 @@ public class ActivitySubstitution {
 					Path source = Paths.get(basePath + File.separatorChar + vPID + File.separatorChar + selectedfileName);
 					Path target = Paths.get(basePath + File.separatorChar + vPID + ".bpmn");
 					Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
+
+					System.out.println("El subproceso fue copiado al archivo " + target.getFileName() + " y es referenciado desde el proceso base como " + vPID);
+					res.put(vPID, target.getFileName().toString());
 				}
 
 				// Copiar el nombre
@@ -77,6 +87,8 @@ public class ActivitySubstitution {
 
 		}
 		saveResult(doc, basePath, resultFileName);
+
+		return res;
 	}
 
 	private static void saveResult(Document doc, String basePath, String fileName) throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
@@ -93,6 +105,8 @@ public class ActivitySubstitution {
 		String vTagName = tagName.equals("bpmn2:process") ? "bpmn2:subProcess" : tagName;
 
 		doc.renameNode(vPNode, "http://www.omg.org/spec/BPMN/20100524/MODEL", vTagName);
+
+		System.out.println("Copiado del tagName: " + vTagName);
 	}
 
 	private static void copyAttributes(Node vPNode, Node vNode) {
@@ -119,11 +133,14 @@ public class ActivitySubstitution {
 				((Element) vPNode).setAttribute(nodeName2, vAttr.item(i).getNodeValue());
 			}
 		}
+
+		System.out.println("Copiados los atributos: " + listAttr);
 	}
 
 	private static void copyName(Node vPNode, Node vNode) {
 		String vName = vNode.getAttributes().getNamedItem("name").getTextContent();
 		vPNode.getAttributes().getNamedItem("name").setTextContent(vName);
+		System.out.println("Copiado el nombre: " + vName);
 	}
 
 	@SuppressWarnings("resource")
@@ -131,16 +148,16 @@ public class ActivitySubstitution {
 
 		String vPID = vPNode.getAttributes().getNamedItem("id").getNodeValue();
 
-		if (ReemplazadorMain.DELETE.equals(selectedVariants.get(vPID))){
+		if (ReemplazadorMain.DELETE.equals(selectedVariants.get(vPID))) {
 			return null;
 		}
-		
+
 		Path path = Paths.get(basePath + File.separatorChar + vPID);
 		Stream<Path> list = Files.list(path);
 		Node vNode = null;
 		if ((!Files.exists(path) || !Files.isDirectory(path) || list.count() == 0)) {
 			throw new Exception("No existen variantes para el VP: " + vPID);
-		} else if (!ReemplazadorMain.DELETE.equals(selectedVariants.get(vPID))){
+		} else if (!ReemplazadorMain.DELETE.equals(selectedVariants.get(vPID))) {
 			vNode = getVariantImpl(docBuilder, path, types, selectedVariants.get(vPID));
 		}
 		return vNode;

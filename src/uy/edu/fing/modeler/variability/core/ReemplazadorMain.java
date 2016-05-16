@@ -11,25 +11,26 @@ import javax.xml.transform.TransformerException;
 import org.xml.sax.SAXException;
 
 public class ReemplazadorMain {
-	
+
 	public static final String SUBPROCESS_ID = "Task_1";
 	public static final String START_EVENT_SUBPROCESS_ID = "StartEvent_10";
 	public static final String DELETE = "DELETE";
 	private static boolean primero = true;
 	private static String BASE_PROCESS_FILE_NAME = "";
 	private static String RESULT_FILE_NAME = "";
-	
+
 	public static void main(String[] args) throws Exception {
 		try {
 
 			Map<String, String> selectedVariants = new HashMap<>();
 			selectedVariants.put(SUBPROCESS_ID, "S2.bpmn");
-			
-			//String basePath = "/home/abrusco/git/reemplazador/Reemplazador/src";
+
+			// String basePath =
+			// "/home/abrusco/git/reemplazador/Reemplazador/src";
 			String basePath = "/home/abrusco/git/variability/test/reemplazador";
 			String baseProcessFileName = "process_2.bpmn";
 			String resultFileName = "result.bpmn";
-			
+
 			replace(basePath, baseProcessFileName, selectedVariants, resultFileName);
 
 		} catch (ParserConfigurationException pce) {
@@ -43,7 +44,7 @@ public class ReemplazadorMain {
 		}
 
 	}
-	
+
 	private static String getResultFileName() {
 		if (primero) {
 			primero = false;
@@ -51,17 +52,22 @@ public class ReemplazadorMain {
 		}
 		return RESULT_FILE_NAME;
 	}
-	
+
 	public static void replace(String basePath, String baseProcessFileName, Map<String, String> selectedVariants, String resultFileName) throws Exception {
 
 		try {
 			BASE_PROCESS_FILE_NAME = baseProcessFileName;
 			RESULT_FILE_NAME = resultFileName;
-			ActivitySubstitution.activitySubstitution(basePath, getResultFileName(), selectedVariants, resultFileName);
+
+			Map<String, String> subprocessResult = ActivitySubstitution.activitySubstitution(basePath, getResultFileName(), selectedVariants, resultFileName);
 			LaneSubstitution.substitution(basePath, getResultFileName(), selectedVariants, resultFileName);
 			ActivitySupression.activitySupression(basePath, getResultFileName(), selectedVariants, resultFileName);
-			
-			SubprocessInsertion.subprocessInsertion(basePath, getResultFileName(), SUBPROCESS_ID, "Task_1.bpmn", resultFileName);
+
+			for (String subProcessName : subprocessResult.keySet()) {
+				String subProcessFilePath = subprocessResult.get(subProcessName);
+				System.out.println("Substituir " + subProcessName + " por lo que hay en el archivo " + subProcessFilePath);
+				SubprocessInsertion.subprocessInsertion(basePath, getResultFileName(), subProcessName, subProcessFilePath, resultFileName);
+			}
 
 			System.out.println("Done");
 

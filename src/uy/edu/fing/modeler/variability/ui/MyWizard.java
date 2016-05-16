@@ -93,4 +93,8 @@ public class MyWizard extends Wizard {
 		return one.getConfigName();
 	}
 
+	public String getResultFileName() {
+		return one.getResultFileName();
+	}
+
 }
