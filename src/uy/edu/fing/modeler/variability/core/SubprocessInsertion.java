@@ -38,7 +38,7 @@ public class SubprocessInsertion {
 		Node outgoingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow", outgoingFlowID);
 		
 		List<Node> nodos = Utils.getSubTree(doc2);
-		nodos = Utils.removerPrimerYUltimo(nodos);
+		nodos = Utils.removeFirstAndLastNode(nodos);
 		if (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
 			System.out.println("-- Tamaño subTree: " + nodos.size() + " --");
 			System.out.println("--- FIN ARMADO DEL ARBOL A EXPORTAR ---\n");
@@ -61,8 +61,10 @@ public class SubprocessInsertion {
 		Utils.deleteNode(doc, subProcessNode);
 
 		System.out.println("-------------- Ya copie todo el subProcess !!!");
+		
+		Utils.removeBPMNDiagram(doc);		
 
 		Utils.saveResult(doc, basePath, resultFileName);
 	}
-
+	
 }

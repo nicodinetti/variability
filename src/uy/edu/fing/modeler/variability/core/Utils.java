@@ -33,9 +33,13 @@ public class Utils {
 		}
 	}
 	
-	public static Node cambiarID(Node nodo) {
+	public static Node changeNodeID(Node nodo) {
 		String nuevoNodoID = getTAGID(nodo) + RENAME_SALT;
 		((Element) nodo).setAttribute("id", nuevoNodoID);
+		if (nodo.getNodeName().equals("bpmn2:sequenceFlow")) {		// Si el nodo es SequenceFlow, también la agrego un SALT al sourceRef y targetRef
+			((Element) nodo).setAttribute("sourceRef", ((Element) nodo).getAttribute("sourceRef") + RENAME_SALT);
+			((Element) nodo).setAttribute("targetRef", ((Element) nodo).getAttribute("targetRef") + RENAME_SALT);
+		}
 		return nodo;
 	}
 	
@@ -52,23 +56,17 @@ public class Utils {
 			System.out.println("--- ARMADO DEL ARBOL A EXPORTAR ---");
 		}
 		List<Node> result = new ArrayList<Node>();
+		Node aInsertar = null;
 		Node aux = getNextNode(doc, nodo);
 		while (!getNodeTAG(doc, getTAGID(aux)).equals("bpmn2:endEvent")) {
-			/*
-			cambiarID(aux);
-			System.out.println("--- NodeName: "+ aux.getNodeName());
-			if (aux.getNodeName().equals("bpmn2:sequenceFlow")) {
-				((Element) aux).setAttribute("sourceRef", ((Element) aux).getAttribute("sourceRef") + RENAME_SALT);
-				((Element) aux).setAttribute("targetRef", ((Element) aux).getAttribute("targetRef") + RENAME_SALT);
-			}
-			*/
-			result.add(aux);
+			aInsertar = aux.cloneNode(true);
+			result.add(changeNodeID(aInsertar));
 			aux = getNextNode(doc, aux);
 		}
 		return result;
 	}
 	
-	public static List<Node> removerPrimerYUltimo(List<Node> lista) {
+	public static List<Node> removeFirstAndLastNode(List<Node> lista) {
 		List<Node> result = new ArrayList<Node>();
 		int tamano = lista.size();
 		for (int i = 1; i < (tamano - 1); i++) {
@@ -95,7 +93,7 @@ public class Utils {
 		return doc;
 	}
 	
-	public static void imprimirSF(Node node) {
+	public static void printSF(Node node) {
 		System.out.println("### IMPRESION DE Sequence Flow ###");
 		System.out.println("# ID : " + getTAGID(node));
 		System.out.println("# sourceRef : " + ((Element) node).getAttribute("sourceRef"));
@@ -236,6 +234,14 @@ public class Utils {
 			}
 		}
 		((Element) elementNode).setAttribute(ref, newRefElement);
+	}
+
+	public static void removeBPMNDiagram(Document doc) {
+		Node nodo = doc.getElementsByTagName("bpmndi:BPMNDiagram").item(0);
+		if (nodo != null) {
+			Utils.deleteNode(doc, nodo);
+			System.out.println("-------------- Borré el BPMNDiagram !!!");
+		}
 	}
 	
 	public static void deleteNode(Document doc, Node nodo) {
