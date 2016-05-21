@@ -11,22 +11,19 @@ import javax.xml.transform.TransformerException;
 import org.xml.sax.SAXException;
 
 public class ReemplazadorMain {
-	
-	public static final String SUBPROCESS_ID = "Task_1";
-	public static final String START_EVENT_SUBPROCESS_ID = "StartEvent_10";
-	public static final String DELETE = "DELETE";
-	private static boolean primero = true;
-	private static String BASE_PROCESS_FILE_NAME = "";
-	private static String RESULT_FILE_NAME = "";
+
 	public static final boolean IMPRIMIR_LOG_SUBPROCESS = false;
-	
+
+	public static final String DELETE = "DELETE";
+
 	public static void main(String[] args) throws Exception {
 		try {
 
 			Map<String, String> selectedVariants = new HashMap<>();
-			selectedVariants.put(SUBPROCESS_ID, "S2.bpmn");
-			
-			String basePath = "/home/abrusco/git/variability/test/reemplazador";
+			selectedVariants.put("Task_1", "S2.bpmn");
+			// String basePath =
+			// "/home/abrusco/git/variability/test/reemplazador";
+			String basePath = "/Users/ndinetti/Desarrollo/sourcecode/variability/test/reemplazador";
 			String baseProcessFileName = "process_2.bpmn";
 			String resultFileName = "result.bpmn";
 
@@ -44,31 +41,30 @@ public class ReemplazadorMain {
 
 	}
 
-	private static String getResultFileName() {
-		if (primero) {
-			primero = false;
-			return BASE_PROCESS_FILE_NAME;
-		}
-		return RESULT_FILE_NAME;
-	}
-
 	public static void replace(String basePath, String baseProcessFileName, Map<String, String> selectedVariants, String resultFileName) throws Exception {
 
 		try {
-			BASE_PROCESS_FILE_NAME = baseProcessFileName;
-			RESULT_FILE_NAME = resultFileName;
 
-			Map<String, String> subprocessResult = ActivitySubstitution.activitySubstitution(basePath, getResultFileName(), selectedVariants, resultFileName);
+			Map<String, String> subprocessResult = ActivitySubstitution.activitySubstitution(basePath, baseProcessFileName, selectedVariants, resultFileName);
 			System.out.println("*** FIN activitySubstitution ***");
-			LaneSubstitution.laneSubstitution(basePath, getResultFileName(), selectedVariants, resultFileName);
+
+			LaneSubstitution.laneSubstitution(basePath, resultFileName, selectedVariants, resultFileName);
 			System.out.println("*** FIN laneSubstitution ***");
-			ActivitySupression.activitySupression(basePath, getResultFileName(), selectedVariants, resultFileName);
+
+			ActivitySupression.activitySupression(basePath, resultFileName, selectedVariants, resultFileName);
 			System.out.println("*** FIN activitySupression ***");
 
+			// Recursión sobre subprocesos
+			for (String subProcessName : subprocessResult.keySet()) {
+				String subProcessFilePath = subprocessResult.get(subProcessName);
+				replace(basePath, subProcessFilePath, selectedVariants, subProcessFilePath);
+			}
+
+			// Meter todos los subporcesos en el archivo final
 			for (String subProcessName : subprocessResult.keySet()) {
 				String subProcessFilePath = subprocessResult.get(subProcessName);
 				System.out.println("Substituir " + subProcessName + " por lo que hay en el archivo " + subProcessFilePath);
-				SubprocessInsertion.subprocessInsertion(basePath, getResultFileName(), subProcessName, subProcessFilePath, resultFileName);
+				SubprocessInsertion.subprocessInsertion(basePath, resultFileName, subProcessName, subProcessFilePath, resultFileName);
 				System.out.println("*** FIN subprocessInsertion ***");
 			}
 

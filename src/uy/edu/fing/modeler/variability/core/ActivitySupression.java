@@ -19,7 +19,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 public class ActivitySupression {
-	
+
 	public static void activitySupression(String basePath, String baseProcessFileName, Map<String, String> selectedVariants, String resultFileName)
 			throws IOException, Exception, SAXException, TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
 
@@ -30,38 +30,52 @@ public class ActivitySupression {
 		Document doc = docBuilder.parse(filepathBase.toString());
 		List<Node> vPNodes = Utils.getVPListByType(doc, "bpmn2:task", "VPTask");
 		vPNodes.addAll(Utils.getVPListByType(doc, "bpmn2:subProcess", "VPSubProcess"));
-		
+
 		for (Node vPNode : vPNodes) {
-			String vPID = vPNode.getAttributes().getNamedItem("id").getNodeValue();							// vPID = Task_1
+			String vPID = vPNode.getAttributes().getNamedItem("id").getNodeValue(); // vPID
 																					// =
 																					// Task_1
+			// =
+			// Task_1
 			String selectedVariant = selectedVariants.get(vPID);
 			if (ReemplazadorMain.DELETE.equals(selectedVariant)) {
-				String incomingFlow = Utils.getNodeFlowID(vPNode, "bpmn2:incoming");								// incomingFlow = SequenceFlow_1
-				String outgoingFlow = Utils.getNodeFlowID(vPNode, "bpmn2:outgoing");								// outgoingFlow = SequenceFlow_4
-				
-				Node incomingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow", incomingFlow);				// incomingNode = SequenceFlow_1 nodo
-				Node outgoingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow", outgoingFlow);				// outgoingNode = SequenceFlow_4 nodo
-				
-				String targetRefFinal = ((Element) outgoingNode).getAttribute("targetRef");					// targetRefFinal = Task_2
+				String incomingFlow = Utils.getNodeFlowID(vPNode, "bpmn2:incoming"); // incomingFlow
+																						// =
+																						// SequenceFlow_1
+				String outgoingFlow = Utils.getNodeFlowID(vPNode, "bpmn2:outgoing"); // outgoingFlow
+																						// =
+																						// SequenceFlow_4
+
+				Node incomingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow", incomingFlow); // incomingNode
+																									// =
+																									// SequenceFlow_1
+																									// nodo
+				Node outgoingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow", outgoingFlow); // outgoingNode
+																									// =
+																									// SequenceFlow_4
+																									// nodo
+
+				String targetRefFinal = ((Element) outgoingNode).getAttribute("targetRef"); // targetRefFinal
+																							// =
+																							// Task_2
 				((Element) incomingNode).setAttribute("targetRef", targetRefFinal);
-				
+
 				Node targetRefFinalNode = Utils.getTargetRefFinalNode(doc, targetRefFinal);
-				
+
 				Node targetRefFinalNodeIncoming = ((Element) targetRefFinalNode).getElementsByTagName("bpmn2:incoming").item(0);
 				targetRefFinalNodeIncoming.setTextContent(Utils.getTAGID(incomingNode));
-				
-				Node outgoingFlowNodeEdge = 	Utils.getNodeByTag(doc, "bpmndi:BPMNEdge", outgoingFlow);
-				Node incomingFlowNodeEdge = 	Utils.getNodeByTag(doc, "bpmndi:BPMNEdge", incomingFlow);
-				Node vPIDNodeShape = 			Utils.getNodeByTag(doc, "bpmndi:BPMNShape", vPID);
-				Node targetRefFinalNodeShape = 	Utils.getNodeByTag(doc, "bpmndi:BPMNShape", targetRefFinal);
-				
+
+				Node outgoingFlowNodeEdge = Utils.getNodeByTag(doc, "bpmndi:BPMNEdge", outgoingFlow);
+				Node incomingFlowNodeEdge = Utils.getNodeByTag(doc, "bpmndi:BPMNEdge", incomingFlow);
+				Node vPIDNodeShape = Utils.getNodeByTag(doc, "bpmndi:BPMNShape", vPID);
+				Node targetRefFinalNodeShape = Utils.getNodeByTag(doc, "bpmndi:BPMNShape", targetRefFinal);
+
 				// Eliminacion del FIGURE a borrar
 				Utils.figureSupression(doc, Utils.getTAGID(vPIDNodeShape), "bpmndi:BPMNShape");
 				Utils.figureSupression(doc, Utils.getTAGID(vPIDNodeShape), "bpmndi:BPMNShape");
 				Utils.figureSupression(doc, Utils.getTAGID(outgoingFlowNodeEdge), "bpmndi:BPMNEdge");
 				Utils.changeBPMNEdgeTarget(doc, Utils.getTAGID(incomingFlowNodeEdge), Utils.getTAGID(targetRefFinalNodeShape), "targetElement");
-				
+
 				// Eliminacion del TAG a borrar
 				Node nodoPadre = vPNode.getParentNode();
 				nodoPadre.removeChild(vPNode); // vPNode = Task_1 nodo
@@ -73,5 +87,5 @@ public class ActivitySupression {
 		}
 		Utils.saveResult(doc, basePath, resultFileName);
 	}
-	
+
 }

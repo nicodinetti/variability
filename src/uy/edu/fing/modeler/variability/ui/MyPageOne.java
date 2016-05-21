@@ -28,7 +28,6 @@ public class MyPageOne extends WizardPage {
 	private Composite container;
 	private Map<String, List<String>> files;
 	private Map<String, Combo> comboSelecteds = new HashMap<>();
-	private Map<String, Combo> comboConfigs = new HashMap<>();
 	private File file;
 	private Map<String, Properties> configs;
 	private boolean newConfig;

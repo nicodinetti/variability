@@ -22,7 +22,7 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
 public class Utils {
-	
+
 	private static final String RENAME_SALT = "_0";
 
 	public static void setFlowNode(Node source, String flowID, String tag) {
@@ -32,29 +32,29 @@ public class Utils {
 			System.out.println("*-----* SETEAMOS " + getTAGID(source) + ":" + tag + " = " + flowID + " *-----*");
 		}
 	}
-	
+
 	public static Node changeNodeID(Node nodo) {
 		String nuevoNodoID = getTAGID(nodo) + RENAME_SALT;
 		((Element) nodo).setAttribute("id", nuevoNodoID);
-		if (nodo.getNodeName().equals("bpmn2:sequenceFlow")) {		// Si el nodo es SequenceFlow, también la agrego un SALT al sourceRef y targetRef
+		if (nodo.getNodeName().equals("bpmn2:sequenceFlow")) {
+			// Si el nodo es SequenceFlow, también la agrego un SALT al
+			// sourceRef y targetRef
 			((Element) nodo).setAttribute("sourceRef", ((Element) nodo).getAttribute("sourceRef") + RENAME_SALT);
 			((Element) nodo).setAttribute("targetRef", ((Element) nodo).getAttribute("targetRef") + RENAME_SALT);
 		}
 		return nodo;
 	}
-	
-	public static void setFlowRef(Document doc, Node source, String refID, String tag) {
+
+	public static void setFlowRef(Node source, String refID, String tag) {
 		((Element) source).setAttribute(tag, refID);
 		if (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
 			System.out.println("*-----* SETEAMOS " + getTAGID(source) + ":" + tag + " = " + refID + " *-----*");
 		}
 	}
-	
+
 	public static List<Node> getSubTree(Document doc) {
-		Node nodo = getTAGNodeByID(doc, "bpmn2:startEvent", ReemplazadorMain.START_EVENT_SUBPROCESS_ID);
-		if (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
-			System.out.println("--- ARMADO DEL ARBOL A EXPORTAR ---");
-		}
+		Node nodo = getStartEvent(doc);
+		System.out.println("--- ARMADO DEL ARBOL A EXPORTAR ---");
 		List<Node> result = new ArrayList<Node>();
 		Node aInsertar = null;
 		Node aux = getNextNode(doc, nodo);
@@ -65,7 +65,11 @@ public class Utils {
 		}
 		return result;
 	}
-	
+
+	public static Node getStartEvent(Document doc) {
+		return doc.getElementsByTagName("bpmn2:startEvent").item(0);
+	}
+
 	public static List<Node> removeFirstAndLastNode(List<Node> lista) {
 		List<Node> result = new ArrayList<Node>();
 		int tamano = lista.size();
@@ -74,7 +78,7 @@ public class Utils {
 		}
 		return result;
 	}
-	
+
 	public static Document insertSubTree(Document doc, Node first, List<Node> nodos) {
 		if (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
 			System.out.println("\n--- INSERCIÓN DE LOS NODOS EN EL OTRO DOCUMENTO ---");
@@ -92,7 +96,7 @@ public class Utils {
 		}
 		return doc;
 	}
-	
+
 	public static void printSF(Node node) {
 		System.out.println("### IMPRESION DE Sequence Flow ###");
 		System.out.println("# ID : " + getTAGID(node));
@@ -100,46 +104,44 @@ public class Utils {
 		System.out.println("# targetRef : " + ((Element) node).getAttribute("targetRef"));
 		System.out.println("### FIN ###");
 	}
-	
+
 	public static Node getNodeByID(Document doc, String nodoID) {
 		return getTAGNodeByID(doc, getNodeTAG(doc, nodoID), nodoID);
 	}
-	
+
 	public static String getNodeTAG(Document doc, String nodoID) {
-		Node aux = null;
-		Node nodo = null;
-		List<String> tags = Arrays.asList("bpmn2:task", "bpmn2:userTask", "bpmn2:manualTask", "bpmn2:scriptTask", "bpmn2:businessRuleTask", "bpmn2:serviceTask", "bpmn2:sendTask", "bpmn2:receiveTask", "bpmn2:startEvent", "bpmn2:endEvent", "bpmn2:sequenceFlow", "bpmn2:subProcess", "bpmn2:process", "bpmndi:BPMNDiagram", "bpmndi:BPMNShape", "bpmndi:BPMNEdge");
+		List<String> tags = Arrays.asList("bpmn2:task", "bpmn2:userTask", "bpmn2:manualTask", "bpmn2:scriptTask", "bpmn2:businessRuleTask", "bpmn2:serviceTask", "bpmn2:sendTask", "bpmn2:receiveTask",
+				"bpmn2:startEvent", "bpmn2:endEvent", "bpmn2:sequenceFlow", "bpmn2:subProcess", "bpmn2:process", "bpmndi:BPMNDiagram", "bpmndi:BPMNShape", "bpmndi:BPMNEdge");
 		for (String tag : tags) {
-			aux = getTAGNodeByID(doc, tag, nodoID);
+			Node aux = getTAGNodeByID(doc, tag, nodoID);
 			if (aux != null) {
-				nodo = aux;
-				break;
+				return aux.getNodeName();
 			}
 		}
-		return nodo.getNodeName();
+		return null;
 	}
-	
+
 	public static boolean isTask(String tag) {
 		List<String> tags = Arrays.asList("bpmn2:task", "bpmn2:userTask", "bpmn2:manualTask", "bpmn2:scriptTask", "bpmn2:businessRuleTask", "bpmn2:serviceTask", "bpmn2:sendTask", "bpmn2:receiveTask");
 		return tags.contains(tag);
 	}
-	
+
 	public static boolean isSequenceFlow(String tag) {
 		List<String> tags = Arrays.asList("bpmn2:sequenceFlow");
 		return tags.contains(tag);
 	}
-	
+
 	public static String getTAGID(Node node) {
 		return ((Element) node).getAttribute("id");
 	}
-	
+
 	public static Node getNextNode(Document doc2, Node first) {
 		Node nextNode = null;
 		String outgoingName = "";
 		if (isTask(getNodeTAG(doc2, getTAGID(first)))) {
 			outgoingName = getNodeFlowID(first, "bpmn2:outgoing");
 			Node outgoingFlowNode = getNodeByID(doc2, outgoingName);
-			nextNode = outgoingFlowNode;			
+			nextNode = outgoingFlowNode;
 		} else if (isSequenceFlow(getNodeTAG(doc2, getTAGID(first)))) {
 			outgoingName = ((Element) first).getAttribute("targetRef");
 			Node outgoingFlowNode = getNodeByID(doc2, outgoingName);
@@ -148,12 +150,13 @@ public class Utils {
 			outgoingName = getNodeFlowID(first, "bpmn2:outgoing");
 			Node outgoingFlowNode = getNodeByID(doc2, outgoingName);
 			nextNode = outgoingFlowNode;
-		};
+		}
+		;
 		return nextNode;
 	}
-	
+
 	public static String getNodeFlowID(Node vPNode, String flowType) {
-		NodeList childNodes = vPNode.getChildNodes();														// vPNode = Task_1 nodo
+		NodeList childNodes = vPNode.getChildNodes(); // vPNode = Task_1 nodo
 		int length = childNodes.getLength();
 		for (int it = 0; it < length; it++) {
 			Node nodo = childNodes.item(it);
@@ -164,13 +167,31 @@ public class Utils {
 		}
 		return null;
 	}
-	
+
 	public static Node getTargetRefFinalNode(Document doc, String targetRefFinal) {
-		if (getTAGNodeByID(doc, "bpmn2:task", targetRefFinal) != null) {									// Probamos si el nodo es del tipo TASK.
-			return getTAGNodeByID(doc, "bpmn2:task", targetRefFinal);										// targetRefFinalNode = Task_2 nodo
-		} else if (getTAGNodeByID(doc, "bpmn2:subProcess", targetRefFinal) != null) {						// Probamos si el nodo es del tipo SUBPROCESS.
+		if (getTAGNodeByID(doc, "bpmn2:task", targetRefFinal) != null) {
+			// Probamos si el nodo es del tipo TASK.
+			return getTAGNodeByID(doc, "bpmn2:task", targetRefFinal); // targetRefFinalNode
+																		// =
+																		// Task_2
+																		// nodo
+		} else if (getTAGNodeByID(doc, "bpmn2:subProcess", targetRefFinal) != null) { // Probamos
+																						// si
+																						// el
+																						// nodo
+																						// es
+																						// del
+																						// tipo
+																						// SUBPROCESS.
 			return getTAGNodeByID(doc, "bpmn2:subProcess", targetRefFinal);
-		} else if (getTAGNodeByID(doc, "bpmn2:endEvent", targetRefFinal) != null) {							// Probamos si el nodo es del tipo ENDEVENT.
+		} else if (getTAGNodeByID(doc, "bpmn2:endEvent", targetRefFinal) != null) { // Probamos
+																					// si
+																					// el
+																					// nodo
+																					// es
+																					// del
+																					// tipo
+																					// ENDEVENT.
 			return getTAGNodeByID(doc, "bpmn2:endEvent", targetRefFinal);
 		} else {
 			return null;
@@ -190,7 +211,7 @@ public class Utils {
 		}
 		return null;
 	}
-	
+
 	public static Node getTAGNodeByID(Document doc, String tag, String idTarget) {
 		NodeList tagsList;
 		int length;
@@ -204,7 +225,7 @@ public class Utils {
 		}
 		return null;
 	}
-	
+
 	public static void figureSupression(Document doc, String elementId, String tag) {
 		Node nodoShape = null;
 		NodeList shapes = doc.getElementsByTagName(tag);
@@ -215,45 +236,47 @@ public class Utils {
 				nodoShape = nodo;
 			}
 		}
-		
+
 		if (nodoShape != null) {
 			Node nodoPadre = nodoShape.getParentNode();
 			nodoPadre.removeChild(nodoShape);
 		}
-		
+
 	}
-	
+
 	public static void changeBPMNEdgeTarget(Document doc, String elementId, String newRefElement, String ref) {
-		Node elementNode = null;
 		NodeList bpmnEdges = doc.getElementsByTagName("bpmndi:BPMNEdge");
 		int length = bpmnEdges.getLength();
 		for (int it = 0; it < length; it++) {
 			Node nodo = bpmnEdges.item(it);
 			if (getTAGID(nodo).equals(elementId)) {
-				elementNode = nodo;																			// elementNode = BPMNEdge_SequenceFlow_1 nodo
+				((Element) nodo).setAttribute(ref, newRefElement);
+				break;
 			}
 		}
-		((Element) elementNode).setAttribute(ref, newRefElement);
 	}
 
 	public static void removeBPMNDiagram(Document doc) {
 		Node nodo = doc.getElementsByTagName("bpmndi:BPMNDiagram").item(0);
 		if (nodo != null) {
-			Utils.deleteNode(doc, nodo);
+			Utils.deleteNode(nodo);
 			System.out.println("-------------- Borré el BPMNDiagram !!!");
 		}
 	}
-	
-	public static void deleteNode(Document doc, Node nodo) {
+
+	public static void deleteNode(Node nodo) {
 		Node nodoPadre = nodo.getParentNode();
 		nodoPadre.removeChild(nodo);
 		if (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
 			System.out.println("*-----* ELIMINAMOS EL NODO " + getTAGID(nodo) + " *-----*");
 		}
-		/*Node vPIDNodeShape = getNodeByTag(doc, "bpmndi:BPMNShape", Utils.getTAGID(nodo));
-		figureSupression(doc, Utils.getTAGID(vPIDNodeShape), "bpmndi:BPMNShape");*/
+		/*
+		 * Node vPIDNodeShape = getNodeByTag(doc, "bpmndi:BPMNShape",
+		 * Utils.getTAGID(nodo)); figureSupression(doc,
+		 * Utils.getTAGID(vPIDNodeShape), "bpmndi:BPMNShape");
+		 */
 	}
-	
+
 	public static void saveResult(Document doc, String basePath, String fileName) throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
