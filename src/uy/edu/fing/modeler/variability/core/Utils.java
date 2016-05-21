@@ -169,33 +169,16 @@ public class Utils {
 	}
 
 	public static Node getTargetRefFinalNode(Document doc, String targetRefFinal) {
-		if (getTAGNodeByID(doc, "bpmn2:task", targetRefFinal) != null) {
-			// Probamos si el nodo es del tipo TASK.
-			return getTAGNodeByID(doc, "bpmn2:task", targetRefFinal); // targetRefFinalNode
-																		// =
-																		// Task_2
-																		// nodo
-		} else if (getTAGNodeByID(doc, "bpmn2:subProcess", targetRefFinal) != null) { // Probamos
-																						// si
-																						// el
-																						// nodo
-																						// es
-																						// del
-																						// tipo
-																						// SUBPROCESS.
-			return getTAGNodeByID(doc, "bpmn2:subProcess", targetRefFinal);
-		} else if (getTAGNodeByID(doc, "bpmn2:endEvent", targetRefFinal) != null) { // Probamos
-																					// si
-																					// el
-																					// nodo
-																					// es
-																					// del
-																					// tipo
-																					// ENDEVENT.
-			return getTAGNodeByID(doc, "bpmn2:endEvent", targetRefFinal);
-		} else {
-			return null;
+		List<String> types = Arrays.asList("bpmn2:task", "bpmn2:subProcess", "bpmn2:endEvent", "bpmn2:inclusiveGateway");
+		for (String type : types) {
+			Node node = getTAGNodeByID(doc, type, targetRefFinal);
+			if (node != null) {
+				return node;
+			}
 		}
+
+		throw new RuntimeException("Tipo de tarea destino no soportada");
+
 	}
 
 	public static Node getNodeByTag(Document doc, String tag, String idTarget) {

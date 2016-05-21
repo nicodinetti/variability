@@ -1,11 +1,5 @@
 package uy.edu.fing.modeler.variability.ui;
 
-import java.io.BufferedWriter;
-import java.io.IOException;
-import java.nio.charset.Charset;
-import java.nio.file.Files;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 import java.util.Map;
 import java.util.Properties;
@@ -18,6 +12,7 @@ public class MyWizard extends Wizard {
 
 	protected MyPageOne one;
 	protected MyPageTwo two;
+	protected MyPageThree three;
 	protected Map<String, List<String>> files;
 	private File file;
 	private Map<String, Properties> configs;
@@ -37,21 +32,12 @@ public class MyWizard extends Wizard {
 
 	@Override
 	public void addPages() {
-		one = new MyPageOne(file, files, configs);
+		one = new MyPageOne();
 		two = new MyPageTwo();
+		three = new MyPageThree();
 		addPage(one);
 		addPage(two);
-	}
-
-	@Override
-	public boolean performFinish() {
-		try {
-			saveConfiguration();
-			return true;
-		} catch (IOException e) {
-			e.printStackTrace();
-			return false;
-		}
+		addPage(three);
 	}
 
 	public MyPageOne getOne() {
@@ -60,6 +46,14 @@ public class MyWizard extends Wizard {
 
 	public File getFile() {
 		return file;
+	}
+
+	public Map<String, Properties> getConfigs() {
+		return configs;
+	}
+
+	public Map<String, List<String>> getFiles() {
+		return files;
 	}
 
 	public String getBasePath() {
@@ -74,27 +68,17 @@ public class MyWizard extends Wizard {
 		return one.getComboSelecteds();
 	}
 
-	public void saveConfiguration() throws IOException {
-		file.getParent().getRawLocation().toString();
-		Path filepathResult = Paths.get(getBasePath() + java.io.File.separatorChar + one.getConfigName() + ".conf");
-
-		Files.createFile(filepathResult);
-
-		try (BufferedWriter writer = Files.newBufferedWriter(filepathResult, Charset.defaultCharset())) {
-			for (String key : getSelectedVariants().keySet()) {
-				writer.append(key + "=" + getSelectedVariants().get(key));
-			}
-		} catch (IOException e) {
-			throw e;
-		}
-	}
-
 	public String getConfigName() {
 		return one.getConfigName();
 	}
 
 	public String getResultFileName() {
 		return one.getResultFileName();
+	}
+
+	@Override
+	public boolean performFinish() {
+		return true;
 	}
 
 }

@@ -39,7 +39,7 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 @SuppressWarnings("restriction")
-public class SubstitutionDelegate extends AbstractHandler {
+public class VariabilityPlugIn extends AbstractHandler {
 
 	@Override
 	public Object execute(ExecutionEvent event) throws ExecutionException {
@@ -145,7 +145,7 @@ public class SubstitutionDelegate extends AbstractHandler {
 		return variationPoints;
 	}
 
-	private void failMessage(Shell parent, String message) {
+	public static void failMessage(Shell parent, String message) {
 		MessageBox fail = new MessageBox(parent);
 		fail.setMessage(message);
 		fail.open();

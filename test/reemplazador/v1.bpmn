@@ -6,17 +6,14 @@
     <bpmn2:endEvent id="EndEvent_3" name="End Event 3">
       <bpmn2:incoming>SequenceFlow_15</bpmn2:incoming>
     </bpmn2:endEvent>
-    <bpmn2:task id="Task_1" name="Hacer A">
-      <bpmn2:incoming>SequenceFlow_5</bpmn2:incoming>
-      <bpmn2:outgoing>SequenceFlow_6</bpmn2:outgoing>
-    </bpmn2:task>
-    <bpmn2:sequenceFlow id="SequenceFlow_5" sourceRef="StartEvent_1" targetRef="Task_1"/>
+    
+    <bpmn2:sequenceFlow id="SequenceFlow_5" sourceRef="StartEvent_1" targetRef="InclusiveGateway_2"/>
     <bpmn2:inclusiveGateway gatewayDirection="Diverging" id="InclusiveGateway_2" name="Inclusive Gateway 2">
-      <bpmn2:incoming>SequenceFlow_6</bpmn2:incoming>
+      <bpmn2:incoming>SequenceFlow_5</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_7</bpmn2:outgoing>
       <bpmn2:outgoing>SequenceFlow_16</bpmn2:outgoing>
     </bpmn2:inclusiveGateway>
-    <bpmn2:sequenceFlow id="SequenceFlow_6" sourceRef="Task_1" targetRef="InclusiveGateway_2"/>
+    
     <bpmn2:task id="Task_2" name="Task 2">
       <bpmn2:incoming>SequenceFlow_16</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_10</bpmn2:outgoing>
@@ -25,21 +22,24 @@
       <bpmn2:incoming>SequenceFlow_10</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_14</bpmn2:outgoing>
     </bpmn2:task>
-    <bpmn2:sequenceFlow id="SequenceFlow_7" sourceRef="InclusiveGateway_2" targetRef="ServiceTask_1_0"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_7" sourceRef="InclusiveGateway_2" targetRef="SubProcess_1_0_0"/>
     <bpmn2:inclusiveGateway gatewayDirection="Converging" id="InclusiveGateway_3" name="Inclusive Gateway 3">
       <bpmn2:incoming>SequenceFlow_8</bpmn2:incoming>
       <bpmn2:incoming>SequenceFlow_14</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_15</bpmn2:outgoing>
     </bpmn2:inclusiveGateway>
-    <bpmn2:sequenceFlow id="SequenceFlow_8" sourceRef="ServiceTask_1_0" targetRef="InclusiveGateway_3"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_8" sourceRef="Task_2_0" targetRef="InclusiveGateway_3"/>
     <bpmn2:sequenceFlow id="SequenceFlow_10" sourceRef="Task_2" targetRef="Task_3"/>
     <bpmn2:sequenceFlow id="SequenceFlow_14" sourceRef="Task_3" targetRef="InclusiveGateway_3"/>
     <bpmn2:sequenceFlow id="SequenceFlow_15" sourceRef="InclusiveGateway_3" targetRef="EndEvent_3"/>
     <bpmn2:sequenceFlow id="SequenceFlow_16" sourceRef="InclusiveGateway_2" targetRef="Task_2"/>
     
-  <bpmn2:serviceTask id="ServiceTask_1_0" name="Service Task 1">
+  <bpmn2:subProcess id="SubProcess_1_0_0" name="Default Process">
       <bpmn2:incoming>SequenceFlow_7</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
+    </bpmn2:subProcess><bpmn2:sequenceFlow id="SequenceFlow_3_0" sourceRef="Task_2_0_0" targetRef="Task_2_0"/><bpmn2:task id="Task_2_0" name="Task D">
+      <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_8</bpmn2:outgoing>
-    </bpmn2:serviceTask></bpmn2:process>
+    </bpmn2:task></bpmn2:process>
   
 </bpmn2:definitions>
