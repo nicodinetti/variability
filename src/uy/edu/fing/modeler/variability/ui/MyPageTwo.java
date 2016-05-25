@@ -50,8 +50,6 @@ public class MyPageTwo extends WizardPage {
 
 			@Override
 			public void handleEvent(Event arg0) {
-				System.out.println("Estoy en p2!");
-
 				try {
 					MyWizard myWizard = (MyWizard) getWizard();
 					String configName = myWizard.getConfigName();

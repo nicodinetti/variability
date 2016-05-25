@@ -175,7 +175,6 @@ public class MyPageOne extends WizardPage {
 		container.addListener(SWT.Show, new Listener() {
 			@Override
 			public void handleEvent(Event e) {
-				System.out.println("Estoy p1!");
 			}
 		});
 

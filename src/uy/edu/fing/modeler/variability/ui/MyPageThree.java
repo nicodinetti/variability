@@ -52,8 +52,6 @@ public class MyPageThree extends WizardPage {
 
 			@Override
 			public void handleEvent(Event arg0) {
-				System.out.println("Estoy en p2!");
-
 				try {
 					String saveConfiguration = saveConfiguration();
 					lresult.setText("Se han guardado los archivos de la variante en:");
@@ -78,7 +76,7 @@ public class MyPageThree extends WizardPage {
 		String basePath = myWizard.getFile().getParent().getRawLocation().toString();
 		Path filepathResult = Paths.get(basePath + java.io.File.separatorChar + myWizard.getConfigName() + ".conf");
 
-		Files.delete(filepathResult);
+		Files.deleteIfExists(filepathResult);
 		Files.createFile(filepathResult);
 
 		try (BufferedWriter writer = Files.newBufferedWriter(filepathResult, Charset.defaultCharset())) {
