@@ -18,6 +18,8 @@ import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import uy.edu.fing.modeler.variability.log.LogUtils;
+
 public class ActivitySupression {
 
 	public static void activitySupression(String basePath, String baseProcessFileName, Map<String, String> selectedVariants, String resultFileName)
@@ -28,36 +30,29 @@ public class ActivitySupression {
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 		Document doc = docBuilder.parse(filepathBase.toString());
+
 		List<Node> vPNodes = Utils.getVPListByType(doc, "bpmn2:task", "VPTask");
 		vPNodes.addAll(Utils.getVPListByType(doc, "bpmn2:subProcess", "VPSubProcess"));
 
+		LogUtils.log(baseProcessFileName, "VPs a suprimir: " + vPNodes);
+
 		for (Node vPNode : vPNodes) {
-			String vPID = vPNode.getAttributes().getNamedItem("id").getNodeValue(); // vPID
-																					// =
-																					// Task_1
-			// =
-			// Task_1
+
+			String vPID = vPNode.getAttributes().getNamedItem("id").getNodeValue();
+
 			String selectedVariant = selectedVariants.get(vPID);
+
 			if (ReemplazadorMain.DELETE.equals(selectedVariant)) {
-				String incomingFlow = Utils.getNodeFlowID(vPNode, "bpmn2:incoming"); // incomingFlow
-																						// =
-																						// SequenceFlow_1
-				String outgoingFlow = Utils.getNodeFlowID(vPNode, "bpmn2:outgoing"); // outgoingFlow
-																						// =
-																						// SequenceFlow_4
 
-				Node incomingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow", incomingFlow); // incomingNode
-																									// =
-																									// SequenceFlow_1
-																									// nodo
-				Node outgoingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow", outgoingFlow); // outgoingNode
-																									// =
-																									// SequenceFlow_4
-																									// nodo
+				LogUtils.logNext(baseProcessFileName, "Suprimir: " + vPID);
 
-				String targetRefFinal = ((Element) outgoingNode).getAttribute("targetRef"); // targetRefFinal
-																							// =
-																							// Task_2
+				String incomingFlow = Utils.getNodeFlowID(vPNode, "bpmn2:incoming");
+				String outgoingFlow = Utils.getNodeFlowID(vPNode, "bpmn2:outgoing");
+
+				Node incomingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow", incomingFlow);
+				Node outgoingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow", outgoingFlow);
+
+				String targetRefFinal = ((Element) outgoingNode).getAttribute("targetRef");
 				((Element) incomingNode).setAttribute("targetRef", targetRefFinal);
 
 				Node targetRefFinalNode = Utils.getTargetRefFinalNode(doc, targetRefFinal);
@@ -78,14 +73,19 @@ public class ActivitySupression {
 
 				// Eliminacion del TAG a borrar
 				Node nodoPadre = vPNode.getParentNode();
-				nodoPadre.removeChild(vPNode); // vPNode = Task_1 nodo
+				nodoPadre.removeChild(vPNode);
 
 				nodoPadre = outgoingNode.getParentNode();
-				nodoPadre.removeChild(outgoingNode); // outgoingNode =
-														// SequenceFlow_4 nodo
+				nodoPadre.removeChild(outgoingNode);
+
+			} else {
+				LogUtils.logNext(baseProcessFileName, "NO suprimir: " + vPID);
 			}
+
+			LogUtils.back();
 		}
-		Utils.saveResult(doc, basePath, resultFileName);
+
+		Utils.saveResult(baseProcessFileName, doc, basePath, resultFileName);
 	}
 
 }

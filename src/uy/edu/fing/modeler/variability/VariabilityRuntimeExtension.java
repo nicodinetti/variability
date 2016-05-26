@@ -17,7 +17,6 @@ public class VariabilityRuntimeExtension implements IBpmn2RuntimeExtension {
 		return BPMN2_VARIABILITY;
 	}
 
-	// test namespaces of bpmn content.
 	@Override
 	public boolean isContentForRuntime(IEditorInput input) {
 		InputSource source = new InputSource(FileService.getInputContents(input));
@@ -28,8 +27,6 @@ public class VariabilityRuntimeExtension implements IBpmn2RuntimeExtension {
 
 	@Override
 	public void notify(LifecycleEvent event) {
-		// TODO Auto-generated method stub
-
 	}
 
 }

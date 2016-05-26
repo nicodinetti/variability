@@ -17,13 +17,9 @@ import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
@@ -47,8 +43,8 @@ public class ActivitySubstitution {
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 		Document doc = docBuilder.parse(filepathBase.toString());
 
-		List<Node> vPNodes = getVPListByType(doc, "bpmn2:task", "VPTask");
-		vPNodes.addAll(getVPListByType(doc, "bpmn2:subProcess", "VPSubProcess"));
+		List<Node> vPNodes = Utils.getVPListByType(doc, "bpmn2:task", "VPTask");
+		vPNodes.addAll(Utils.getVPListByType(doc, "bpmn2:subProcess", "VPSubProcess"));
 
 		LogUtils.log(baseProcessFileName, "VPs a reemplazar: " + vPNodes);
 
@@ -99,20 +95,9 @@ public class ActivitySubstitution {
 
 		}
 
-		saveResult(baseProcessFileName, doc, basePath, resultFileName);
+		Utils.saveResult(baseProcessFileName, doc, basePath, resultFileName);
 
 		return res;
-	}
-
-	private static void saveResult(String baseProcessFileName, Document doc, String basePath, String fileName)
-			throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
-		DOMSource source = new DOMSource(doc);
-		Path filepathResult = Paths.get(basePath + File.separatorChar + fileName);
-		StreamResult result = new StreamResult(new File(filepathResult.toString()));
-		transformer.transform(source, result);
-		LogUtils.log(baseProcessFileName, "Resultado guardado en: " + filepathResult);
 	}
 
 	private static void changeTagName(Document doc, Node vPNode, Node vNode) {
@@ -197,20 +182,6 @@ public class ActivitySubstitution {
 		}
 		Node vNode = vNodes.get(0);
 		return vNode;
-	}
-
-	private static List<Node> getVPListByType(Document doc, String type, String variability) {
-		NodeList nodeList = doc.getElementsByTagName(type);
-		List<Node> variationPoints = new ArrayList<Node>();
-		for (int it = 0; it < nodeList.getLength(); it++) {
-			Node nodo = nodeList.item(it);
-			NamedNodeMap attr = nodo.getAttributes();
-			Node nodeAttr = attr.getNamedItem("ext:variability");
-			if (nodeAttr != null && variability.equals(nodeAttr.getTextContent())) {
-				variationPoints.add(nodo);
-			}
-		}
-		return variationPoints;
 	}
 
 	private static List<Node> getVListByType(Document doc, String type) {

@@ -1,4 +1,5 @@
 package uy.edu.fing.modeler.variability.core;
+
 import java.io.File;
 import java.io.IOException;
 import java.nio.file.Path;
@@ -8,18 +9,16 @@ import java.util.stream.Collectors;
 
 import javax.xml.parsers.DocumentBuilder;
 import javax.xml.parsers.DocumentBuilderFactory;
-import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
-import javax.xml.transform.TransformerFactory;
 import javax.xml.transform.TransformerFactoryConfigurationError;
-import javax.xml.transform.dom.DOMSource;
-import javax.xml.transform.stream.StreamResult;
 
 import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
+
+import uy.edu.fing.modeler.variability.log.LogUtils;
 
 public class LaneSubstitution {
 
@@ -29,6 +28,7 @@ public class LaneSubstitution {
 		Map<String, String> filterSelecteds = filterSelecteds(selectedVariants);
 
 		if (filterSelecteds.isEmpty()) {
+			LogUtils.log(baseProcessFileName, "No hay Lanes para sustituir");
 			return;
 		}
 
@@ -39,7 +39,10 @@ public class LaneSubstitution {
 		Document doc = docBuilder.parse(filepathBase.toString());
 
 		String activity = filterSelecteds.keySet().iterator().next();
+		LogUtils.log(baseProcessFileName, "Actividad: " + activity);
+
 		String lane = filterSelecteds.get(activity);
+		LogUtils.log(baseProcessFileName, "Lane: " + lane);
 
 		NodeList lanes = doc.getElementsByTagName("bpmn2:lane");
 
@@ -60,6 +63,7 @@ public class LaneSubstitution {
 
 			if (searchActivity != null) {
 				searchActivity.getParentNode().removeChild(searchActivity);
+				LogUtils.log(baseProcessFileName, "Actividad encontrada y eliminada");
 				break;
 			}
 
@@ -71,28 +75,19 @@ public class LaneSubstitution {
 			System.out.println(laneID);
 			if (laneID.equals(lane)) {
 				nodo.appendChild(searchActivity);
+				LogUtils.log(baseProcessFileName, "Agregada la actividad al Lane seleccionado");
 				break;
 			}
 
 		}
 
-		saveResult(doc, basePath, resultFileName);
+		Utils.saveResult(baseProcessFileName, doc, basePath, resultFileName);
 	}
 
 	private static Map<String, String> filterSelecteds(Map<String, String> selectedVariants) {
-
 		Map<String, String> result = selectedVariants.keySet().stream().filter(x -> !selectedVariants.get(x).equals(ReemplazadorMain.DELETE) && !selectedVariants.get(x).endsWith("bpmn"))
 				.collect(Collectors.toMap(x -> x, x -> selectedVariants.get(x)));
 		return result;
-	}
-
-	private static void saveResult(Document doc, String basePath, String fileName) throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
-		DOMSource source = new DOMSource(doc);
-		Path filepathResult = Paths.get(basePath + File.separatorChar + fileName);
-		StreamResult result = new StreamResult(new File(filepathResult.toString()));
-		transformer.transform(source, result);
 	}
 
 }

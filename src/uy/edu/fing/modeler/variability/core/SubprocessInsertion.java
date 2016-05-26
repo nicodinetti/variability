@@ -64,7 +64,7 @@ public class SubprocessInsertion {
 
 		Utils.removeBPMNDiagram(doc);
 
-		Utils.saveResult(doc, basePath, resultFileName);
+		Utils.saveResult(baseProcessFileName, doc, basePath, resultFileName);
 	}
 
 }

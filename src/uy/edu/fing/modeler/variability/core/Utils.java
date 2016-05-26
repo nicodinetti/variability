@@ -21,6 +21,8 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import uy.edu.fing.modeler.variability.log.LogUtils;
+
 public class Utils {
 
 	private static final String RENAME_SALT = "_0";
@@ -80,29 +82,20 @@ public class Utils {
 	}
 
 	public static Document insertSubTree(Document doc, Node first, List<Node> nodos) {
-		if (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
-			System.out.println("\n--- INSERCIÓN DE LOS NODOS EN EL OTRO DOCUMENTO ---");
-		}
+		LogUtils.log("insertSubTree", "Insertando nodos en el nuevo documento: " + nodos);
+
 		Node parentNode = first.getParentNode();
 		for (Node node : nodos) {
 			Node newNode = doc.importNode(node, true);
 			parentNode.appendChild(newNode);
 			if (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
-				System.out.println("-------- INSERTAMOS: " + getTAGID(newNode));
+				LogUtils.logNext("insertSubTree", "Insertamos " + getTAGID(newNode));
+				LogUtils.back();
 			}
 		}
-		if (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
-			System.out.println("--- FIN INSERCIÓN DE LOS NODOS EN EL OTRO DOCUMENTO ---\n");
-		}
-		return doc;
-	}
 
-	public static void printSF(Node node) {
-		System.out.println("### IMPRESION DE Sequence Flow ###");
-		System.out.println("# ID : " + getTAGID(node));
-		System.out.println("# sourceRef : " + ((Element) node).getAttribute("sourceRef"));
-		System.out.println("# targetRef : " + ((Element) node).getAttribute("targetRef"));
-		System.out.println("### FIN ###");
+		LogUtils.log("insertSubTree", "Fin Insertando nodos en el nuevo documento: " + nodos);
+		return doc;
 	}
 
 	public static Node getNodeByID(Document doc, String nodoID) {
@@ -173,6 +166,7 @@ public class Utils {
 		for (String type : types) {
 			Node node = getTAGNodeByID(doc, type, targetRefFinal);
 			if (node != null) {
+				LogUtils.log("getTargetRefFinalNode", "Nodo encontrado " + getTAGID(node));
 				return node;
 			}
 		}
@@ -187,11 +181,14 @@ public class Utils {
 		tagsList = doc.getElementsByTagName(tag);
 		length = tagsList.getLength();
 		for (int it = 0; it < length; it++) {
-			Node nodo = tagsList.item(it);
-			if ((((Element) nodo).getAttribute("bpmnElement")).equals(idTarget)) {
-				return nodo;
+			Node node = tagsList.item(it);
+			if ((((Element) node).getAttribute("bpmnElement")).equals(idTarget)) {
+				LogUtils.log("getNodeByTag", "Nodo encontrado " + getTAGID(node));
+				return node;
 			}
 		}
+
+		LogUtils.log("getNodeByTag", "Nodo no encontrado " + idTarget);
 		return null;
 	}
 
@@ -201,28 +198,32 @@ public class Utils {
 		tagsList = doc.getElementsByTagName(tag);
 		length = tagsList.getLength();
 		for (int it = 0; it < length; it++) {
-			Node nodo = tagsList.item(it);
-			if (getTAGID(nodo).equals(idTarget)) {
-				return nodo;
+			Node node = tagsList.item(it);
+			if (getTAGID(node).equals(idTarget)) {
+				LogUtils.log("getTAGNodeByID", "Nodo encontrado " + getTAGID(node));
+				return node;
 			}
 		}
+
+		LogUtils.log("getTAGNodeByID", "Nodo No encontrado " + idTarget);
 		return null;
 	}
 
 	public static void figureSupression(Document doc, String elementId, String tag) {
-		Node nodoShape = null;
+		Node nodeShape = null;
 		NodeList shapes = doc.getElementsByTagName(tag);
 		int length = shapes.getLength();
 		for (int it = 0; it < length; it++) {
-			Node nodo = shapes.item(it);
-			if (getTAGID(nodo).equals(elementId)) {
-				nodoShape = nodo;
+			Node node = shapes.item(it);
+			if (getTAGID(node).equals(elementId)) {
+				nodeShape = node;
 			}
 		}
 
-		if (nodoShape != null) {
-			Node nodoPadre = nodoShape.getParentNode();
-			nodoPadre.removeChild(nodoShape);
+		if (nodeShape != null) {
+			Node nodePadre = nodeShape.getParentNode();
+			nodePadre.removeChild(nodeShape);
+			LogUtils.log("figureSupression", "Eliminado " + getTAGID(nodeShape) + " del padre " + getTAGID(nodePadre));
 		}
 
 	}
@@ -234,6 +235,7 @@ public class Utils {
 			Node nodo = bpmnEdges.item(it);
 			if (getTAGID(nodo).equals(elementId)) {
 				((Element) nodo).setAttribute(ref, newRefElement);
+				LogUtils.log("changeBPMNEdgeTarget", "Cambiado " + getTAGID(nodo));
 				break;
 			}
 		}
@@ -243,30 +245,25 @@ public class Utils {
 		Node nodo = doc.getElementsByTagName("bpmndi:BPMNDiagram").item(0);
 		if (nodo != null) {
 			Utils.deleteNode(nodo);
-			System.out.println("-------------- Borré el BPMNDiagram !!!");
+			LogUtils.log("removeBPMNDiagram", "Eliminado nodo " + getTAGID(nodo));
 		}
 	}
 
 	public static void deleteNode(Node nodo) {
 		Node nodoPadre = nodo.getParentNode();
 		nodoPadre.removeChild(nodo);
-		if (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
-			System.out.println("*-----* ELIMINAMOS EL NODO " + getTAGID(nodo) + " *-----*");
-		}
-		/*
-		 * Node vPIDNodeShape = getNodeByTag(doc, "bpmndi:BPMNShape",
-		 * Utils.getTAGID(nodo)); figureSupression(doc,
-		 * Utils.getTAGID(vPIDNodeShape), "bpmndi:BPMNShape");
-		 */
+		LogUtils.log("deleteNode", "Eliminado nodo " + getTAGID(nodo));
 	}
 
-	public static void saveResult(Document doc, String basePath, String fileName) throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
+	public static void saveResult(String baseProcessFileName, Document doc, String basePath, String fileName)
+			throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
 		TransformerFactory transformerFactory = TransformerFactory.newInstance();
 		Transformer transformer = transformerFactory.newTransformer();
 		DOMSource source = new DOMSource(doc);
 		Path filepathResult = Paths.get(basePath + File.separatorChar + fileName);
 		StreamResult result = new StreamResult(new File(filepathResult.toString()));
 		transformer.transform(source, result);
+		LogUtils.log(baseProcessFileName, "Resultado guardado en: " + filepathResult);
 	}
 
 	public static List<Node> getVPListByType(Document doc, String type, String variability) {
