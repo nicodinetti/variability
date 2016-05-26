@@ -24,6 +24,7 @@ import org.eclipse.ui.PlatformUI;
 @SuppressWarnings("restriction")
 public class MyPageOne extends WizardPage {
 
+	private static final String DELETE = "DELETE";
 	private static final String ELEGIR = "-- Elegir --";
 
 	private Label lNewConfigName;
@@ -150,7 +151,7 @@ public class MyPageOne extends WizardPage {
 			Combo options = new Combo(container, SWT.DEFAULT);
 			options.add(ELEGIR);
 			myWizard.getFiles().get(vpOption).stream().forEach(x -> options.add(x));
-			options.add("DELETE");
+			options.add(DELETE);
 			options.setLayoutData(gd);
 			options.select(0);
 			options.addSelectionListener(new SelectionListener() {

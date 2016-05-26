@@ -38,6 +38,8 @@ import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
+import uy.edu.fing.modeler.variability.log.LogUtils;
+
 @SuppressWarnings("restriction")
 public class VariabilityPlugIn extends AbstractHandler {
 
@@ -58,14 +60,12 @@ public class VariabilityPlugIn extends AbstractHandler {
 				try {
 					files = searchFiles(file);
 					Map<String, Properties> configs = searchConfigs(file);
+					LogUtils.log(this.getClass().getSimpleName(), "Abriendo Wizard...");
 					WizardDialog wizardDialog = new WizardDialog(parent, new MyWizard(file, files, configs));
 					if (wizardDialog.open() == Window.OK) {
-						System.out.println("Ok pressed");
-					} else {
-						System.out.println("Cancel pressed");
 					}
+
 				} catch (SAXException | IOException | ParserConfigurationException e) {
-					// FIXME Poner mensaje de error
 					e.printStackTrace();
 					failMessage(parent, e.getMessage());
 				}
@@ -83,13 +83,19 @@ public class VariabilityPlugIn extends AbstractHandler {
 	private Map<String, Properties> searchConfigs(File file) throws IOException {
 		Map<String, Properties> res = new HashMap<>();
 
-		List<Path> list = Files.list(Paths.get(file.getParent().getRawLocationURI())).collect(Collectors.toList());
-		for (Path path : list) {
-			if (path.toString().endsWith(".conf")) {
-				Reader reader = new FileReader(path.toString());
+		Path path = Paths.get(file.getParent().getRawLocationURI());
+		LogUtils.log(this.getClass().getSimpleName(), "Buscando configuraciones en: " + path.toString());
+
+		List<Path> list = Files.list(path).collect(Collectors.toList());
+		for (Path p : list) {
+			String pPath = p.toString();
+			if (pPath.endsWith(".conf")) {
+				Reader reader = new FileReader(pPath);
 				Properties prop = new Properties();
 				prop.load(reader);
-				res.put(path.getFileName().toString(), prop);
+				String configName = p.getFileName().toString();
+				res.put(configName, prop);
+				LogUtils.log(this.getClass().getSimpleName(), "Configuración cargada: " + configName);
 			}
 		}
 
@@ -101,28 +107,36 @@ public class VariabilityPlugIn extends AbstractHandler {
 		Map<String, List<String>> res = new HashMap<>();
 
 		String path = file.getRawLocation().toString();
+		LogUtils.log(this.getClass().getSimpleName(), "Buscando VPs en " + path);
 
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
 		Document variantDoc = docBuilder.parse(path);
 
 		List<Node> vpListByType = getVPListByType(variantDoc, "bpmn2:task", "bpmn2:subProcess");
+		LogUtils.log(this.getClass().getSimpleName(), "Cantidad de VPs:" + vpListByType.size());
 
 		String parentFullPath = file.getParent().getRawLocation().toString();
 		for (Node node : vpListByType) {
 			String vpName = node.getAttributes().getNamedItem("id").getNodeValue();
+			LogUtils.log(this.getClass().getSimpleName(), "Buscando variantes para el VP: " + vpName);
+
 			Path vpPath = Paths.get(parentFullPath + java.io.File.separatorChar + vpName);
 			if (!Files.exists(vpPath) || !Files.isDirectory(vpPath)) {
+				LogUtils.log(this.getClass().getSimpleName(), "No existe la carpeta con las variantes");
 				throw new RuntimeException("No existen variantes para el VP: " + vpName);
 			}
 
 			Stream<Path> list = Files.list(vpPath);
 			if (list.count() == 0) {
+				LogUtils.log(this.getClass().getSimpleName(), "No existen variantes en la carpeta");
 				throw new RuntimeException("No existen variantes para el VP: " + vpName);
 			}
 
 			list = Files.list(vpPath);
-			res.put(vpName, list.map(x -> x.getFileName().toString()).collect(Collectors.toList()));
+			List<String> collect = list.map(x -> x.getFileName().toString()).collect(Collectors.toList());
+			res.put(vpName, collect);
+			LogUtils.log(this.getClass().getSimpleName(), "Cantidad de variantes encontradas " + collect.size());
 		}
 		return res;
 	}
@@ -133,11 +147,13 @@ public class VariabilityPlugIn extends AbstractHandler {
 		for (String type : types) {
 
 			NodeList nodeList = doc.getElementsByTagName(type);
+			LogUtils.log("getVPListByType", "Buscando VPs de tipo: " + type);
 			for (int it = 0; it < nodeList.getLength(); it++) {
 				Node nodo = nodeList.item(it);
 				NamedNodeMap attr = nodo.getAttributes();
 				Node nodeAttr = attr.getNamedItem("ext:variability");
 				if (nodeAttr != null) {
+					LogUtils.log("getVPListByType", "VP encontrado: " + nodo.getNodeName());
 					variationPoints.add(nodo);
 				}
 			}

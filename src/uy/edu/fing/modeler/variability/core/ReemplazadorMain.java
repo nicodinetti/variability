@@ -10,6 +10,8 @@ import javax.xml.transform.TransformerException;
 
 import org.xml.sax.SAXException;
 
+import uy.edu.fing.modeler.variability.log.LogUtils;
+
 public class ReemplazadorMain {
 
 	public static final boolean IMPRIMIR_LOG_SUBPROCESS = false;
@@ -45,30 +47,41 @@ public class ReemplazadorMain {
 
 		try {
 
+			LogUtils.log(baseProcessFileName, "--INI-- Comenzando proceso de reemplazo");
+
+			LogUtils.logNext(baseProcessFileName, "Ini activitySubstitution");
 			Map<String, String> subprocessResult = ActivitySubstitution.activitySubstitution(basePath, baseProcessFileName, selectedVariants, resultFileName);
-			System.out.println("*** FIN activitySubstitution ***");
+			LogUtils.logBack(baseProcessFileName, "Fin activitySubstitution");
 
+			LogUtils.logNext(baseProcessFileName, "Ini laneSubstitution");
 			LaneSubstitution.laneSubstitution(basePath, resultFileName, selectedVariants, resultFileName);
-			System.out.println("*** FIN laneSubstitution ***");
+			LogUtils.logBack(baseProcessFileName, "Fin laneSubstitution");
 
+			LogUtils.logNext(baseProcessFileName, "Ini activitySupression");
 			ActivitySupression.activitySupression(basePath, resultFileName, selectedVariants, resultFileName);
-			System.out.println("*** FIN activitySupression ***");
+			LogUtils.logBack(baseProcessFileName, "Fin activitySupression");
 
 			// Recursión sobre subprocesos
+			LogUtils.logNext(baseProcessFileName, "Ini recursión sobre subprocesos");
 			for (String subProcessName : subprocessResult.keySet()) {
 				String subProcessFilePath = subprocessResult.get(subProcessName);
+				LogUtils.logNext(baseProcessFileName, "Ini " + subProcessFilePath);
 				replace(basePath, subProcessFilePath, selectedVariants, subProcessFilePath);
+				LogUtils.logBack(baseProcessFileName, "Fin " + subProcessFilePath);
 			}
+			LogUtils.logBack(baseProcessFileName, "Fin recursión sobre subprocesos");
 
 			// Meter todos los subporcesos en el archivo final
+			LogUtils.logNext(baseProcessFileName, "Ini armado de archivo XML final");
 			for (String subProcessName : subprocessResult.keySet()) {
 				String subProcessFilePath = subprocessResult.get(subProcessName);
-				System.out.println("Substituir " + subProcessName + " por lo que hay en el archivo " + subProcessFilePath);
+				LogUtils.logNext(baseProcessFileName, "Ini " + subProcessFilePath);
 				SubprocessInsertion.subprocessInsertion(basePath, resultFileName, subProcessName, subProcessFilePath, resultFileName);
-				System.out.println("*** FIN subprocessInsertion ***");
+				LogUtils.logBack(baseProcessFileName, "Fin " + subProcessFilePath);
 			}
+			LogUtils.logBack(baseProcessFileName, "Fin armado de archivo XML final");
 
-			System.out.println("Done");
+			LogUtils.log(baseProcessFileName, "--FIN--");
 
 		} catch (Exception e) {
 			e.printStackTrace();
