@@ -1,4 +1,4 @@
-package uy.edu.fing.modeler.variability.core;
+package uy.edu.fing.modeler.variability.utils;
 
 import java.io.File;
 import java.nio.file.Path;
@@ -21,6 +21,7 @@ import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 
+import uy.edu.fing.modeler.variability.core.ReemplazadorMain;
 import uy.edu.fing.modeler.variability.log.LogUtils;
 
 public class Utils {

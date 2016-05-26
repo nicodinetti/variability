@@ -16,6 +16,8 @@ import org.w3c.dom.Document;
 import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
+import uy.edu.fing.modeler.variability.utils.Utils;
+
 public class SubprocessInsertion {
 
 	public static void subprocessInsertion(String basePath, String baseProcessFileName, String subProcessID, String subProcessFilePath, String resultFileName)
@@ -61,8 +63,6 @@ public class SubprocessInsertion {
 		Utils.deleteNode(subProcessNode);
 
 		System.out.println("-------------- Ya copie todo el subProcess !!!");
-
-		Utils.removeBPMNDiagram(doc);
 
 		Utils.saveResult(baseProcessFileName, doc, basePath, resultFileName);
 	}

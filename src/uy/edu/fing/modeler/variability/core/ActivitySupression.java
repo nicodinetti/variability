@@ -19,6 +19,7 @@ import org.w3c.dom.Node;
 import org.xml.sax.SAXException;
 
 import uy.edu.fing.modeler.variability.log.LogUtils;
+import uy.edu.fing.modeler.variability.utils.Utils;
 
 public class ActivitySupression {
 
