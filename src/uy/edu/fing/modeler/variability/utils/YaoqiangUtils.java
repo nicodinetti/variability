@@ -9,9 +9,6 @@ import java.io.IOException;
 import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URL;
-import java.nio.file.LinkOption;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.HashSet;
 import java.util.List;
@@ -31,8 +28,8 @@ import org.xml.sax.SAXException;
 import org.yaoqiang.bpmn.model.BPMNModelConstants;
 import org.yaoqiang.bpmn.model.BPMNModelEntityResolver;
 import org.yaoqiang.bpmn.model.BPMNModelParsingErrors;
-import org.yaoqiang.bpmn.model.BPMNModelUtils;
 import org.yaoqiang.bpmn.model.BPMNModelParsingErrors.ErrorMessage;
+import org.yaoqiang.bpmn.model.BPMNModelUtils;
 import org.yaoqiang.bpmn.model.elements.XMLAttribute;
 import org.yaoqiang.bpmn.model.elements.XMLComplexElement;
 import org.yaoqiang.bpmn.model.elements.XMLElement;
@@ -44,10 +41,13 @@ import org.yaoqiang.bpmn.model.elements.bpmndi.BPMNDiagram;
 import org.yaoqiang.bpmn.model.elements.bpmndi.BPMNPlane;
 import org.yaoqiang.bpmn.model.elements.collaboration.Collaboration;
 import org.yaoqiang.bpmn.model.elements.core.foundation.BaseElement;
+import org.yaoqiang.bpmn.model.elements.core.infrastructure.Definitions;
 import org.yaoqiang.bpmn.model.elements.process.BPMNProcess;
 import org.yaoqiang.graph.io.bpmn.BPMNCodec;
 import org.yaoqiang.graph.io.bpmn.BPMNCodecUtils;
 import org.yaoqiang.graph.layout.BPMNLayout;
+import org.yaoqiang.graph.model.GraphModel;
+import org.yaoqiang.graph.swing.GraphComponent;
 import org.yaoqiang.graph.util.Constants;
 import org.yaoqiang.graph.util.GraphUtils;
 import org.yaoqiang.graph.view.Graph;
@@ -58,15 +58,45 @@ import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.util.mxDomUtils;
 import com.mxgraph.util.mxImageBundle;
 import com.mxgraph.util.mxPoint;
-import com.mxgraph.util.mxResources;
 import com.mxgraph.util.mxUtils;
+import com.mxgraph.util.mxXmlUtils;
 
-public class YaoqiangUtils extends BPMNCodec{
-	
+import uy.edu.fing.modeler.variability.log.LogUtils;
+
+public class YaoqiangUtils extends BPMNCodec {
+
 	private static final String NAME_PLUGIN = "NOSEQUENOSECUANTO-";
 
 	public YaoqiangUtils(Graph graph) {
 		super(graph);
+	}
+
+	public static void run(String basePath, String resultFileName) throws Exception {
+		Definitions bpmnModel = null;
+		Graph graph = new Graph(new GraphModel());
+		GraphComponent graphComponent = new GraphComponent(graph);
+		YaoqiangUtils codec = new YaoqiangUtils(graph);
+		List<ErrorMessage> errors = codec.decode(basePath + File.separatorChar + resultFileName);
+
+		if (!errors.isEmpty()) {
+			String reduce = errors.stream().map(x -> x.getType() + "-" + x.getMessage()).reduce("", (x, y) -> x + y);
+			throw new Exception(reduce);
+		}
+
+		if (codec.isAutolayout()) {
+			for (Object pool : graph.getAllPools()) {
+				GraphUtils.arrangeSwimlaneSize(graph, pool, false, false, false);
+			}
+			GraphUtils.arrangeSwimlanePosition(graphComponent);
+		}
+		bpmnModel = graph.getBpmnModel();
+		bpmnModel.setName(resultFileName);
+
+		File file = new File(basePath + File.separatorChar + resultFileName);
+		file.delete();
+
+		String xml = mxXmlUtils.getXml(codec.encode().getDocumentElement());
+		mxUtils.writeFile(xml, basePath + File.separatorChar + resultFileName);
 	}
 
 	@Override
@@ -79,10 +109,9 @@ public class YaoqiangUtils extends BPMNCodec{
 		model.setRoot(root);
 
 		Document doc = parseDocument(file, true, errorMessages);
-		if (doc == null) {
-			JOptionPane.showMessageDialog(null, "Not a valid BPMN file!", mxResources.get("Warning"), JOptionPane.WARNING_MESSAGE);
-		} else if (errorMessages.size() > 0) {
-			JOptionPane.showMessageDialog(null, "Not a valid BPMN file!", mxResources.get("Warning"), JOptionPane.WARNING_MESSAGE);
+		if (doc == null || errorMessages.size() > 0) {
+			LogUtils.log("", "Not a valid BPMN file!");
+			return errorMessages;
 		}
 
 		bpmnCodec.decode(doc.getDocumentElement(), bpmnModel);
@@ -198,8 +227,8 @@ public class YaoqiangUtils extends BPMNCodec{
 					root.insert(defParent, root.getChildCount());
 					plane.setBpmnElement(bpmnElement.getCalledElement());
 				} else {
-					JOptionPane.showMessageDialog(null, "Yaoqiang BPMN Editor does not support the Sub-Process defined in a separate diagram",
-							"Unsupported BPMN 2.0 file", JOptionPane.ERROR_MESSAGE);
+					LogUtils.log("", "Yaoqiang BPMN Editor does not support the Sub-Process defined in a separate diagram");
+					return errorMessages;
 				}
 				defParent.setValue(((BPMNDiagram) el).getName());
 				decodeBPMNShapes(shapes, defParent);
@@ -209,10 +238,9 @@ public class YaoqiangUtils extends BPMNCodec{
 		}
 
 		return errorMessages;
-		
-		
+
 	}
-	
+
 	private void setNamespaces() {
 		if (!bpmnModel.getNamespaces().containsValue("tns")) {
 			if (bpmnModel.getTargetNamespace().length() == 0) {
@@ -229,7 +257,7 @@ public class YaoqiangUtils extends BPMNCodec{
 		bpmnModel.getNamespaces().remove(BPMNModelConstants.XMLNS_XSI);
 		bpmnModel.getNamespaces().put(BPMNModelConstants.XMLNS_XSI, "xsi");
 	}
-	
+
 	private void setPageSize(BPMNDiagram diagram, mxPoint pageSize) {
 		if (diagram != null && diagram.getDocumentation().startsWith("background=")) {
 			Map<String, Object> props = graph.getStylesheet().getCellStyle(diagram.getDocumentation(), null);
@@ -267,11 +295,10 @@ public class YaoqiangUtils extends BPMNCodec{
 			pageFormat.setPaper(paper);
 			model.setPageFormat(pageFormat);
 
-			Constants.SWIMLANE_WIDTH = (int) (model.getPageFormat().getWidth() * 1.25 + (model.getHorizontalPageCount() - 1)
-					* (Constants.SWIMLANE_START_POINT + model.getPageFormat().getWidth() * 1.25));
+			Constants.SWIMLANE_WIDTH = (int) (model.getPageFormat().getWidth() * 1.25
+					+ (model.getHorizontalPageCount() - 1) * (Constants.SWIMLANE_START_POINT + model.getPageFormat().getWidth() * 1.25));
 
-			Constants.SWIMLANE_HEIGHT = (int) (model.getPageFormat().getHeight() * 1.2 + (model.getPageCount() - 1)
-					* (Constants.SWIMLANE_START_POINT + model.getPageFormat().getHeight() * 1.2));
+			Constants.SWIMLANE_HEIGHT = (int) (model.getPageFormat().getHeight() * 1.2 + (model.getPageCount() - 1) * (Constants.SWIMLANE_START_POINT + model.getPageFormat().getHeight() * 1.2));
 
 		} else {
 			int horizontalPageCount = (int) Math.round(pageSize.getX() / Constants.PAGE_WIDTH);
@@ -280,16 +307,15 @@ public class YaoqiangUtils extends BPMNCodec{
 			model.setHorizontalPageCount(Math.max(horizontalPageCount, 1));
 		}
 	}
-	
+
 	public static Document parseDocument(Object toParse, boolean isFile, List<ErrorMessage> errorMessages) {
 
 		Document document = null;
 
 		try {
-			
-			
+
 			String xsdDir = new File(YaoqiangUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsolutePath() + File.separatorChar + "resources" + File.separatorChar;
-			
+
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 			docBuilderFactory.setValidating(true);
 			docBuilderFactory.setNamespaceAware(true);
@@ -340,7 +366,7 @@ public class YaoqiangUtils extends BPMNCodec{
 
 		return document;
 	}
-	
+
 	@Override
 	public Document encode() {
 		Document doc = mxDomUtils.createDocument();
@@ -401,7 +427,7 @@ public class YaoqiangUtils extends BPMNCodec{
 
 		return doc;
 	}
-	
+
 	@Override
 	public void encodeBPMNDiagram(Element defs, mxCell root) {
 
@@ -411,14 +437,20 @@ public class YaoqiangUtils extends BPMNCodec{
 		defs.appendChild(diagram);
 
 		if (root == model.getChildAt(model.getRoot(), 0)) {
-//			PageFormat pageFormat = model.getPageFormat();
-//			Paper paper = pageFormat.getPaper();
-//			String documentation = "background=" + mxUtils.hexString(model.getBackgroundColor()) + ";count=" + model.getPageCount() + ";horizontalcount="
-//					+ model.getHorizontalPageCount() + ";orientation=" + pageFormat.getOrientation() + ";width=" + paper.getWidth() + ";height="
-//					+ paper.getHeight() + ";imageableWidth=" + paper.getImageableWidth() + ";imageableHeight=" + paper.getImageableHeight() + ";imageableX="
-//					+ paper.getImageableX() + ";imageableY=" + paper.getImageableY();
-//
-//			diagram.setAttribute("documentation", documentation);
+			// PageFormat pageFormat = model.getPageFormat();
+			// Paper paper = pageFormat.getPaper();
+			// String documentation = "background=" +
+			// mxUtils.hexString(model.getBackgroundColor()) + ";count=" +
+			// model.getPageCount() + ";horizontalcount="
+			// + model.getHorizontalPageCount() + ";orientation=" +
+			// pageFormat.getOrientation() + ";width=" + paper.getWidth() +
+			// ";height="
+			// + paper.getHeight() + ";imageableWidth=" +
+			// paper.getImageableWidth() + ";imageableHeight=" +
+			// paper.getImageableHeight() + ";imageableX="
+			// + paper.getImageableX() + ";imageableY=" + paper.getImageableY();
+			//
+			// diagram.setAttribute("documentation", documentation);
 			BaseElement container = BPMNModelUtils.getDefaultFlowElementsContainer(graph.getBpmnModel());
 			plane.setAttribute("bpmnElement", container == null ? root.getId() : container.getId());
 		} else {
@@ -445,7 +477,7 @@ public class YaoqiangUtils extends BPMNCodec{
 		encodeBPMNShapes(plane, vertices);
 		encodeBPMNEdges(plane, edges);
 	}
-	
+
 	@Override
 	public void encodeBPMNShapes(Element plane, List<Object> vertices) {
 		Element el = null;
@@ -551,7 +583,7 @@ public class YaoqiangUtils extends BPMNCodec{
 				}
 
 				Element msgShape = plane.getOwnerDocument().createElement(bpmndiPrefix + "BPMNShape");
-				msgShape.setAttribute("id",NAME_PLUGIN + messageId);
+				msgShape.setAttribute("id", NAME_PLUGIN + messageId);
 				msgShape.setAttribute("bpmnElement", messageId);
 				bounds = plane.getOwnerDocument().createElement(dcPrefix + "Bounds");
 				BPMNCodecUtils.setBounds(graph, message, bounds);
@@ -572,7 +604,7 @@ public class YaoqiangUtils extends BPMNCodec{
 			plane.appendChild(el);
 		}
 	}
-	
+
 	private static Element generateEdgeElement(Graph graph, mxCell cell, Element plane, String bpmndiPrefix, String dcPrefix, String diPrefix) {
 		Element el = plane.getOwnerDocument().createElement(bpmndiPrefix + "BPMNEdge");
 		el.setAttribute("id", NAME_PLUGIN + cell.getId());
