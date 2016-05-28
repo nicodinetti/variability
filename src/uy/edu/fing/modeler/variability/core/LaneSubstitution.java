@@ -14,6 +14,7 @@ import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
 
 import org.w3c.dom.Document;
+import org.w3c.dom.Element;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
@@ -63,23 +64,41 @@ public class LaneSubstitution {
 			}
 
 			if (searchActivity != null) {
-				searchActivity.getParentNode().removeChild(searchActivity);
+				//searchActivity.getParentNode().removeChild(searchActivity);
+				Utils.deleteNode(searchActivity);
 				LogUtils.log(baseProcessFileName, "Actividad encontrada y eliminada");
 				break;
 			}
 
 		}
+		if (searchActivity == null) {
+			LogUtils.log(baseProcessFileName, "ERROR: No existe esa Actividad !!!");
+		}
 		// Buscar el lane y agregarle la actividad
+		boolean encontre_lane = false;
 		for (int it = 0; it < lanes.getLength(); it++) {
 			Node nodo = lanes.item(it);
 			String laneID = nodo.getAttributes().getNamedItem("id").getTextContent();
 			System.out.println(laneID);
 			if (laneID.equals(lane)) {
+				encontre_lane = true;
 				nodo.appendChild(searchActivity);
 				LogUtils.log(baseProcessFileName, "Agregada la actividad al Lane seleccionado");
 				break;
 			}
-
+		}
+		if (!encontre_lane){
+			// Creo el nuevo Lane
+			Element newLane = doc.createElement("bpmn2:lane");
+			newLane.setAttribute("id", lane);
+			newLane.setAttribute("name", lane);
+			Node parentNode = lanes.item(0).getParentNode();
+			doc.importNode(newLane, true);
+			parentNode.appendChild(newLane);
+			
+			// Inserta la Activity en el nuevo Lane
+			newLane.appendChild(searchActivity);			
+			LogUtils.log(baseProcessFileName, "No existía el Lane. Creado el Lane con la actividad seleccionada dentro.");
 		}
 
 		Utils.saveResult(baseProcessFileName, doc, basePath, resultFileName);

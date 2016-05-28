@@ -32,11 +32,10 @@ public class ReemplazadorMain {
 		try {
 
 			Map<String, String> selectedVariants = new HashMap<>();
-			selectedVariants.put("Task_1", "S2.bpmn");
-			// String basePath =
-			// "/home/abrusco/git/variability/test/reemplazador";
-			String basePath = "/Users/ndinetti/Desarrollo/sourcecode/variability/test/reemplazador";
-			String baseProcessFileName = "process_2.bpmn";
+			selectedVariants.put("Task_1", "Lane_3");
+			String basePath = "/home/abrusco/git/variability/test";
+			//String basePath = "/Users/ndinetti/Desarrollo/sourcecode/variability/test/reemplazador";
+			String baseProcessFileName = "collaboration_1.bpmn";
 			String resultFileName = "result.bpmn";
 
 			replace(basePath, baseProcessFileName, selectedVariants, resultFileName);
