@@ -1,12 +1,16 @@
 package uy.edu.fing.modeler.variability.utils;
 
 import java.io.File;
+import java.io.IOException;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Arrays;
 import java.util.List;
 
+import javax.xml.parsers.DocumentBuilder;
+import javax.xml.parsers.DocumentBuilderFactory;
+import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.Transformer;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -20,6 +24,7 @@ import org.w3c.dom.Element;
 import org.w3c.dom.NamedNodeMap;
 import org.w3c.dom.Node;
 import org.w3c.dom.NodeList;
+import org.xml.sax.SAXException;
 
 import uy.edu.fing.modeler.variability.core.ReemplazadorMain;
 import uy.edu.fing.modeler.variability.log.LogUtils;
@@ -28,31 +33,17 @@ public class Utils {
 
 	private static final String RENAME_SALT = "_0";
 
-	public static void setFlowNode(Node source, String flowID, String tag) {
-		Node sourceChild = ((Element) source).getElementsByTagName(tag).item(0);
-		sourceChild.setTextContent(flowID);
-		if (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
-			System.out.println("*-----* SETEAMOS " + getTAGID(source) + ":" + tag + " = " + flowID + " *-----*");
-		}
+	public static Document getDocument(String path, String processFileName) throws ParserConfigurationException, SAXException, IOException {
+		Path filepathBase = Paths.get(path + File.separatorChar + processFileName);
+		DocumentBuilder docBuilder = getDocumentBuilder(path, processFileName);
+		Document doc = docBuilder.parse(filepathBase.toString());
+		return doc;
 	}
-
-	public static Node changeNodeID(Node nodo) {
-		String nuevoNodoID = getTAGID(nodo) + RENAME_SALT;
-		((Element) nodo).setAttribute("id", nuevoNodoID);
-		if (nodo.getNodeName().equals("bpmn2:sequenceFlow")) {
-			// Si el nodo es SequenceFlow, también la agrego un SALT al
-			// sourceRef y targetRef
-			((Element) nodo).setAttribute("sourceRef", ((Element) nodo).getAttribute("sourceRef") + RENAME_SALT);
-			((Element) nodo).setAttribute("targetRef", ((Element) nodo).getAttribute("targetRef") + RENAME_SALT);
-		}
-		return nodo;
-	}
-
-	public static void setFlowRef(Node source, String refID, String tag) {
-		((Element) source).setAttribute(tag, refID);
-		if (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
-			System.out.println("*-----* SETEAMOS " + getTAGID(source) + ":" + tag + " = " + refID + " *-----*");
-		}
+	
+	public static DocumentBuilder getDocumentBuilder(String path, String processFileName) throws ParserConfigurationException, SAXException, IOException {
+		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
+		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
+		return docBuilder;
 	}
 
 	public static List<Node> getSubTree(Document doc) {
@@ -72,33 +63,7 @@ public class Utils {
 	public static Node getStartEvent(Document doc) {
 		return doc.getElementsByTagName("bpmn2:startEvent").item(0);
 	}
-
-	public static List<Node> removeFirstAndLastNode(List<Node> lista) {
-		List<Node> result = new ArrayList<Node>();
-		int tamano = lista.size();
-		for (int i = 1; i < (tamano - 1); i++) {
-			result.add(lista.get(i));
-		}
-		return result;
-	}
-
-	public static Document insertSubTree(Document doc, Node first, List<Node> nodos) {
-		LogUtils.log("insertSubTree", "Insertando nodos en el nuevo documento: " + nodos);
-
-		Node parentNode = first.getParentNode();
-		for (Node node : nodos) {
-			Node newNode = doc.importNode(node, true);
-			parentNode.appendChild(newNode);
-			if (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
-				LogUtils.logNext("insertSubTree", "Insertamos " + getTAGID(newNode));
-				LogUtils.back();
-			}
-		}
-
-		LogUtils.log("insertSubTree", "Fin Insertando nodos en el nuevo documento: " + nodos);
-		return doc;
-	}
-
+	
 	public static Node getNodeByID(Document doc, String nodoID) {
 		return getTAGNodeByID(doc, getNodeTAG(doc, nodoID), nodoID);
 	}
@@ -115,18 +80,12 @@ public class Utils {
 		return null;
 	}
 
-	public static boolean isTask(String tag) {
-		List<String> tags = Arrays.asList("bpmn2:task", "bpmn2:userTask", "bpmn2:manualTask", "bpmn2:scriptTask", "bpmn2:businessRuleTask", "bpmn2:serviceTask", "bpmn2:sendTask", "bpmn2:receiveTask");
-		return tags.contains(tag);
-	}
-
-	public static boolean isSequenceFlow(String tag) {
-		List<String> tags = Arrays.asList("bpmn2:sequenceFlow");
-		return tags.contains(tag);
-	}
-
 	public static String getTAGID(Node node) {
 		return ((Element) node).getAttribute("id");
+	}
+	
+	public static String getTAGName(Node node) {
+		return ((Element) node).getAttribute("name");
 	}
 
 	public static Node getNextNode(Document doc2, Node first) {
@@ -210,6 +169,99 @@ public class Utils {
 		return null;
 	}
 
+	public static List<Node> getVPListByType(Document doc, String type, String variability) {
+		NodeList nodeList = doc.getElementsByTagName(type);
+		List<Node> variationPoints = new ArrayList<Node>();
+		for (int it = 0; it < nodeList.getLength(); it++) {
+			Node nodo = nodeList.item(it);
+			NamedNodeMap attr = nodo.getAttributes();
+			Node nodeAttr = attr.getNamedItem("ext:variability");
+			if (nodeAttr != null && variability.equals(nodeAttr.getTextContent())) {
+				variationPoints.add(nodo);
+			}
+		}
+		return variationPoints;
+	}
+
+	public static boolean isTask(String tag) {
+		List<String> tags = Arrays.asList("bpmn2:task", "bpmn2:userTask", "bpmn2:manualTask", "bpmn2:scriptTask", "bpmn2:businessRuleTask", "bpmn2:serviceTask", "bpmn2:sendTask", "bpmn2:receiveTask");
+		return tags.contains(tag);
+	}
+
+	public static boolean isSequenceFlow(String tag) {
+		List<String> tags = Arrays.asList("bpmn2:sequenceFlow");
+		return tags.contains(tag);
+	}
+
+	public static void setFlowNode(Node source, String flowID, String tag) {
+		Node sourceChild = ((Element) source).getElementsByTagName(tag).item(0);
+		sourceChild.setTextContent(flowID);
+		if (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
+			System.out.println("*-----* SETEAMOS " + getTAGID(source) + ":" + tag + " = " + flowID + " *-----*");
+		}
+		
+	}
+
+	public static void setFlowRef(Node source, String refID, String tag) {
+		((Element) source).setAttribute(tag, refID);
+		if (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
+			System.out.println("*-----* SETEAMOS " + getTAGID(source) + ":" + tag + " = " + refID + " *-----*");
+		}
+	}
+
+	public static Node changeNodeID(Node nodo) {
+		String nuevoNodoID = getTAGID(nodo) + RENAME_SALT;
+		((Element) nodo).setAttribute("id", nuevoNodoID);
+		if (nodo.getNodeName().equals("bpmn2:sequenceFlow")) {
+			// Si el nodo es SequenceFlow, también la agrego un SALT al
+			// sourceRef y targetRef
+			((Element) nodo).setAttribute("sourceRef", ((Element) nodo).getAttribute("sourceRef") + RENAME_SALT);
+			((Element) nodo).setAttribute("targetRef", ((Element) nodo).getAttribute("targetRef") + RENAME_SALT);
+		}
+		return nodo;
+	}
+
+	public static Document insertSubTree(Document doc, Node first, List<Node> nodos) {
+		LogUtils.log("insertSubTree", "Insertando nodos en el nuevo documento: " + nodos);
+
+		Node parentNode = first.getParentNode();
+		for (Node node : nodos) {
+			Node newNode = doc.importNode(node, true);
+			parentNode.appendChild(newNode);
+			if (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
+				LogUtils.logNext("insertSubTree", "Insertamos " + getTAGID(newNode));
+				LogUtils.back();
+			}
+		}
+
+		LogUtils.log("insertSubTree", "Fin Insertando nodos en el nuevo documento: " + nodos);
+		return doc;
+	}
+
+	public static void changeBPMNEdgeTarget(Document doc, String elementId, String newRefElement, String ref) {
+		NodeList bpmnEdges = doc.getElementsByTagName("bpmndi:BPMNEdge");
+		int length = bpmnEdges.getLength();
+		for (int it = 0; it < length; it++) {
+			Node nodo = bpmnEdges.item(it);
+			if (getTAGID(nodo).equals(elementId)) {
+				((Element) nodo).setAttribute(ref, newRefElement);
+				LogUtils.log("changeBPMNEdgeTarget", "Cambiado " + getTAGID(nodo));
+				break;
+			}
+		}
+	}
+
+	public static void saveResult(String baseProcessFileName, Document doc, String basePath, String fileName)
+			throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
+		TransformerFactory transformerFactory = TransformerFactory.newInstance();
+		Transformer transformer = transformerFactory.newTransformer();
+		DOMSource source = new DOMSource(doc);
+		Path filepathResult = Paths.get(basePath + File.separatorChar + fileName);
+		StreamResult result = new StreamResult(new File(filepathResult.toString()));
+		transformer.transform(source, result);
+		LogUtils.log(baseProcessFileName, "Resultado guardado en: " + filepathResult);
+	}
+
 	public static void figureSupression(Document doc, String elementId, String tag) {
 		Node nodeShape = null;
 		NodeList shapes = doc.getElementsByTagName(tag);
@@ -229,17 +281,13 @@ public class Utils {
 
 	}
 
-	public static void changeBPMNEdgeTarget(Document doc, String elementId, String newRefElement, String ref) {
-		NodeList bpmnEdges = doc.getElementsByTagName("bpmndi:BPMNEdge");
-		int length = bpmnEdges.getLength();
-		for (int it = 0; it < length; it++) {
-			Node nodo = bpmnEdges.item(it);
-			if (getTAGID(nodo).equals(elementId)) {
-				((Element) nodo).setAttribute(ref, newRefElement);
-				LogUtils.log("changeBPMNEdgeTarget", "Cambiado " + getTAGID(nodo));
-				break;
-			}
+	public static List<Node> removeFirstAndLastNode(List<Node> lista) {
+		List<Node> result = new ArrayList<Node>();
+		int tamano = lista.size();
+		for (int i = 1; i < (tamano - 1); i++) {
+			result.add(lista.get(i));
 		}
+		return result;
 	}
 
 	public static void removeBPMNDiagram(Document doc) {
@@ -254,31 +302,6 @@ public class Utils {
 		Node nodoPadre = nodo.getParentNode();
 		nodoPadre.removeChild(nodo);
 		LogUtils.log("deleteNode", "Eliminado nodo " + getTAGID(nodo));
-	}
-
-	public static void saveResult(String baseProcessFileName, Document doc, String basePath, String fileName)
-			throws TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
-		TransformerFactory transformerFactory = TransformerFactory.newInstance();
-		Transformer transformer = transformerFactory.newTransformer();
-		DOMSource source = new DOMSource(doc);
-		Path filepathResult = Paths.get(basePath + File.separatorChar + fileName);
-		StreamResult result = new StreamResult(new File(filepathResult.toString()));
-		transformer.transform(source, result);
-		LogUtils.log(baseProcessFileName, "Resultado guardado en: " + filepathResult);
-	}
-
-	public static List<Node> getVPListByType(Document doc, String type, String variability) {
-		NodeList nodeList = doc.getElementsByTagName(type);
-		List<Node> variationPoints = new ArrayList<Node>();
-		for (int it = 0; it < nodeList.getLength(); it++) {
-			Node nodo = nodeList.item(it);
-			NamedNodeMap attr = nodo.getAttributes();
-			Node nodeAttr = attr.getNamedItem("ext:variability");
-			if (nodeAttr != null && variability.equals(nodeAttr.getTextContent())) {
-				variationPoints.add(nodo);
-			}
-		}
-		return variationPoints;
 	}
 
 }

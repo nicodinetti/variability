@@ -1,13 +1,8 @@
 package uy.edu.fing.modeler.variability.core;
 
-import java.io.File;
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.List;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -23,15 +18,8 @@ public class SubprocessInsertion {
 	public static void subprocessInsertion(String basePath, String baseProcessFileName, String subProcessID, String subProcessFilePath, String resultFileName)
 			throws IOException, Exception, SAXException, TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
 
-		Path filepathBase = Paths.get(basePath + File.separatorChar + baseProcessFileName);
-		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-		Document doc = docBuilder.parse(filepathBase.toString());
-
-		Path filepathBase2 = Paths.get(basePath + File.separatorChar + subProcessFilePath);
-		DocumentBuilderFactory docFactory2 = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder2 = docFactory2.newDocumentBuilder();
-		Document doc2 = docBuilder2.parse(filepathBase2.toString());
+		Document doc = Utils.getDocument(basePath, baseProcessFileName);
+		Document doc2 = Utils.getDocument(basePath, subProcessFilePath);
 
 		Node subProcessNode = Utils.getTAGNodeByID(doc, "bpmn2:subProcess", subProcessID);
 		String incomingFlowID = Utils.getNodeFlowID(subProcessNode, "bpmn2:incoming");

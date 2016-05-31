@@ -26,7 +26,7 @@
       <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
     </bpmn2:task>
-    <bpmn2:task id="Task_2" name="Task 2">
+    <bpmn2:task id="Task_2" ext:variability="VPTask" name="Task 2">
       <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
     </bpmn2:task>

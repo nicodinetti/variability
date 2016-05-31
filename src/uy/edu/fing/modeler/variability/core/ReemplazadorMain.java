@@ -1,15 +1,10 @@
 package uy.edu.fing.modeler.variability.core;
 
-import java.io.File;
 // http://www.mkyong.com/java/how-to-modify-xml-file-in-java-dom-parser/
 import java.io.IOException;
-import java.nio.file.Path;
-import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 
-import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
@@ -32,7 +27,8 @@ public class ReemplazadorMain {
 		try {
 
 			Map<String, String> selectedVariants = new HashMap<>();
-			selectedVariants.put("Task_1", "Lane_3");
+			selectedVariants.put("Task_1", "Lane_3"); // Ejemplo de sustitucion de un lane
+			selectedVariants.put("Task_2", "A.bpmn"); // Ejemplo de sustitucion de una tarea
 			String basePath = "/home/abrusco/git/variability/test";
 			//String basePath = "/Users/ndinetti/Desarrollo/sourcecode/variability/test/reemplazador";
 			String baseProcessFileName = "collaboration_1.bpmn";
@@ -61,10 +57,7 @@ public class ReemplazadorMain {
 			substitution(basePath, baseProcessFileName, selectedVariants, resultFileName);
 
 			// Borrar Diagrama
-			Path filepathBase = Paths.get(basePath + File.separatorChar + resultFileName);
-			DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-			DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-			Document doc = docBuilder.parse(filepathBase.toString());
+			Document doc = Utils.getDocument(basePath, resultFileName);
 			Utils.removeBPMNDiagram(doc);
 
 			Utils.saveResult(baseProcessFileName, doc, basePath, resultFileName);
@@ -89,13 +82,15 @@ public class ReemplazadorMain {
 
 	private static void substitution(String basePath, String baseProcessFileName, Map<String, String> selectedVariants, String resultFileName)
 			throws IOException, Exception, SAXException, TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
-		LogUtils.logNext(baseProcessFileName, "Ini activitySubstitution");
-		Map<String, String> subprocessResult = ActivitySubstitution.activitySubstitution(basePath, baseProcessFileName, selectedVariants, resultFileName);
-		LogUtils.logBack(baseProcessFileName, "Fin activitySubstitution");
 
 		LogUtils.logNext(baseProcessFileName, "Ini laneSubstitution");
-		LaneSubstitution.laneSubstitution(basePath, resultFileName, selectedVariants, resultFileName);
+		LaneSubstitution.laneSubstitution(basePath, baseProcessFileName, selectedVariants, resultFileName);
+		//LaneSubstitution.laneSubstitution(basePath, baseProcessFileName, selectedVariants, resultFileName);
 		LogUtils.logBack(baseProcessFileName, "Fin laneSubstitution");
+
+		LogUtils.logNext(baseProcessFileName, "Ini activitySubstitution");
+		Map<String, String> subprocessResult = ActivitySubstitution.activitySubstitution(basePath, resultFileName, selectedVariants, resultFileName);
+		LogUtils.logBack(baseProcessFileName, "Fin activitySubstitution");
 
 		LogUtils.logNext(baseProcessFileName, "Ini activitySupression");
 		ActivitySupression.activitySupression(basePath, resultFileName, selectedVariants, resultFileName);

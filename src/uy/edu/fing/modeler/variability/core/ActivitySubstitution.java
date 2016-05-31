@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -38,11 +37,8 @@ public class ActivitySubstitution {
 
 		Map<String, String> res = new HashMap<>();
 
-		Path filepathBase = Paths.get(basePath + File.separatorChar + baseProcessFileName);
-
-		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-		Document doc = docBuilder.parse(filepathBase.toString());
+		Document doc = Utils.getDocument(basePath, baseProcessFileName);
+		DocumentBuilder docBuilder = Utils.getDocumentBuilder(basePath, baseProcessFileName);
 
 		List<Node> vPNodes = Utils.getVPListByType(doc, "bpmn2:task", "VPTask");
 		vPNodes.addAll(Utils.getVPListByType(doc, "bpmn2:subProcess", "VPSubProcess"));
@@ -72,7 +68,7 @@ public class ActivitySubstitution {
 				String vTagName = ((Element) vNode).getTagName();
 				if (vTagName.equals("bpmn2:process")) {
 
-					LogUtils.log(baseProcessFileName, "Copair el archivo correspondiente al subproceso " + vNode);
+					LogUtils.log(baseProcessFileName, "Copiar el archivo correspondiente al subproceso " + vNode);
 
 					String vPID = vPNode.getAttributes().getNamedItem("id").getNodeValue();
 					String selectedfileName = selectedVariants.get(vPID);
