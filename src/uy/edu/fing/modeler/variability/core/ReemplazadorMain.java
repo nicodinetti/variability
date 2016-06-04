@@ -20,6 +20,7 @@ import uy.edu.fing.modeler.variability.utils.YaoqiangUtils;
 public class ReemplazadorMain {
 
 	public static final boolean IMPRIMIR_LOG_SUBPROCESS = false;
+	public static final boolean PRINT_LOGS = false;
 
 	public static final String DELETE = "DELETE";
 
@@ -28,7 +29,7 @@ public class ReemplazadorMain {
 
 			Map<String, String> selectedVariants = new HashMap<>();
 			selectedVariants.put("Task_1", "Lane_3"); // Ejemplo de sustitucion de un lane
-			selectedVariants.put("Task_2", "A.bpmn"); // Ejemplo de sustitucion de una tarea
+			selectedVariants.put("Task_2", "Sub_B.bpmn"); // Ejemplo de sustitucion de una tarea // Poniendo "A.bpmn" funciona, todavia no con Subprocesos
 			String basePath = "/home/abrusco/git/variability/test";
 			//String basePath = "/Users/ndinetti/Desarrollo/sourcecode/variability/test/reemplazador";
 			String baseProcessFileName = "collaboration_1.bpmn";
@@ -85,7 +86,6 @@ public class ReemplazadorMain {
 
 		LogUtils.logNext(baseProcessFileName, "Ini laneSubstitution");
 		LaneSubstitution.laneSubstitution(basePath, baseProcessFileName, selectedVariants, resultFileName);
-		//LaneSubstitution.laneSubstitution(basePath, baseProcessFileName, selectedVariants, resultFileName);
 		LogUtils.logBack(baseProcessFileName, "Fin laneSubstitution");
 
 		LogUtils.logNext(baseProcessFileName, "Ini activitySubstitution");

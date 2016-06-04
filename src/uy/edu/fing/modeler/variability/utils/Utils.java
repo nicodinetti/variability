@@ -32,6 +32,7 @@ import uy.edu.fing.modeler.variability.log.LogUtils;
 public class Utils {
 
 	private static final String RENAME_SALT = "_0";
+	private static final boolean PRINT_LOGS = ReemplazadorMain.PRINT_LOGS;
 
 	public static Document getDocument(String path, String processFileName) throws ParserConfigurationException, SAXException, IOException {
 		Path filepathBase = Paths.get(path + File.separatorChar + processFileName);
@@ -126,7 +127,8 @@ public class Utils {
 		for (String type : types) {
 			Node node = getTAGNodeByID(doc, type, targetRefFinal);
 			if (node != null) {
-				LogUtils.log("getTargetRefFinalNode", "Nodo encontrado " + getTAGID(node));
+				if (PRINT_LOGS)
+					LogUtils.log("getTargetRefFinalNode", "Nodo encontrado " + getTAGID(node));
 				return node;
 			}
 		}
@@ -143,12 +145,14 @@ public class Utils {
 		for (int it = 0; it < length; it++) {
 			Node node = tagsList.item(it);
 			if ((((Element) node).getAttribute("bpmnElement")).equals(idTarget)) {
-				LogUtils.log("getNodeByTag", "Nodo encontrado " + getTAGID(node));
+				if (PRINT_LOGS)
+					LogUtils.log("getNodeByTag", "Nodo encontrado " + getTAGID(node));
 				return node;
 			}
 		}
 
-		LogUtils.log("getNodeByTag", "Nodo no encontrado " + idTarget);
+		if (PRINT_LOGS)
+			LogUtils.log("getNodeByTag", "Nodo no encontrado " + idTarget);
 		return null;
 	}
 
@@ -160,12 +164,14 @@ public class Utils {
 		for (int it = 0; it < length; it++) {
 			Node node = tagsList.item(it);
 			if (getTAGID(node).equals(idTarget)) {
-				LogUtils.log("getTAGNodeByID", "Nodo encontrado " + getTAGID(node));
+				if (PRINT_LOGS)
+					LogUtils.log("getTAGNodeByID", "Nodo encontrado " + getTAGID(node));
 				return node;
 			}
 		}
 
-		LogUtils.log("getTAGNodeByID", "Nodo No encontrado " + idTarget);
+		if (PRINT_LOGS)
+			LogUtils.log("getTAGNodeByID", "Nodo No encontrado " + idTarget);
 		return null;
 	}
 
@@ -212,11 +218,27 @@ public class Utils {
 	public static Node changeNodeID(Node nodo) {
 		String nuevoNodoID = getTAGID(nodo) + RENAME_SALT;
 		((Element) nodo).setAttribute("id", nuevoNodoID);
-		if (nodo.getNodeName().equals("bpmn2:sequenceFlow")) {
+		if (isSequenceFlow(nodo.getNodeName())) {
 			// Si el nodo es SequenceFlow, también la agrego un SALT al
 			// sourceRef y targetRef
 			((Element) nodo).setAttribute("sourceRef", ((Element) nodo).getAttribute("sourceRef") + RENAME_SALT);
 			((Element) nodo).setAttribute("targetRef", ((Element) nodo).getAttribute("targetRef") + RENAME_SALT);
+		} else if (isTask(nodo.getNodeName())) {
+			System.out.println("***---*** IMPRIMIREMOS INFO ***---***");
+			/*
+			System.out.println("***---*** nodo ID: " + Utils.getTAGID(nodo));
+			
+			String incomingFlowID = Utils.getNodeFlowID(nodo, "bpmn2:incoming");
+			Node incomingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow", incomingFlowID);
+			incomingNode = changeNodeID(doc, incomingNode);
+			String outgoingFlowID = Utils.getNodeFlowID(nodo, "bpmn2:outgoing");
+			Node outgoingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow", outgoingFlowID);
+			outgoingNode = changeNodeID(doc, outgoingNode);
+			
+			Utils.setFlowNode(nodo, Utils.getTAGID(incomingNode), "bpmn2:incoming");
+			Utils.setFlowNode(nodo, Utils.getTAGID(outgoingNode), "bpmn2:outgoing");
+			*/
+			System.out.println("***---*** FIN IMPRIMIREMOS INFO ***---***");			
 		}
 		return nodo;
 	}
@@ -245,7 +267,8 @@ public class Utils {
 			Node nodo = bpmnEdges.item(it);
 			if (getTAGID(nodo).equals(elementId)) {
 				((Element) nodo).setAttribute(ref, newRefElement);
-				LogUtils.log("changeBPMNEdgeTarget", "Cambiado " + getTAGID(nodo));
+				if (PRINT_LOGS)
+					LogUtils.log("changeBPMNEdgeTarget", "Cambiado " + getTAGID(nodo));
 				break;
 			}
 		}
@@ -276,7 +299,8 @@ public class Utils {
 		if (nodeShape != null) {
 			Node nodePadre = nodeShape.getParentNode();
 			nodePadre.removeChild(nodeShape);
-			LogUtils.log("figureSupression", "Eliminado " + getTAGID(nodeShape) + " del padre " + getTAGID(nodePadre));
+			if (PRINT_LOGS)
+				LogUtils.log("figureSupression", "Eliminado " + getTAGID(nodeShape) + " del padre " + getTAGID(nodePadre));
 		}
 
 	}
@@ -294,14 +318,16 @@ public class Utils {
 		Node nodo = doc.getElementsByTagName("bpmndi:BPMNDiagram").item(0);
 		if (nodo != null) {
 			Utils.deleteNode(nodo);
-			LogUtils.log("removeBPMNDiagram", "Eliminado nodo " + getTAGID(nodo));
+			if (PRINT_LOGS)
+				LogUtils.log("removeBPMNDiagram", "Eliminado nodo " + getTAGID(nodo));
 		}
 	}
 
 	public static void deleteNode(Node nodo) {
 		Node nodoPadre = nodo.getParentNode();
 		nodoPadre.removeChild(nodo);
-		LogUtils.log("deleteNode", "Eliminado nodo " + getTAGID(nodo));
+		if (PRINT_LOGS)
+			LogUtils.log("deleteNode", "Eliminado nodo " + getTAGID(nodo));
 	}
 
 }

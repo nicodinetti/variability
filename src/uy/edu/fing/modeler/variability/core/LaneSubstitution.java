@@ -26,12 +26,13 @@ public class LaneSubstitution {
 
 		Map<String, String> filterSelecteds = filterSelecteds(selectedVariants);
 
+		Document doc = Utils.getDocument(basePath, baseProcessFileName);
+		
 		if (filterSelecteds.isEmpty()) {
 			LogUtils.log(baseProcessFileName, "No hay Lanes para sustituir");
+			Utils.saveResult(baseProcessFileName, doc, basePath, resultFileName);
 			return;
 		}
-
-		Document doc = Utils.getDocument(basePath, baseProcessFileName);
 
 		String activity = filterSelecteds.keySet().iterator().next();
 		LogUtils.log(baseProcessFileName, "Actividad: " + activity);
@@ -93,8 +94,10 @@ public class LaneSubstitution {
 		Utils.saveResult(baseProcessFileName, doc, basePath, resultFileName);
 		
 		Map<String, String> selectedVariants2 = new HashMap<>();
-		selectedVariants2.put("Task_1", variante);
+		selectedVariants2.put(activity, variante);
+		LogUtils.logNext(baseProcessFileName, "LANE SUBSTITUTION: Ini laneSubstitution");
 		ActivitySubstitution.activitySubstitution(basePath, resultFileName, selectedVariants2, resultFileName);
+		LogUtils.logNext(baseProcessFileName, "LANE SUBSTITUTION: FIN laneSubstitution");
 	}
 	
 	private static Node getVariabilityLane(Document doc) {

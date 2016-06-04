@@ -1,6 +1,10 @@
 package uy.edu.fing.modeler.variability.core;
 
+import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.List;
 
 import javax.xml.transform.TransformerConfigurationException;
@@ -53,6 +57,10 @@ public class SubprocessInsertion {
 		System.out.println("-------------- Ya copie todo el subProcess !!!");
 
 		Utils.saveResult(baseProcessFileName, doc, basePath, resultFileName);
+		
+		Path target = Paths.get(basePath + File.separatorChar + subProcessFilePath);
+		System.out.println("-------------- VAMOS A BORRAR EL ARCHIVO " + target + " !!!");
+		Files.delete(target);
 	}
 
 }
