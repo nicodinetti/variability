@@ -87,7 +87,7 @@
 			<menu id="bpmnSubMenu" label="BPMN">
 				<command 
 					commandId="variability.commands.substitutionCommand"
-					label="Excecute substitution"
+					label="Run"
 					icon="icons/red_dot.gif"
 		        	style="push">
 				</command>

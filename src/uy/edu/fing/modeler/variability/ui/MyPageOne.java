@@ -1,6 +1,8 @@
 package uy.edu.fing.modeler.variability.ui;
 
+import java.util.ArrayList;
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 import java.util.stream.Collectors;
@@ -21,18 +23,21 @@ import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
+import uy.edu.fing.modeler.variability.ui.model.ComboVariant;
+import uy.edu.fing.modeler.variability.ui.model.VarPoint;
+import uy.edu.fing.modeler.variability.ui.model.Variant;
+
 @SuppressWarnings("restriction")
 public class MyPageOne extends WizardPage {
 
 	private static final String DELETE = "DELETE";
-	private static final String ELEGIR = "-- Elegir --";
 
 	private Label lNewConfigName;
 	private Text newConfigName;
 	private Composite container;
-	private Map<String, Combo> comboSelecteds = new HashMap<>();
+	private List<ComboVariant> comboVariants;
 	private boolean newConfig;
-	private Combo configOptions;
+	private ComboVariant configOptions;
 
 	public MyPageOne() {
 		super("Configuración");
@@ -67,8 +72,7 @@ public class MyPageOne extends WizardPage {
 		Label lConfigName = new Label(container, SWT.NONE);
 		lConfigName.setText("Configuración: ");
 
-		configOptions = new Combo(container, SWT.DEFAULT);
-		configOptions.add(ELEGIR);
+		configOptions = new ComboVariant(container, SWT.DEFAULT, lConfigName);
 		myWizard.getConfigs().keySet().stream().forEach(x -> configOptions.add(x));
 		configOptions.add("Nueva configuración...");
 		configOptions.setLayoutData(gd);
@@ -93,16 +97,17 @@ public class MyPageOne extends WizardPage {
 					newConfigName.setText(selectedConfig.replace(".conf", ""));
 
 					Properties configFile = myWizard.getConfigs().get(selectedConfig);
-					for (Object value : configFile.keySet()) {
-						String valueString = value.toString();
-						Combo combo = comboSelecteds.get(valueString);
-						if (combo == null) {
-							VariabilityPlugIn.failMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Archivo de configuración inválido");
-							cleanSelection();
-							break;
+					if (configFile != null) {
+						for (Object value : configFile.keySet()) {
+							String valueString = value.toString();
+
+							boolean anyMatch = comboVariants.stream().anyMatch(x -> x.selectVariant(valueString, configFile.getProperty(valueString)));
+							if (!anyMatch) {
+								VariabilityPlugIn.failMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Archivo de configuración inválido");
+								cleanSelection();
+								break;
+							}
 						}
-						combo.setText(configFile.getProperty(valueString));
-						setPageComplete(true);
 					}
 				} else {
 					cleanSelection();
@@ -136,38 +141,12 @@ public class MyPageOne extends WizardPage {
 
 		});
 
-		// Espacios
-		new Label(container, SWT.NONE);
-		new Label(container, SWT.NONE);
-
 		Label lSelections = new Label(container, SWT.NONE);
 		lSelections.setText("Selecciones: ");
 		new Label(container, SWT.NONE);
 
-		for (String vpOption : myWizard.getFiles().keySet()) {
-			Label vpName = new Label(container, SWT.NONE);
-			vpName.setText(vpOption + ": ");
-
-			Combo options = new Combo(container, SWT.DEFAULT);
-			options.add(ELEGIR);
-			myWizard.getFiles().get(vpOption).stream().forEach(x -> options.add(x));
-			options.add(DELETE);
-			options.setLayoutData(gd);
-			options.select(0);
-			options.addSelectionListener(new SelectionListener() {
-
-				@Override
-				public void widgetSelected(SelectionEvent arg0) {
-					setPageComplete(allSelected());
-				}
-
-				@Override
-				public void widgetDefaultSelected(SelectionEvent arg0) {
-				}
-			});
-
-			comboSelecteds.put(vpOption, options);
-		}
+		Variant variant = myWizard.getVariant();
+		comboVariants = addOptions("", gd, variant, true);
 
 		// required to avoid an error in the system
 		setControl(container);
@@ -181,9 +160,66 @@ public class MyPageOne extends WizardPage {
 
 	}
 
+	private List<ComboVariant> addOptions(String prefix, GridData gd, Variant variant, boolean visible) {
+
+		List<ComboVariant> res = new ArrayList<>();
+
+		String varPath = prefix + variant.getVarName();
+
+		for (VarPoint varPoint : variant.getVpOptions()) {
+
+			String varName = varPath + "/" + varPoint.getName();
+
+			Label label = new Label(container, SWT.NONE);
+			label.setText(varName + ": ");
+			label.setVisible(visible);
+
+			ComboVariant resCombo = new ComboVariant(container, SWT.DEFAULT, label);
+			resCombo.setVarName(varName);
+			varPoint.getVarOptions().stream().forEach(x -> resCombo.add(x.getVarName()));
+			resCombo.add(DELETE);
+			resCombo.setLayoutData(gd);
+			resCombo.select(0);
+			resCombo.setVisible(visible);
+			resCombo.addSelectionListener(new SelectionListener() {
+
+				@Override
+				public void widgetSelected(SelectionEvent arg0) {
+
+					ComboVariant source = (ComboVariant) arg0.getSource();
+					String selected = source.getVarName() + "/" + source.getText();
+
+					source.getComboVariants().stream().forEach(x -> {
+						System.out.println(selected + " - " + x.getVarName());
+						if (x.getVarName().startsWith(selected)) {
+							x.setVisible(true);
+						} else {
+							x.setVisible(false);
+						}
+					});
+
+					setPageComplete(allSelected());
+				}
+
+				@Override
+				public void widgetDefaultSelected(SelectionEvent arg0) {
+				}
+			});
+
+			for (Variant variantRec : varPoint.getVarOptions()) {
+				List<ComboVariant> cvs = addOptions(varName + "/", gd, variantRec, false);
+				resCombo.getComboVariants().addAll(cvs);
+			}
+
+			res.add(resCombo);
+		}
+
+		return res;
+	}
+
 	private boolean allSelected() {
-		boolean allComboSeleteds = comboSelecteds.values().stream().allMatch(x -> !x.getText().equals(ELEGIR));
-		if (!configOptions.getText().equals(ELEGIR) && !newConfigName.getText().isEmpty() && allComboSeleteds) {
+		boolean allComboSeleteds = comboVariants.stream().allMatch(x -> x.isAllSelected());
+		if (allComboSeleteds && configOptions.isAllSelected() && !newConfigName.getText().isEmpty()) {
 			return true;
 		}
 		return false;
@@ -203,13 +239,33 @@ public class MyPageOne extends WizardPage {
 	}
 
 	public Map<String, String> getComboSelecteds() {
-		Map<String, String> collect = comboSelecteds.keySet().stream().collect(Collectors.toMap(x -> x, x -> comboSelecteds.get(x).getText()));
+		Map<String, String> res = new HashMap<>();
+		List<Map<String, String>> collect = comboVariants.stream().map(x -> getComboSelectedsImpl(x)).collect(Collectors.toList());
+		for (Map<String, String> map : collect) {
+			res.putAll(map);
+		}
+		return res;
+	}
+
+	public Map<String, String> getComboSelectedsImpl(ComboVariant comboVariant) {
+
+		Map<String, String> collect = new HashMap<>();
+
+		if (comboVariant.isVisible()) {
+			collect.put(comboVariant.getVarName(), comboVariant.getText());
+		}
+
+		for (ComboVariant cv : comboVariant.getComboVariants()) {
+			Map<String, String> comboSelectedsImpl = getComboSelectedsImpl(cv);
+			collect.putAll(comboSelectedsImpl);
+		}
+
 		return collect;
 	}
 
 	public void cleanSelection() {
 		newConfigName.setText("");
-		comboSelecteds.keySet().stream().forEach(x -> comboSelecteds.get(x).select(0));
+		comboVariants.stream().forEach(x -> x.clean());
 	}
 
 }

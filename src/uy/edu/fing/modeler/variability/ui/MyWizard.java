@@ -1,11 +1,12 @@
 package uy.edu.fing.modeler.variability.ui;
 
-import java.util.List;
 import java.util.Map;
 import java.util.Properties;
 
 import org.eclipse.core.internal.resources.File;
 import org.eclipse.jface.wizard.Wizard;
+
+import uy.edu.fing.modeler.variability.ui.model.Variant;
 
 @SuppressWarnings("restriction")
 public class MyWizard extends Wizard {
@@ -13,14 +14,14 @@ public class MyWizard extends Wizard {
 	protected MyPageOne one;
 	protected MyPageTwo two;
 	protected MyPageThree three;
-	protected Map<String, List<String>> files;
+	protected Variant variant;
 	private File file;
 	private Map<String, Properties> configs;
 
-	public MyWizard(File file, Map<String, List<String>> files, Map<String, Properties> configs) {
+	public MyWizard(File file, Variant variant, Map<String, Properties> configs) {
 		super();
 		this.file = file;
-		this.files = files;
+		this.variant = variant;
 		this.configs = configs;
 		setNeedsProgressMonitor(true);
 	}
@@ -52,8 +53,8 @@ public class MyWizard extends Wizard {
 		return configs;
 	}
 
-	public Map<String, List<String>> getFiles() {
-		return files;
+	public Variant getVariant() {
+		return variant;
 	}
 
 	public String getBasePath() {

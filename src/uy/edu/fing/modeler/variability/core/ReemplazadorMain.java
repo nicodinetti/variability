@@ -28,10 +28,18 @@ public class ReemplazadorMain {
 		try {
 
 			Map<String, String> selectedVariants = new HashMap<>();
-			selectedVariants.put("Task_1", "Lane_3"); // Ejemplo de sustitucion de un lane
-			selectedVariants.put("Task_2", "Sub_B.bpmn"); // Ejemplo de sustitucion de una tarea // Poniendo "A.bpmn" funciona, todavia no con Subprocesos
+			selectedVariants.put("Task_1", "Lane_3"); // Ejemplo de sustitucion
+														// de un lane
+			selectedVariants.put("Task_2", "Sub_B.bpmn"); // Ejemplo de
+															// sustitucion de
+															// una tarea //
+															// Poniendo "A.bpmn"
+															// funciona, todavia
+															// no con
+															// Subprocesos
 			String basePath = "/home/abrusco/git/variability/test";
-			//String basePath = "/Users/ndinetti/Desarrollo/sourcecode/variability/test/reemplazador";
+			// String basePath =
+			// "/Users/ndinetti/Desarrollo/sourcecode/variability/test/reemplazador";
 			String baseProcessFileName = "collaboration_1.bpmn";
 			String resultFileName = "result.bpmn";
 
@@ -55,7 +63,7 @@ public class ReemplazadorMain {
 
 			LogUtils.log(baseProcessFileName, "--INI-- Comenzando proceso de reemplazo");
 
-			substitution(basePath, baseProcessFileName, selectedVariants, resultFileName);
+			substitution(1, basePath, baseProcessFileName, selectedVariants, resultFileName);
 
 			// Borrar Diagrama
 			Document doc = Utils.getDocument(basePath, resultFileName);
@@ -81,8 +89,16 @@ public class ReemplazadorMain {
 
 	}
 
-	private static void substitution(String basePath, String baseProcessFileName, Map<String, String> selectedVariants, String resultFileName)
+	private static void substitution(int i, String basePath, String baseProcessFileName, Map<String, String> allSelecteds, String resultFileName)
 			throws IOException, Exception, SAXException, TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
+
+		Map<String, String> selectedVariants = new HashMap<>();
+		for (String key : allSelecteds.keySet()) {
+			String[] split = key.split("/");
+			if (split.length == i * 2) {
+				selectedVariants.put(split[(i * 2) - 1], allSelecteds.get(key));
+			}
+		}
 
 		LogUtils.logNext(baseProcessFileName, "Ini laneSubstitution");
 		LaneSubstitution.laneSubstitution(basePath, baseProcessFileName, selectedVariants, resultFileName);
@@ -101,7 +117,7 @@ public class ReemplazadorMain {
 		for (String subProcessName : subprocessResult.keySet()) {
 			String subProcessFilePath = subprocessResult.get(subProcessName);
 			LogUtils.logNext(baseProcessFileName, "Ini " + subProcessFilePath);
-			substitution(basePath, subProcessFilePath, selectedVariants, subProcessFilePath);
+			substitution(i + 1, basePath, subProcessFilePath, allSelecteds, subProcessFilePath);
 			LogUtils.logBack(baseProcessFileName, "Fin " + subProcessFilePath);
 		}
 		LogUtils.logBack(baseProcessFileName, "Fin recursión sobre subprocesos");

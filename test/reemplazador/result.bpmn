@@ -1,111 +1,28 @@
-<?xml version="1.0" encoding="UTF-8" standalone="yes"?>
-<bpmn2:definitions xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ext="http://org.eclipse.bpmn2/ext" xmlns:tns="http://org.eclipse.bpmn2/default/process" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:yaoqiang="http://bpmn.sourceforge.net" exporter="org.eclipse.bpmn2.modeler.core" exporterVersion="1.2.2.201512032052" expressionLanguage="http://www.w3.org/1999/XPath" id="Definitions_1" name="result.bpmn" targetNamespace="http://org.eclipse.bpmn2/default/process" typeLanguage="http://www.w3.org/2001/XMLSchema" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://bpmn.sourceforge.net/schemas/BPMN20.xsd">
-  <bpmn2:process id="process_2" isClosed="false" isExecutable="false" name="Default Process" processType="None">
-    <bpmn2:startEvent id="StartEvent_1" isInterrupting="true" name="Start Event 1" parallelMultiple="false">
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!-- origin at X=0.0 Y=0.0 --><bpmn2:definitions xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ext="http://org.eclipse.bpmn2/ext" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" exporter="org.eclipse.bpmn2.modeler.core" exporterVersion="1.2.2.201512032052" id="Definitions_1" targetNamespace="http://org.eclipse.bpmn2/default/process">
+  <bpmn2:process id="process_2" isExecutable="false" name="Default Process">
+    <bpmn2:startEvent id="StartEvent_1" name="Start Event 1">
       <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
     </bpmn2:startEvent>
     <bpmn2:endEvent id="EndEvent_1" name="End Event 1">
       <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
     </bpmn2:endEvent>
-    <bpmn2:task completionQuantity="1" id="Task_2" isForCompensation="false" name="Task 2" startQuantity="1">
+    
+    <bpmn2:task id="Task_2" name="Task 2">
       <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
     </bpmn2:task>
     <bpmn2:sequenceFlow id="SequenceFlow_2" sourceRef="StartEvent_1" targetRef="Task_10_0"/>
     <bpmn2:sequenceFlow id="SequenceFlow_3" sourceRef="Task_30_0" targetRef="Task_2"/>
     <bpmn2:sequenceFlow id="SequenceFlow_4" sourceRef="Task_2" targetRef="EndEvent_1"/>
-    <bpmn2:task completionQuantity="1" id="Task_10_0" isForCompensation="false" name="Task 10" startQuantity="1">
+  <bpmn2:task id="Task_10_0" name="Task 10">
       <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_40</bpmn2:outgoing>
-      <bpmn2:outgoing>SequenceFlow_40_0</bpmn2:outgoing>
-    </bpmn2:task>
-    <bpmn2:sequenceFlow id="SequenceFlow_40_0" sourceRef="Task_10_0" targetRef="UserTask_10_0"/>
-    <bpmn2:userTask completionQuantity="1" id="UserTask_10_0" implementation="##unspecified" isForCompensation="false" name="User Task 10" startQuantity="1">
+    </bpmn2:task><bpmn2:sequenceFlow id="SequenceFlow_40_0" sourceRef="Task_10_0" targetRef="UserTask_10_0"/><bpmn2:userTask id="UserTask_10_0" name="User Task 10">
       <bpmn2:incoming>SequenceFlow_40</bpmn2:incoming>
-      <bpmn2:incoming>SequenceFlow_40_0</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_50</bpmn2:outgoing>
-      <bpmn2:outgoing>SequenceFlow_50_0</bpmn2:outgoing>
-    </bpmn2:userTask>
-    <bpmn2:sequenceFlow id="SequenceFlow_50_0" sourceRef="UserTask_10_0" targetRef="Task_30_0"/>
-    <bpmn2:task completionQuantity="1" id="Task_30_0" isForCompensation="false" name="Task 30" startQuantity="1">
+    </bpmn2:userTask><bpmn2:sequenceFlow id="SequenceFlow_50_0" sourceRef="UserTask_10_0" targetRef="Task_30_0"/><bpmn2:task id="Task_30_0" name="Task 30">
       <bpmn2:incoming>SequenceFlow_50</bpmn2:incoming>
-      <bpmn2:incoming>SequenceFlow_50_0</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
-    </bpmn2:task>
-  </bpmn2:process>
-  <bpmndi:BPMNDiagram id="NOSEQUENOSECUANTO-_1" name="newDiagram" resolution="96.0">
-    <bpmndi:BPMNPlane bpmnElement="process_2">
-      <bpmndi:BPMNShape bpmnElement="Task_30_0" id="NOSEQUENOSECUANTO-Task_30_0">
-        <dc:Bounds height="55.0" width="85.0" x="402.0" y="188.5"/>
-        <bpmndi:BPMNLabel>
-          <dc:Bounds height="18.955078125" width="48.0" x="420.5" y="208.5224609375"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="UserTask_10_0" id="NOSEQUENOSECUANTO-UserTask_10_0">
-        <dc:Bounds height="55.0" width="85.0" x="257.0" y="188.5"/>
-        <bpmndi:BPMNLabel>
-          <dc:Bounds height="18.955078125" width="76.0" x="261.5" y="208.5224609375"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="Task_10_0" id="NOSEQUENOSECUANTO-Task_10_0">
-        <dc:Bounds height="55.0" width="85.0" x="112.0" y="188.5"/>
-        <bpmndi:BPMNLabel>
-          <dc:Bounds height="18.955078125" width="48.0" x="130.5" y="208.5224609375"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="Task_2" id="NOSEQUENOSECUANTO-Task_2">
-        <dc:Bounds height="55.0" width="85.0" x="547.0" y="188.5"/>
-        <bpmndi:BPMNLabel>
-          <dc:Bounds height="18.955078125" width="41.0" x="569.0" y="208.5224609375"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="EndEvent_1" id="NOSEQUENOSECUANTO-EndEvent_1">
-        <dc:Bounds height="32.0" width="32.0" x="692.0" y="200.0"/>
-        <bpmndi:BPMNLabel>
-          <dc:Bounds height="18.955078125" width="68.0" x="674.0" y="240.5224609375"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape bpmnElement="StartEvent_1" id="NOSEQUENOSECUANTO-StartEvent_1">
-        <dc:Bounds height="32.0" width="32.0" x="20.0" y="200.0"/>
-        <bpmndi:BPMNLabel>
-          <dc:Bounds height="18.955078125" width="73.0" x="-0.5" y="240.5224609375"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNShape>
-      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_50_0" id="NOSEQUENOSECUANTO-SequenceFlow_50_0" sourceElement="NOSEQUENOSECUANTO-UserTask_10_0" targetElement="NOSEQUENOSECUANTO-Task_30_0">
-        <di:waypoint x="342.0" y="216.0"/>
-        <di:waypoint x="402.0" y="216.0"/>
-        <bpmndi:BPMNLabel>
-          <dc:Bounds height="18.955078125" width="6.0" x="369.0" y="206.5224609375"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_40_0" id="NOSEQUENOSECUANTO-SequenceFlow_40_0" sourceElement="NOSEQUENOSECUANTO-Task_10_0" targetElement="NOSEQUENOSECUANTO-UserTask_10_0">
-        <di:waypoint x="197.0" y="216.0"/>
-        <di:waypoint x="257.0" y="216.0"/>
-        <bpmndi:BPMNLabel>
-          <dc:Bounds height="18.955078125" width="6.0" x="224.0" y="206.5224609375"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_4" id="NOSEQUENOSECUANTO-SequenceFlow_4" sourceElement="NOSEQUENOSECUANTO-Task_2" targetElement="NOSEQUENOSECUANTO-EndEvent_1">
-        <di:waypoint x="632.0" y="216.0"/>
-        <di:waypoint x="692.0" y="216.0"/>
-        <bpmndi:BPMNLabel>
-          <dc:Bounds height="18.955078125" width="6.0" x="659.0" y="206.5224609375"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_3" id="NOSEQUENOSECUANTO-SequenceFlow_3" sourceElement="NOSEQUENOSECUANTO-Task_30_0" targetElement="NOSEQUENOSECUANTO-Task_2">
-        <di:waypoint x="487.0" y="216.0"/>
-        <di:waypoint x="547.0" y="216.0"/>
-        <bpmndi:BPMNLabel>
-          <dc:Bounds height="18.955078125" width="6.0" x="514.0" y="206.5224609375"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_2" id="NOSEQUENOSECUANTO-SequenceFlow_2" sourceElement="NOSEQUENOSECUANTO-StartEvent_1" targetElement="NOSEQUENOSECUANTO-Task_10_0">
-        <di:waypoint x="52.0" y="216.0"/>
-        <di:waypoint x="112.0" y="216.0"/>
-        <bpmndi:BPMNLabel>
-          <dc:Bounds height="18.955078125" width="6.0" x="79.0" y="206.5224609375"/>
-        </bpmndi:BPMNLabel>
-      </bpmndi:BPMNEdge>
-    </bpmndi:BPMNPlane>
-  </bpmndi:BPMNDiagram>
+    </bpmn2:task></bpmn2:process>
+  
 </bpmn2:definitions>

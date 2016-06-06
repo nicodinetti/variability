@@ -39,6 +39,8 @@ import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import uy.edu.fing.modeler.variability.log.LogUtils;
+import uy.edu.fing.modeler.variability.ui.model.VarPoint;
+import uy.edu.fing.modeler.variability.ui.model.Variant;
 
 @SuppressWarnings("restriction")
 public class VariabilityPlugIn extends AbstractHandler {
@@ -56,16 +58,19 @@ public class VariabilityPlugIn extends AbstractHandler {
 		if (firstElement instanceof File) {
 			File file = (File) firstElement;
 			if ("bpmn".equals(file.getFileExtension())) {
-				Map<String, List<String>> files;
 				try {
-					files = searchFiles(file);
+
+					String fileName = file.getName();
+					String folder = file.getParent().getRawLocation().toString();
+					Variant variant = searchVPOptions(folder, fileName);
+
 					Map<String, Properties> configs = searchConfigs(file);
 					LogUtils.log(this.getClass().getSimpleName(), "Abriendo Wizard...");
-					WizardDialog wizardDialog = new WizardDialog(parent, new MyWizard(file, files, configs));
+					WizardDialog wizardDialog = new WizardDialog(parent, new MyWizard(file, variant, configs));
 					if (wizardDialog.open() == Window.OK) {
 					}
 
-				} catch (SAXException | IOException | ParserConfigurationException e) {
+				} catch (Exception e) {
 					e.printStackTrace();
 					failMessage(parent, e.getMessage());
 				}
@@ -102,41 +107,52 @@ public class VariabilityPlugIn extends AbstractHandler {
 		return res;
 	}
 
-	@SuppressWarnings("resource")
-	private Map<String, List<String>> searchFiles(File file) throws SAXException, IOException, ParserConfigurationException {
-		Map<String, List<String>> res = new HashMap<>();
+	private Variant searchVPOptions(String folder, String varName) throws SAXException, IOException, ParserConfigurationException {
+		Variant res = new Variant();
+		res.setVarName(varName);
 
-		String path = file.getRawLocation().toString();
-		LogUtils.log(this.getClass().getSimpleName(), "Buscando VPs en " + path);
+		LogUtils.log(this.getClass().getSimpleName(), "Buscando VPs en " + folder);
 
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-		Document variantDoc = docBuilder.parse(path);
+		Document variantDoc = docBuilder.parse(folder + java.io.File.separatorChar + varName);
 
 		List<Node> vpListByType = getVPListByType(variantDoc, "bpmn2:task", "bpmn2:subProcess");
 		LogUtils.log(this.getClass().getSimpleName(), "Cantidad de VPs:" + vpListByType.size());
 
-		String parentFullPath = file.getParent().getRawLocation().toString();
 		for (Node node : vpListByType) {
 			String vpName = node.getAttributes().getNamedItem("id").getNodeValue();
-			LogUtils.log(this.getClass().getSimpleName(), "Buscando variantes para el VP: " + vpName);
+			String vp = folder + java.io.File.separatorChar + vpName;
 
-			Path vpPath = Paths.get(parentFullPath + java.io.File.separatorChar + vpName);
+			VarPoint varPoint = new VarPoint(vpName);
+			LogUtils.log(this.getClass().getSimpleName(), "Buscando variantes para el VP: " + vp);
+
+			Path vpPath = Paths.get(vp);
 			if (!Files.exists(vpPath) || !Files.isDirectory(vpPath)) {
 				LogUtils.log(this.getClass().getSimpleName(), "No existe la carpeta con las variantes");
-				throw new RuntimeException("No existen variantes para el VP: " + vpName);
+				throw new RuntimeException("No existen variantes para el VP: " + vp);
 			}
 
-			Stream<Path> list = Files.list(vpPath);
+			Stream<Path> list = Files.list(vpPath).filter(x -> !Files.isDirectory(Paths.get(x.toUri())));
 			if (list.count() == 0) {
 				LogUtils.log(this.getClass().getSimpleName(), "No existen variantes en la carpeta");
-				throw new RuntimeException("No existen variantes para el VP: " + vpName);
+				throw new RuntimeException("No existen variantes para el VP: " + vp);
 			}
 
-			list = Files.list(vpPath);
-			List<String> collect = list.map(x -> x.getFileName().toString()).collect(Collectors.toList());
-			res.put(vpName, collect);
-			LogUtils.log(this.getClass().getSimpleName(), "Cantidad de variantes encontradas " + collect.size());
+			list = Files.list(vpPath).filter(x -> !Files.isDirectory(Paths.get(x.toUri())));
+			List<String> variants = list.map(x -> x.getFileName().toString()).collect(Collectors.toList());
+
+			LogUtils.log(this.getClass().getSimpleName(), vpName + ": Cantidad de variantes encontradas " + variants.size());
+
+			LogUtils.log(this.getClass().getSimpleName(), "Ver si hay variantes a nivel subprocess ");
+			for (String vName : variants) {
+				LogUtils.log(this.getClass().getSimpleName(), "Variant: " + vName);
+				Variant variant = searchVPOptions(vpPath.toString(), vName);
+				varPoint.getVarOptions().add(variant);
+			}
+
+			res.getVpOptions().add(varPoint);
+			LogUtils.log(this.getClass().getSimpleName(), "Variantes a nivel subprocess ");
 		}
 		return res;
 	}
