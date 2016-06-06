@@ -16,7 +16,6 @@ import java.util.stream.Collectors;
 import java.util.stream.Stream;
 
 import javax.xml.parsers.DocumentBuilder;
-import javax.xml.parsers.DocumentBuilderFactory;
 import javax.xml.transform.TransformerConfigurationException;
 import javax.xml.transform.TransformerException;
 import javax.xml.transform.TransformerFactoryConfigurationError;
@@ -32,22 +31,22 @@ import uy.edu.fing.modeler.variability.log.LogUtils;
 import uy.edu.fing.modeler.variability.utils.Utils;
 
 public class ActivitySubstitution {
+	
+	private static final boolean PRINT_LOGS = ReemplazadorMain.PRINT_LOGS;
 
 	public static Map<String, String> activitySubstitution(String basePath, String baseProcessFileName, Map<String, String> selectedVariants, String resultFileName)
 			throws IOException, Exception, SAXException, TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
 
 		Map<String, String> res = new HashMap<>();
 
-		Path filepathBase = Paths.get(basePath + File.separatorChar + baseProcessFileName);
-
-		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
-		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-		Document doc = docBuilder.parse(filepathBase.toString());
+		Document doc = Utils.getDocument(basePath, baseProcessFileName);
+		DocumentBuilder docBuilder = Utils.getDocumentBuilder(basePath, baseProcessFileName);
 
 		List<Node> vPNodes = Utils.getVPListByType(doc, "bpmn2:task", "VPTask");
 		vPNodes.addAll(Utils.getVPListByType(doc, "bpmn2:subProcess", "VPSubProcess"));
 
-		LogUtils.log(baseProcessFileName, "VPs a reemplazar: " + vPNodes);
+		if (PRINT_LOGS)
+			LogUtils.log(baseProcessFileName, "VPs a reemplazar: " + vPNodes);
 
 		for (Node vPNode : vPNodes) {
 
@@ -57,7 +56,8 @@ public class ActivitySubstitution {
 			// Es un subProcess
 			if (vNode != null) {
 				vNode = getVariant(docBuilder, basePath, vPNode, Arrays.asList("bpmn2:process"), selectedVariants);
-				LogUtils.log(baseProcessFileName, "Se reemplaza por un subproceso: " + vNode);
+				if (PRINT_LOGS)
+					LogUtils.log(baseProcessFileName, "Se reemplaza por un subproceso: " + vNode);
 			}
 
 			// Es una Task
@@ -65,14 +65,15 @@ public class ActivitySubstitution {
 				vNode = getVariant(docBuilder, basePath, vPNode,
 						Arrays.asList("bpmn2:task", "bpmn2:userTask", "bpmn2:manualTask", "bpmn2:scriptTask", "bpmn2:businessRuleTask", "bpmn2:serviceTask", "bpmn2:sendTask", "bpmn2:receiveTask"),
 						selectedVariants);
-				LogUtils.log(baseProcessFileName, "Se reemplaza por una tarea: " + vNode);
+				if (PRINT_LOGS)
+					LogUtils.log(baseProcessFileName, "Se reemplaza por una tarea: " + vNode);
 			}
 
 			if (vNode != null) {
 				String vTagName = ((Element) vNode).getTagName();
 				if (vTagName.equals("bpmn2:process")) {
 
-					LogUtils.log(baseProcessFileName, "Copair el archivo correspondiente al subproceso " + vNode);
+					LogUtils.log(baseProcessFileName, "Copiar el archivo correspondiente al subproceso " + vNode);
 
 					String vPID = vPNode.getAttributes().getNamedItem("id").getNodeValue();
 					String selectedfileName = selectedVariants.get(vPID);
@@ -82,8 +83,10 @@ public class ActivitySubstitution {
 
 					res.put(vPID, target.getFileName().toString());
 
-					LogUtils.log(baseProcessFileName, "Copiado el archivo del subproceso: " + target.getFileName());
-					LogUtils.log(baseProcessFileName, "Referenciado desde: " + vPID);
+					if (PRINT_LOGS)
+						LogUtils.log(baseProcessFileName, "Copiado el archivo del subproceso: " + target.getFileName());
+					if (PRINT_LOGS)
+						LogUtils.log(baseProcessFileName, "Referenciado desde: " + vPID);
 				}
 
 				// Copiar el nombre
@@ -106,7 +109,8 @@ public class ActivitySubstitution {
 		String vTagName = tagName.equals("bpmn2:process") ? "bpmn2:subProcess" : tagName;
 		doc.renameNode(vPNode, "http://www.omg.org/spec/BPMN/20100524/MODEL", vTagName);
 
-		LogUtils.log(vPNode.getNodeName(), "Copiado el tagName: " + vTagName);
+		if (PRINT_LOGS)
+			LogUtils.log(vPNode.getNodeName(), "Copiado el tagName: " + vTagName);
 	}
 
 	private static void copyAttributes(Node vPNode, Node vNode) {
@@ -134,13 +138,15 @@ public class ActivitySubstitution {
 			}
 		}
 
-		LogUtils.log(vPNode.getNodeName(), "Copiados los atributos: " + listAttr);
+		if (PRINT_LOGS)
+			LogUtils.log(vPNode.getNodeName(), "Copiados los atributos: " + listAttr);
 	}
 
 	private static void copyName(Node vPNode, Node vNode) {
 		String vName = vNode.getAttributes().getNamedItem("name").getTextContent();
 		vPNode.getAttributes().getNamedItem("name").setTextContent(vName);
-		LogUtils.log(vPNode.getNodeName(), "Copiado el nombre: " + vName);
+		if (PRINT_LOGS)
+			LogUtils.log(vPNode.getNodeName(), "Copiado el nombre: " + vName);
 	}
 
 	@SuppressWarnings("resource")
@@ -148,10 +154,12 @@ public class ActivitySubstitution {
 		LogUtils.next();
 
 		String vPID = vPNode.getAttributes().getNamedItem("id").getNodeValue();
-		LogUtils.log(vPNode.getNodeName(), "Obtener variante para: " + vPID);
+		if (PRINT_LOGS)
+			LogUtils.log(vPNode.getNodeName(), "Obtener variante para: " + vPID);
 
 		if (ReemplazadorMain.DELETE.equals(selectedVariants.get(vPID))) {
-			LogUtils.log(vPNode.getNodeName(), "No es necesario para DELETE");
+			if (PRINT_LOGS)
+				LogUtils.log(vPNode.getNodeName(), "No es necesario para DELETE");
 			LogUtils.back();
 			return null;
 		}
@@ -160,12 +168,14 @@ public class ActivitySubstitution {
 		Stream<Path> list = Files.list(path);
 		Node vNode = null;
 		if ((!Files.exists(path) || !Files.isDirectory(path) || list.count() == 0)) {
-			LogUtils.log(vPNode.getNodeName(), "No se encontraron variantes");
+			if (PRINT_LOGS)
+				LogUtils.log(vPNode.getNodeName(), "No se encontraron variantes");
 			throw new Exception("No existen variantes para el VP: " + vPID);
 		} else if (!ReemplazadorMain.DELETE.equals(selectedVariants.get(vPID)) && selectedVariants.get(vPID) != null) {
 			vNode = getVariantImpl(docBuilder, path, types, selectedVariants.get(vPID));
 		}
-		LogUtils.log(vPNode.getNodeName(), "Variante seleccionada: " + vNode);
+		if (PRINT_LOGS)
+			LogUtils.log(vPNode.getNodeName(), "Variante seleccionada: " + vNode);
 		LogUtils.back();
 		return vNode;
 	}
