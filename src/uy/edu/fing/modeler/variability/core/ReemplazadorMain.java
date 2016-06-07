@@ -28,19 +28,20 @@ public class ReemplazadorMain {
 		try {
 
 			Map<String, String> selectedVariants = new HashMap<>();
-			selectedVariants.put("Task_1", "Lane_3"); // Ejemplo de sustitucion
+			selectedVariants.put("p6.bpmn/SubProcess_1", "Lane_2");
+			//selectedVariants.put("Task_1", "Lane_3"); // Ejemplo de sustitucion
 														// de un lane
-			selectedVariants.put("Task_2", "Sub_B.bpmn"); // Ejemplo de
+			//selectedVariants.put("Task_2", "Sub_B.bpmn"); // Ejemplo de
 															// sustitucion de
 															// una tarea //
 															// Poniendo "A.bpmn"
 															// funciona, todavia
 															// no con
 															// Subprocesos
-			String basePath = "/home/abrusco/git/variability/test";
+			String basePath = "/home/abrusco/git/variability/test/pruebas/p6";
 			// String basePath =
 			// "/Users/ndinetti/Desarrollo/sourcecode/variability/test/reemplazador";
-			String baseProcessFileName = "collaboration_1.bpmn";
+			String baseProcessFileName = "p6.bpmn";
 			String resultFileName = "result.bpmn";
 
 			replace(basePath, baseProcessFileName, selectedVariants, resultFileName);
@@ -122,7 +123,7 @@ public class ReemplazadorMain {
 		}
 		LogUtils.logBack(baseProcessFileName, "Fin recursión sobre subprocesos");
 
-		// Meter todos los subporcesos en el archivo final
+		// Meter todos los subprocesos en el archivo final
 		LogUtils.logNext(baseProcessFileName, "Ini armado de archivo XML final");
 		for (String subProcessName : subprocessResult.keySet()) {
 			String subProcessFilePath = subprocessResult.get(subProcessName);

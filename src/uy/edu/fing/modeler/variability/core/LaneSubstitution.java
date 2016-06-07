@@ -83,11 +83,6 @@ public class LaneSubstitution {
 			LogUtils.log(baseProcessFileName, "No existía el Lane. Creado el Lane !");
 		}
 		nodoLaneBuscado.appendChild(searchActivity);
-		/*
-		doc.importNode(nodoLane, true);
-		doc.adoptNode(nodoLane);
-		nodoLaneBuscado.appendChild(nodoLane);
-		*/
 		
 		LogUtils.log(baseProcessFileName, "Agregada la actividad al Lane seleccionado");
 
@@ -95,6 +90,8 @@ public class LaneSubstitution {
 		
 		Map<String, String> selectedVariants2 = new HashMap<>();
 		selectedVariants2.put(activity, variante);
+		System.out.println("--- Activity: " + activity);
+		System.out.println("--- Variante: " + variante);
 		LogUtils.logNext(baseProcessFileName, "LANE SUBSTITUTION: Ini laneSubstitution");
 		ActivitySubstitution.activitySubstitution(basePath, resultFileName, selectedVariants2, resultFileName);
 		LogUtils.logNext(baseProcessFileName, "LANE SUBSTITUTION: FIN laneSubstitution");
