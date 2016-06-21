@@ -23,6 +23,17 @@
 		<customTask
 			category="VarPoints"
 			featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
+			icon="VPSubProcess.png"
+			id="VPSubProcess"
+			name="VPSubProcess"
+			runtimeId="uy.edu.fing.modeler.variability"
+			type="SubProcess">
+				<property name="variability" value="VPSubProcess" />
+		</customTask>
+		<!-- 
+		<customTask
+			category="VarPoints"
+			featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
 			icon="VPLane.png"
 			id="VPLane"
 			name="VPLane"
@@ -40,16 +51,7 @@
 			type="Participant">
 				<property name="variability" value="VPParticipant" />
 		</customTask>
-		<customTask
-			category="VarPoints"
-			featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-			icon="VPSubProcess.png"
-			id="VPSubProcess"
-			name="VPSubProcess"
-			runtimeId="uy.edu.fing.modeler.variability"
-			type="SubProcess">
-				<property name="variability" value="VPSubProcess" />
-		</customTask>
+		-->
 	</extension>
    
    
@@ -84,7 +86,7 @@
 	
 	<extension point="org.eclipse.ui.menus">
 		<menuContribution locationURI="popup:org.eclipse.ui.popup.any?before=additions">
-			<menu id="bpmnSubMenu" label="BPMN">
+			<menu id="bpmnSubMenu" label="BPMNext">
 				<command 
 					commandId="variability.commands.substitutionCommand"
 					label="Run"
