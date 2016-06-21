@@ -29,15 +29,16 @@ public class ReemplazadorMain {
 
 			Map<String, String> selectedVariants = new HashMap<>();
 			selectedVariants.put("p6.bpmn/SubProcess_1", "Lane_2");
-			//selectedVariants.put("Task_1", "Lane_3"); // Ejemplo de sustitucion
-														// de un lane
-			//selectedVariants.put("Task_2", "Sub_B.bpmn"); // Ejemplo de
-															// sustitucion de
-															// una tarea //
-															// Poniendo "A.bpmn"
-															// funciona, todavia
-															// no con
-															// Subprocesos
+			// selectedVariants.put("Task_1", "Lane_3"); // Ejemplo de
+			// sustitucion
+			// de un lane
+			// selectedVariants.put("Task_2", "Sub_B.bpmn"); // Ejemplo de
+			// sustitucion de
+			// una tarea //
+			// Poniendo "A.bpmn"
+			// funciona, todavia
+			// no con
+			// Subprocesos
 			String basePath = "/home/abrusco/git/variability/test/pruebas/p6";
 			// String basePath =
 			// "/Users/ndinetti/Desarrollo/sourcecode/variability/test/reemplazador";
@@ -116,20 +117,20 @@ public class ReemplazadorMain {
 		// Recursión sobre subprocesos
 		LogUtils.logNext(baseProcessFileName, "Ini recursión sobre subprocesos");
 		for (String subProcessName : subprocessResult.keySet()) {
-			String subProcessFilePath = subprocessResult.get(subProcessName);
-			LogUtils.logNext(baseProcessFileName, "Ini " + subProcessFilePath);
-			substitution(i + 1, basePath, subProcessFilePath, allSelecteds, subProcessFilePath);
-			LogUtils.logBack(baseProcessFileName, "Fin " + subProcessFilePath);
+			String subProcessFileName = subprocessResult.get(subProcessName);
+			LogUtils.logNext(baseProcessFileName, "Ini " + subProcessFileName);
+			substitution(i + 1, basePath + "/" + subProcessName, subProcessFileName, allSelecteds, subProcessFileName);
+			LogUtils.logBack(baseProcessFileName, "Fin " + subProcessFileName);
 		}
 		LogUtils.logBack(baseProcessFileName, "Fin recursión sobre subprocesos");
 
 		// Meter todos los subprocesos en el archivo final
 		LogUtils.logNext(baseProcessFileName, "Ini armado de archivo XML final");
 		for (String subProcessName : subprocessResult.keySet()) {
-			String subProcessFilePath = subprocessResult.get(subProcessName);
-			LogUtils.logNext(baseProcessFileName, "Ini " + subProcessFilePath);
-			SubprocessInsertion.subprocessInsertion(basePath, resultFileName, subProcessName, subProcessFilePath, resultFileName);
-			LogUtils.logBack(baseProcessFileName, "Fin " + subProcessFilePath);
+			String subProcessFileName = subprocessResult.get(subProcessName);
+			LogUtils.logNext(baseProcessFileName, "Ini " + subProcessFileName);
+			SubprocessInsertion.subprocessInsertion(basePath, resultFileName, subProcessFileName, subProcessName, resultFileName);
+			LogUtils.logBack(baseProcessFileName, "Fin " + subProcessFileName);
 		}
 
 		LogUtils.logBack(baseProcessFileName, "Fin armado de archivo XML final");

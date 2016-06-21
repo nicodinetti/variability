@@ -240,27 +240,11 @@ public class MyPageOne extends WizardPage {
 
 	public Map<String, String> getComboSelecteds() {
 		Map<String, String> res = new HashMap<>();
-		List<Map<String, String>> collect = comboVariants.stream().map(x -> getComboSelectedsImpl(x)).collect(Collectors.toList());
+		List<Map<String, String>> collect = comboVariants.stream().map(x -> x.getComboSelecteds()).collect(Collectors.toList());
 		for (Map<String, String> map : collect) {
 			res.putAll(map);
 		}
 		return res;
-	}
-
-	public Map<String, String> getComboSelectedsImpl(ComboVariant comboVariant) {
-
-		Map<String, String> collect = new HashMap<>();
-
-		if (comboVariant.isVisible()) {
-			collect.put(comboVariant.getVarName(), comboVariant.getText());
-		}
-
-		for (ComboVariant cv : comboVariant.getComboVariants()) {
-			Map<String, String> comboSelectedsImpl = getComboSelectedsImpl(cv);
-			collect.putAll(comboSelectedsImpl);
-		}
-
-		return collect;
 	}
 
 	public void cleanSelection() {

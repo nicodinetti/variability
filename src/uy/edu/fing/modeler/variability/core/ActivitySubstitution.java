@@ -31,7 +31,7 @@ import uy.edu.fing.modeler.variability.log.LogUtils;
 import uy.edu.fing.modeler.variability.utils.Utils;
 
 public class ActivitySubstitution {
-	
+
 	private static final boolean PRINT_LOGS = ReemplazadorMain.PRINT_LOGS;
 
 	public static Map<String, String> activitySubstitution(String basePath, String baseProcessFileName, Map<String, String> selectedVariants, String resultFileName)
@@ -78,7 +78,7 @@ public class ActivitySubstitution {
 					String vPID = vPNode.getAttributes().getNamedItem("id").getNodeValue();
 					String selectedfileName = selectedVariants.get(vPID);
 					Path source = Paths.get(basePath + File.separatorChar + vPID + File.separatorChar + selectedfileName);
-					Path target = Paths.get(basePath + File.separatorChar + vPID + ".bpmn");
+					Path target = Paths.get(basePath + File.separatorChar + vPID + File.separatorChar + vPID + ".bpmn");
 					Files.copy(source, target, StandardCopyOption.REPLACE_EXISTING);
 
 					res.put(vPID, target.getFileName().toString());
