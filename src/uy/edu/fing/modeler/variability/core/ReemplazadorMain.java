@@ -45,7 +45,6 @@ public class ReemplazadorMain {
 															// funciona, todavia
 															// no con
 															// Subprocesos
->>>>>>> a20d11f3909e84d1077b2f8597f76535ab4fe4ca
 
 			replace(basePath, baseProcessFileName, selectedVariants, resultFileName);
 
