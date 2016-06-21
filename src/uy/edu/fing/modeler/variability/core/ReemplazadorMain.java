@@ -27,23 +27,25 @@ public class ReemplazadorMain {
 	public static void main(String[] args) throws Exception {
 		try {
 
+			String resultFileName = "result.bpmn";
 			Map<String, String> selectedVariants = new HashMap<>();
-			selectedVariants.put("p6.bpmn/SubProcess_1", "Lane_2");
-			// selectedVariants.put("Task_1", "Lane_3"); // Ejemplo de
-			// sustitucion
-			// de un lane
-			// selectedVariants.put("Task_2", "Sub_B.bpmn"); // Ejemplo de
-			// sustitucion de
-			// una tarea //
-			// Poniendo "A.bpmn"
-			// funciona, todavia
-			// no con
-			// Subprocesos
-			String basePath = "/home/abrusco/git/variability/test/pruebas/p6";
 			// String basePath =
 			// "/Users/ndinetti/Desarrollo/sourcecode/variability/test/reemplazador";
-			String baseProcessFileName = "p6.bpmn";
-			String resultFileName = "result.bpmn";
+			String basePath = "/home/abrusco/git/variability/test";
+			String baseProcessFileName = "process_subp.bpmn";
+			//selectedVariants.put("SubProcess_1", "Sub_A.bpmn");
+			/*String basePath = "/home/abrusco/git/variability/test/pruebas/p4";
+			String baseProcessFileName = "p4.bpmn";
+			selectedVariants.put("p4.bpmn/Task_1", "Lane_3");*/
+														// de un lane
+			//selectedVariants.put("Task_2", "Sub_B.bpmn"); // Ejemplo de
+															// sustitucion de
+															// una tarea //
+															// Poniendo "A.bpmn"
+															// funciona, todavia
+															// no con
+															// Subprocesos
+>>>>>>> a20d11f3909e84d1077b2f8597f76535ab4fe4ca
 
 			replace(basePath, baseProcessFileName, selectedVariants, resultFileName);
 
@@ -95,6 +97,9 @@ public class ReemplazadorMain {
 			throws IOException, Exception, SAXException, TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
 
 		Map<String, String> selectedVariants = new HashMap<>();
+		
+		//selectedVariants.put("SubProcess_1", "Sub_A.bpmn");
+		
 		for (String key : allSelecteds.keySet()) {
 			String[] split = key.split("/");
 			if (split.length == i * 2) {
