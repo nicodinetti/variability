@@ -1,6 +1,7 @@
 package uy.edu.fing.modeler.variability.utils;
 
 import java.awt.Color;
+import java.awt.Rectangle;
 import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 import java.io.File;
@@ -10,6 +11,9 @@ import java.io.InputStream;
 import java.io.StringReader;
 import java.net.URL;
 import java.util.ArrayList;
+import java.util.Collection;
+import java.util.Collections;
+import java.util.Comparator;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
@@ -54,6 +58,7 @@ import org.yaoqiang.graph.view.Graph;
 
 import com.mxgraph.layout.mxIGraphLayout;
 import com.mxgraph.model.mxCell;
+import com.mxgraph.model.mxGeometry;
 import com.mxgraph.model.mxGraphModel;
 import com.mxgraph.util.mxDomUtils;
 import com.mxgraph.util.mxImageBundle;
@@ -62,11 +67,15 @@ import com.mxgraph.util.mxUtils;
 import com.mxgraph.util.mxXmlUtils;
 
 import uy.edu.fing.modeler.variability.log.LogUtils;
+import com.mxgraph.view.mxCellState;
 
 public class YaoqiangUtils extends BPMNCodec {
 
 	private static final String NAME_PLUGIN = "NOSEQUENOSECUANTO-";
-
+	
+	private double maxLaneWidth = 0D;
+	
+	
 	public YaoqiangUtils(Graph graph) {
 		super(graph);
 	}
@@ -238,7 +247,6 @@ public class YaoqiangUtils extends BPMNCodec {
 		}
 
 		return errorMessages;
-
 	}
 
 	private void setNamespaces() {
@@ -313,7 +321,6 @@ public class YaoqiangUtils extends BPMNCodec {
 		Document document = null;
 
 		try {
-
 			String xsdDir = new File(YaoqiangUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsolutePath() + File.separatorChar + "resources" + File.separatorChar;
 
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
@@ -551,6 +558,10 @@ public class YaoqiangUtils extends BPMNCodec {
 			el.appendChild(label);
 
 			plane.appendChild(el);
+			
+			System.out.println("id -> " + cell.getId());
+			System.out.println("state -> " + graph.getView().getState(cell));
+			System.out.println("geometry -> " + cell.getGeometry());
 		}
 	}
 
@@ -622,4 +633,156 @@ public class YaoqiangUtils extends BPMNCodec {
 
 		return el;
 	}
+	
+	public void arrangeSwimlaneSize(final Graph graph, Object cell, boolean other) {
+		final GraphModel model = graph.getModel();
+		mxCell swimlane = (mxCell) cell;
+
+		if (!other) {
+			Collection<Object> swimlanes = mxGraphModel.filterDescendants(model, new mxGraphModel.Filter() {
+				public boolean filter(Object cell) {
+					return !model.isCollapsed(model.getParentPool(cell)) && (graph.hasChildNonLane(cell) || graph.isEmptySwimlane(cell));
+				}
+			});
+
+			for (Object lane : swimlanes) {
+				arrangeSwimlaneSize(graph, lane, true);
+			}
+		}
+		
+		mxCell laneIt = swimlane;
+		
+		if (graph.isSwimlane(laneIt)) {
+			Object[] cells = mxGraphModel.getChildVertices(model, laneIt);
+			
+			double sizeWidth=0;
+			double sizeHeight=0;
+			
+			for (int i = 0; i < cells.length; i++) {
+				if (other && !graph.isSwimlane(cells[i])){
+					sizeWidth += model.getGeometry(cells[i]).getWidth();
+				} else {
+					sizeHeight += model.getGeometry(cells[i]).getHeight();
+				}
+			}
+
+			mxGeometry geo = model.getGeometry(laneIt);
+			mxCellState state = graph.getView().getState(laneIt);
+			
+			if (sizeHeight > 0){
+				geo.setHeight(sizeHeight);
+				state.setHeight(sizeHeight);
+			}
+			
+			double estimatedSize = sizeWidth + (cells.length-1)*70 + 50;
+			if (estimatedSize > maxLaneWidth){
+				maxLaneWidth = estimatedSize;
+			}
+			
+			if (!other){
+				maxLaneWidth = maxLaneWidth + 30;
+			} 
+			
+			geo.setWidth(maxLaneWidth);
+			state.setWidth(maxLaneWidth);
+			
+			model.setGeometry(laneIt, geo);
+			
+		}
+
+	}
+
+	public void arrangeSwimlanePosition(final GraphComponent graphComponent) {
+		final Graph graph = graphComponent.getGraph();
+		Collection<Object> pools = mxGraphModel.filterDescendants(graph.getModel(), new mxGraphModel.Filter() {
+			public boolean filter(Object cell) {
+				return graph.isAutoPool(cell);
+			}
+		});
+
+		List<Object> poolList = new ArrayList<Object>();
+		poolList.addAll(pools);
+		Collections.sort(poolList, new Comparator<Object>() {
+			public int compare(Object o1, Object o2) {
+				mxGeometry geo1 = ((mxCell) o1).getGeometry();
+				mxGeometry geo2 = ((mxCell) o2).getGeometry();
+				if (graph.isVerticalSwimlane(o1)) {
+					return (int) (geo1.getX() - geo2.getX());
+				} else {
+					return (int) (geo1.getY() - geo2.getY());
+				}
+			}
+
+		});
+
+		for (Object pool : poolList) {
+			arrangePoolYOffset(graphComponent, pool);
+			arrangeLaneYOffset(graph, pool);
+		}
+	}
+
+	public static void arrangePoolYOffset(final GraphComponent graphComponent, Object cell) {
+		final Graph graph = graphComponent.getGraph();
+		if (graph.isManualPool(cell)) {
+			return;
+		}
+		GraphModel model = graph.getModel();
+		mxGeometry geo = model.getGeometry(cell);
+		mxCellState state = graph.getView().getState(cell);
+		Rectangle rect = geo.getRectangle();
+		double yOffset = Constants.POOL_SPACING;
+		Object pool = graphComponent.getCellAt(Constants.SWIMLANE_WIDTH / 4, rect.y - Constants.POOL_SPACING / 2);
+		if (pool == null) {
+			pool = graphComponent.getCellAt(Constants.SWIMLANE_WIDTH / 4, rect.y - 1);
+		}
+		if (pool == null) {
+			pool = graphComponent.getCellAt(Constants.SWIMLANE_WIDTH / 4, rect.y - Constants.POOL_SPACING);
+		}
+		if (model.isLane(pool)) {
+			pool = model.getParentPool(pool);
+		}
+		if (pool != cell && model.isPool(pool)) {
+			mxGeometry tmp = model.getGeometry(pool);
+			yOffset += tmp.getY() + tmp.getHeight();
+			geo.setY(yOffset);
+			model.setGeometry(cell, geo);
+		} else if (pool == null && model.isPool(cell)) {
+			mxGeometry tmp = model.getGeometry(cell);
+			if (tmp.getY() < 50) {
+				geo.setY(Constants.SWIMLANE_START_POINT);
+			}
+			model.setGeometry(cell, geo);
+		}
+		
+		state.setX(geo.getX());
+		state.setY(geo.getY());
+		state.setWidth(geo.getWidth());
+		state.setHeight(geo.getHeight());
+
+	}
+	
+	public static void arrangeLaneYOffset(final Graph graph, Object cell) {
+		if (graph.hasChildLane(cell)) {
+			GraphModel model = graph.getModel();
+			double yOffset = 0;
+			int laneCount = model.getChildCount(cell);
+
+			for (int i = 0; i < laneCount; i++) {
+				Object lane = model.getChildAt(cell, i);
+				if (model.isLane(lane)) {
+					mxGeometry geo = model.getGeometry(lane);
+					mxCellState state = graph.getView().getState(lane);
+					geo.setY(yOffset);
+					geo.setX(geo.getX()-20);
+					model.setGeometry(lane, geo);
+					state.setY(geo.getY());
+					state.setX(geo.getX());
+					yOffset += model.getGeometry(lane).getHeight();
+					arrangeLaneYOffset(graph, lane);
+				}
+			}
+		}
+	}
+	
+	
 }
