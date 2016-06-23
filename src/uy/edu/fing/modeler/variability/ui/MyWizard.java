@@ -6,7 +6,7 @@ import java.util.Properties;
 import org.eclipse.core.internal.resources.File;
 import org.eclipse.jface.wizard.Wizard;
 
-import uy.edu.fing.modeler.variability.ui.model.Variant;
+import uy.edu.fing.modeler.variability.ui.model.ModelVariant;
 
 @SuppressWarnings("restriction")
 public class MyWizard extends Wizard {
@@ -14,11 +14,11 @@ public class MyWizard extends Wizard {
 	protected MyPageOne one;
 	protected MyPageTwo two;
 	protected MyPageThree three;
-	protected Variant variant;
+	protected ModelVariant variant;
 	private File file;
 	private Map<String, Properties> configs;
 
-	public MyWizard(File file, Variant variant, Map<String, Properties> configs) {
+	public MyWizard(File file, ModelVariant variant, Map<String, Properties> configs) {
 		super();
 		this.file = file;
 		this.variant = variant;
@@ -53,7 +53,7 @@ public class MyWizard extends Wizard {
 		return configs;
 	}
 
-	public Variant getVariant() {
+	public ModelVariant getVariant() {
 		return variant;
 	}
 

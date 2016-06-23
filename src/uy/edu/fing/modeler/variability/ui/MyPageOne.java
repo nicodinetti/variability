@@ -24,8 +24,7 @@ import org.eclipse.swt.widgets.Text;
 import org.eclipse.ui.PlatformUI;
 
 import uy.edu.fing.modeler.variability.ui.model.ComboVariant;
-import uy.edu.fing.modeler.variability.ui.model.VarPoint;
-import uy.edu.fing.modeler.variability.ui.model.Variant;
+import uy.edu.fing.modeler.variability.ui.model.ModelVariant;
 
 @SuppressWarnings("restriction")
 public class MyPageOne extends WizardPage {
@@ -145,8 +144,8 @@ public class MyPageOne extends WizardPage {
 		lSelections.setText("Selecciones: ");
 		new Label(container, SWT.NONE);
 
-		Variant variant = myWizard.getVariant();
-		comboVariants = addOptions("", gd, variant, true);
+		ModelVariant variant = myWizard.getVariant();
+		comboVariants = addOptions(gd, variant, true);
 
 		// required to avoid an error in the system
 		setControl(container);
@@ -160,23 +159,21 @@ public class MyPageOne extends WizardPage {
 
 	}
 
-	private List<ComboVariant> addOptions(String prefix, GridData gd, Variant variant, boolean visible) {
+	private List<ComboVariant> addOptions(GridData gd, ModelVariant variant, boolean visible) {
 
 		List<ComboVariant> res = new ArrayList<>();
 
-		String varPath = prefix + variant.getVarName();
+		for (ModelVariant varPoint : variant.getModelVariants()) {
 
-		for (VarPoint varPoint : variant.getVpOptions()) {
-
-			String varName = varPath + "/" + varPoint.getName();
+			String varName = varPoint.getVarpointName();
 
 			Label label = new Label(container, SWT.NONE);
-			label.setText(varName + ": ");
+			label.setText(variant.getFileName() + "/" + varName + ": ");
 			label.setVisible(visible);
 
 			ComboVariant resCombo = new ComboVariant(container, SWT.DEFAULT, label);
-			resCombo.setVarName(varName);
-			varPoint.getVarOptions().stream().forEach(x -> resCombo.add(x.getVarName()));
+			resCombo.setVarName(variant.getFileName() + "/" + varName);
+			varPoint.getModelVariants().stream().forEach(x -> resCombo.add(x.getVarpointName()));
 			resCombo.add(DELETE);
 			resCombo.setLayoutData(gd);
 			resCombo.select(0);
@@ -206,8 +203,8 @@ public class MyPageOne extends WizardPage {
 				}
 			});
 
-			for (Variant variantRec : varPoint.getVarOptions()) {
-				List<ComboVariant> cvs = addOptions(varName + "/", gd, variantRec, false);
+			for (ModelVariant variantRec : varPoint.getModelVariants()) {
+				List<ComboVariant> cvs = addOptions(gd, variantRec, true);
 				resCombo.getComboVariants().addAll(cvs);
 			}
 
