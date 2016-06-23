@@ -65,17 +65,16 @@ import com.mxgraph.util.mxImageBundle;
 import com.mxgraph.util.mxPoint;
 import com.mxgraph.util.mxUtils;
 import com.mxgraph.util.mxXmlUtils;
+import com.mxgraph.view.mxCellState;
 
 import uy.edu.fing.modeler.variability.log.LogUtils;
-import com.mxgraph.view.mxCellState;
 
 public class YaoqiangUtils extends BPMNCodec {
 
 	private static final String NAME_PLUGIN = "NOSEQUENOSECUANTO-";
-	
+
 	private double maxLaneWidth = 0D;
-	
-	
+
 	public YaoqiangUtils(Graph graph) {
 		super(graph);
 	}
@@ -193,7 +192,8 @@ public class YaoqiangUtils extends BPMNCodec {
 		setPageSize(diagram, pageSize);
 
 		if (autolayout) {
-			mxIGraphLayout bpmnLayout = new BPMNLayout(graph, "1".equals(Constants.SETTINGS.getProperty("orientation", "1")));
+			mxIGraphLayout bpmnLayout = new BPMNLayout(graph,
+					"1".equals(Constants.SETTINGS.getProperty("orientation", "1")));
 			if (bpmnLayout instanceof BPMNLayout) {
 				int nodeDistance = Integer.parseInt(Constants.SETTINGS.getProperty("nodeDistance", "20"));
 				int levelDistance = Integer.parseInt(Constants.SETTINGS.getProperty("levelDistance", "40"));
@@ -236,7 +236,8 @@ public class YaoqiangUtils extends BPMNCodec {
 					root.insert(defParent, root.getChildCount());
 					plane.setBpmnElement(bpmnElement.getCalledElement());
 				} else {
-					LogUtils.log("", "Yaoqiang BPMN Editor does not support the Sub-Process defined in a separate diagram");
+					LogUtils.log("",
+							"Yaoqiang BPMN Editor does not support the Sub-Process defined in a separate diagram");
 					return errorMessages;
 				}
 				defParent.setValue(((BPMNDiagram) el).getName());
@@ -284,7 +285,8 @@ public class YaoqiangUtils extends BPMNCodec {
 
 			PageFormat pageFormat = new PageFormat();
 			Paper paper = new Paper();
-			if (props != null && props.get("orientation") != null && props.get("width") != null && props.get("height") != null) {
+			if (props != null && props.get("orientation") != null && props.get("width") != null
+					&& props.get("height") != null) {
 				int orientation = Integer.parseInt(props.get("orientation").toString());
 				double width = Double.parseDouble(props.get("width").toString());
 				double height = Double.parseDouble(props.get("height").toString());
@@ -304,9 +306,11 @@ public class YaoqiangUtils extends BPMNCodec {
 			model.setPageFormat(pageFormat);
 
 			Constants.SWIMLANE_WIDTH = (int) (model.getPageFormat().getWidth() * 1.25
-					+ (model.getHorizontalPageCount() - 1) * (Constants.SWIMLANE_START_POINT + model.getPageFormat().getWidth() * 1.25));
+					+ (model.getHorizontalPageCount() - 1)
+							* (Constants.SWIMLANE_START_POINT + model.getPageFormat().getWidth() * 1.25));
 
-			Constants.SWIMLANE_HEIGHT = (int) (model.getPageFormat().getHeight() * 1.2 + (model.getPageCount() - 1) * (Constants.SWIMLANE_START_POINT + model.getPageFormat().getHeight() * 1.2));
+			Constants.SWIMLANE_HEIGHT = (int) (model.getPageFormat().getHeight() * 1.2 + (model.getPageCount() - 1)
+					* (Constants.SWIMLANE_START_POINT + model.getPageFormat().getHeight() * 1.2));
 
 		} else {
 			int horizontalPageCount = (int) Math.round(pageSize.getX() / Constants.PAGE_WIDTH);
@@ -321,13 +325,16 @@ public class YaoqiangUtils extends BPMNCodec {
 		Document document = null;
 
 		try {
-			String xsdDir = new File(YaoqiangUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath()).getAbsolutePath() + File.separatorChar + "resources" + File.separatorChar;
+			String xsdDir = new File(YaoqiangUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath())
+					.getAbsolutePath() + File.separatorChar + "resources" + File.separatorChar;
 
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 			docBuilderFactory.setValidating(true);
 			docBuilderFactory.setNamespaceAware(true);
-			docBuilderFactory.setAttribute("http://java.sun.com/xml/jaxp/properties/schemaLanguage", "http://www.w3.org/2001/XMLSchema");
-			docBuilderFactory.setAttribute("http://java.sun.com/xml/jaxp/properties/schemaSource", xsdDir + "BPMN20.xsd");
+			docBuilderFactory.setAttribute("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
+					"http://www.w3.org/2001/XMLSchema");
+			docBuilderFactory.setAttribute("http://java.sun.com/xml/jaxp/properties/schemaSource",
+					xsdDir + "BPMN20.xsd");
 
 			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 			BPMNModelParsingErrors pErrors = new BPMNModelParsingErrors();
@@ -398,9 +405,11 @@ public class YaoqiangUtils extends BPMNCodec {
 					if (graph.getImageFromBundles(ca) == null) {
 						continue;
 					}
-					XMLExtensionElement artifactElement = new XMLExtensionElement(extensionElements, "yaoqiang:artifact");
+					XMLExtensionElement artifactElement = new XMLExtensionElement(extensionElements,
+							"yaoqiang:artifact");
 					artifactElement.addAttribute(new XMLAttribute(artifactElement, "name", ca));
-					artifactElement.addAttribute(new XMLAttribute(artifactElement, "image", graph.getImageFromBundles(ca)));
+					artifactElement
+							.addAttribute(new XMLAttribute(artifactElement, "image", graph.getImageFromBundles(ca)));
 					extensionElements.addChildElement(artifactElement);
 					customArtifactEls.add(artifactElement);
 				}
@@ -429,7 +438,8 @@ public class YaoqiangUtils extends BPMNCodec {
 			graph.getView().setCurrentRoot(currentRoot);
 		} catch (Exception e) {
 			e.printStackTrace();
-			JOptionPane.showMessageDialog(null, e.getStackTrace(), "Please Capture This Error Screen Shots and Submit this BUG.", JOptionPane.ERROR_MESSAGE);
+			JOptionPane.showMessageDialog(null, e.getStackTrace(),
+					"Please Capture This Error Screen Shots and Submit this BUG.", JOptionPane.ERROR_MESSAGE);
 		}
 
 		return doc;
@@ -539,7 +549,8 @@ public class YaoqiangUtils extends BPMNCodec {
 			} else if (model.isSubProcess(cell)) {
 				el.setAttribute("isExpanded", Boolean.toString(model.isExpandedSubProcess(cell)));
 			} else if (graph.isSubChoreography(cell)) {
-				el.setAttribute("isExpanded", Boolean.toString(model.isExpandedSubProcess(GraphUtils.getChoreographyActivity(model, cell))));
+				el.setAttribute("isExpanded",
+						Boolean.toString(model.isExpandedSubProcess(GraphUtils.getChoreographyActivity(model, cell))));
 			} else if (model.isCallProcess(cell)) {
 				el.setAttribute("isExpanded", "false");
 			} else if (cell.getStyle().startsWith("exclusiveGatewayWithIndicator")) {
@@ -558,7 +569,7 @@ public class YaoqiangUtils extends BPMNCodec {
 			el.appendChild(label);
 
 			plane.appendChild(el);
-			
+
 			System.out.println("id -> " + cell.getId());
 			System.out.println("state -> " + graph.getView().getState(cell));
 			System.out.println("geometry -> " + cell.getGeometry());
@@ -616,7 +627,8 @@ public class YaoqiangUtils extends BPMNCodec {
 		}
 	}
 
-	private static Element generateEdgeElement(Graph graph, mxCell cell, Element plane, String bpmndiPrefix, String dcPrefix, String diPrefix) {
+	private static Element generateEdgeElement(Graph graph, mxCell cell, Element plane, String bpmndiPrefix,
+			String dcPrefix, String diPrefix) {
 		Element el = plane.getOwnerDocument().createElement(bpmndiPrefix + "BPMNEdge");
 		el.setAttribute("id", NAME_PLUGIN + cell.getId());
 		el.setAttribute("bpmnElement", cell.getId());
@@ -633,15 +645,17 @@ public class YaoqiangUtils extends BPMNCodec {
 
 		return el;
 	}
-	
+
 	public void arrangeSwimlaneSize(final Graph graph, Object cell, boolean other) {
 		final GraphModel model = graph.getModel();
 		mxCell swimlane = (mxCell) cell;
 
 		if (!other) {
 			Collection<Object> swimlanes = mxGraphModel.filterDescendants(model, new mxGraphModel.Filter() {
+				@Override
 				public boolean filter(Object cell) {
-					return !model.isCollapsed(model.getParentPool(cell)) && (graph.hasChildNonLane(cell) || graph.isEmptySwimlane(cell));
+					return !model.isCollapsed(model.getParentPool(cell))
+							&& (graph.hasChildNonLane(cell) || graph.isEmptySwimlane(cell));
 				}
 			});
 
@@ -649,17 +663,17 @@ public class YaoqiangUtils extends BPMNCodec {
 				arrangeSwimlaneSize(graph, lane, true);
 			}
 		}
-		
+
 		mxCell laneIt = swimlane;
-		
+
 		if (graph.isSwimlane(laneIt)) {
 			Object[] cells = mxGraphModel.getChildVertices(model, laneIt);
-			
-			double sizeWidth=0;
-			double sizeHeight=0;
-			
+
+			double sizeWidth = 0;
+			double sizeHeight = 0;
+
 			for (int i = 0; i < cells.length; i++) {
-				if (other && !graph.isSwimlane(cells[i])){
+				if (other && !graph.isSwimlane(cells[i])) {
 					sizeWidth += model.getGeometry(cells[i]).getWidth();
 				} else {
 					sizeHeight += model.getGeometry(cells[i]).getHeight();
@@ -668,26 +682,26 @@ public class YaoqiangUtils extends BPMNCodec {
 
 			mxGeometry geo = model.getGeometry(laneIt);
 			mxCellState state = graph.getView().getState(laneIt);
-			
-			if (sizeHeight > 0){
+
+			if (sizeHeight > 0) {
 				geo.setHeight(sizeHeight);
 				state.setHeight(sizeHeight);
 			}
-			
-			double estimatedSize = sizeWidth + (cells.length-1)*70 + 50;
-			if (estimatedSize > maxLaneWidth){
+
+			double estimatedSize = sizeWidth + (cells.length - 1) * 70 + 50;
+			if (estimatedSize > maxLaneWidth) {
 				maxLaneWidth = estimatedSize;
 			}
-			
-			if (!other){
+
+			if (!other) {
 				maxLaneWidth = maxLaneWidth + 30;
-			} 
-			
+			}
+
 			geo.setWidth(maxLaneWidth);
 			state.setWidth(maxLaneWidth);
-			
+
 			model.setGeometry(laneIt, geo);
-			
+
 		}
 
 	}
@@ -695,6 +709,7 @@ public class YaoqiangUtils extends BPMNCodec {
 	public void arrangeSwimlanePosition(final GraphComponent graphComponent) {
 		final Graph graph = graphComponent.getGraph();
 		Collection<Object> pools = mxGraphModel.filterDescendants(graph.getModel(), new mxGraphModel.Filter() {
+			@Override
 			public boolean filter(Object cell) {
 				return graph.isAutoPool(cell);
 			}
@@ -703,6 +718,7 @@ public class YaoqiangUtils extends BPMNCodec {
 		List<Object> poolList = new ArrayList<Object>();
 		poolList.addAll(pools);
 		Collections.sort(poolList, new Comparator<Object>() {
+			@Override
 			public int compare(Object o1, Object o2) {
 				mxGeometry geo1 = ((mxCell) o1).getGeometry();
 				mxGeometry geo2 = ((mxCell) o2).getGeometry();
@@ -753,14 +769,14 @@ public class YaoqiangUtils extends BPMNCodec {
 			}
 			model.setGeometry(cell, geo);
 		}
-		
+
 		state.setX(geo.getX());
 		state.setY(geo.getY());
 		state.setWidth(geo.getWidth());
 		state.setHeight(geo.getHeight());
 
 	}
-	
+
 	public static void arrangeLaneYOffset(final Graph graph, Object cell) {
 		if (graph.hasChildLane(cell)) {
 			GraphModel model = graph.getModel();
@@ -773,7 +789,7 @@ public class YaoqiangUtils extends BPMNCodec {
 					mxGeometry geo = model.getGeometry(lane);
 					mxCellState state = graph.getView().getState(lane);
 					geo.setY(yOffset);
-					geo.setX(geo.getX()-20);
+					geo.setX(geo.getX() - 20);
 					model.setGeometry(lane, geo);
 					state.setY(geo.getY());
 					state.setX(geo.getX());
@@ -783,6 +799,5 @@ public class YaoqiangUtils extends BPMNCodec {
 			}
 		}
 	}
-	
-	
+
 }

@@ -33,18 +33,21 @@ public class ReemplazadorMain {
 			// "/Users/ndinetti/Desarrollo/sourcecode/variability/test/reemplazador";
 			String basePath = "/home/abrusco/git/variability/test";
 			String baseProcessFileName = "process_subp.bpmn";
-			//selectedVariants.put("SubProcess_1", "Sub_A.bpmn");
-			/*String basePath = "/home/abrusco/git/variability/test/pruebas/p4";
-			String baseProcessFileName = "p4.bpmn";
-			selectedVariants.put("p4.bpmn/Task_1", "Lane_3");*/
-														// de un lane
-			//selectedVariants.put("Task_2", "Sub_B.bpmn"); // Ejemplo de
-															// sustitucion de
-															// una tarea //
-															// Poniendo "A.bpmn"
-															// funciona, todavia
-															// no con
-															// Subprocesos
+			// selectedVariants.put("SubProcess_1", "Sub_A.bpmn");
+			/*
+			 * String basePath =
+			 * "/home/abrusco/git/variability/test/pruebas/p4"; String
+			 * baseProcessFileName = "p4.bpmn";
+			 * selectedVariants.put("p4.bpmn/Task_1", "Lane_3");
+			 */
+			// de un lane
+			// selectedVariants.put("Task_2", "Sub_B.bpmn"); // Ejemplo de
+			// sustitucion de
+			// una tarea //
+			// Poniendo "A.bpmn"
+			// funciona, todavia
+			// no con
+			// Subprocesos
 
 			replace(basePath, baseProcessFileName, selectedVariants, resultFileName);
 
@@ -60,7 +63,8 @@ public class ReemplazadorMain {
 
 	}
 
-	public static void replace(String basePath, String baseProcessFileName, Map<String, String> selectedVariants, String resultFileName) throws Exception {
+	public static void replace(String basePath, String baseProcessFileName, Map<String, String> selectedVariants,
+			String resultFileName) throws Exception {
 
 		try {
 
@@ -92,13 +96,14 @@ public class ReemplazadorMain {
 
 	}
 
-	private static void substitution(int i, String basePath, String baseProcessFileName, Map<String, String> allSelecteds, String resultFileName)
-			throws IOException, Exception, SAXException, TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
+	private static void substitution(int i, String basePath, String baseProcessFileName,
+			Map<String, String> allSelecteds, String resultFileName) throws IOException, Exception, SAXException,
+			TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
 
 		Map<String, String> selectedVariants = new HashMap<>();
-		
-		//selectedVariants.put("SubProcess_1", "Sub_A.bpmn");
-		
+
+		// selectedVariants.put("SubProcess_1", "Sub_A.bpmn");
+
 		for (String key : allSelecteds.keySet()) {
 			String[] split = key.split("/");
 			if (split.length == i * 2) {
@@ -111,7 +116,8 @@ public class ReemplazadorMain {
 		LogUtils.logBack(baseProcessFileName, "Fin laneSubstitution");
 
 		LogUtils.logNext(baseProcessFileName, "Ini activitySubstitution");
-		Map<String, String> subprocessResult = ActivitySubstitution.activitySubstitution(basePath, resultFileName, selectedVariants, resultFileName);
+		Map<String, String> subprocessResult = ActivitySubstitution.activitySubstitution(basePath, resultFileName,
+				selectedVariants, resultFileName);
 		LogUtils.logBack(baseProcessFileName, "Fin activitySubstitution");
 
 		LogUtils.logNext(baseProcessFileName, "Ini activitySupression");
@@ -133,7 +139,8 @@ public class ReemplazadorMain {
 		for (String subProcessName : subprocessResult.keySet()) {
 			String subProcessFileName = subprocessResult.get(subProcessName);
 			LogUtils.logNext(baseProcessFileName, "Ini " + subProcessFileName);
-			SubprocessInsertion.subprocessInsertion(basePath, resultFileName, subProcessFileName, subProcessName, resultFileName);
+			SubprocessInsertion.subprocessInsertion(basePath, resultFileName, subProcessFileName, subProcessName,
+					resultFileName);
 			LogUtils.logBack(baseProcessFileName, "Fin " + subProcessFileName);
 		}
 
