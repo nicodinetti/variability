@@ -48,6 +48,18 @@ public class Utils {
 	}
 
 	public static List<Node> getSubTree(Document doc) {
+		System.out.println("--- ARMADO DEL ARBOL A EXPORTAR ---");
+		List<Node> result = new ArrayList<Node>();
+		Node aux = getStartEvent(doc);
+		while (aux != null) {
+			result.add(changeNodeID(doc, aux.cloneNode(true)));
+			aux = getNextNode(doc, aux);
+		}
+		return result;
+	}
+	
+	/* VIEJO
+	public static List<Node> getSubTree(Document doc) {
 		Node nodo = getStartEvent(doc);
 		System.out.println("--- ARMADO DEL ARBOL A EXPORTAR ---");
 		List<Node> result = new ArrayList<Node>();
@@ -60,6 +72,7 @@ public class Utils {
 		}
 		return result;
 	}
+	 */
 
 	public static Node getStartEvent(Document doc) {
 		return doc.getElementsByTagName("bpmn2:startEvent").item(0);
@@ -92,7 +105,9 @@ public class Utils {
 	public static Node getNextNode(Document doc2, Node first) {
 		Node nextNode = null;
 		String outgoingName = "";
-		if (isTask(getNodeTAG(doc2, getTAGID(first)))) {
+		if (isEndEvent(getNodeTAG(doc2, getTAGID(first)))) {
+			return nextNode;
+		} else if(isTask(getNodeTAG(doc2, getTAGID(first)))) {
 			outgoingName = getNodeFlowID(first, "bpmn2:outgoing");
 			Node outgoingFlowNode = getNodeByID(doc2, outgoingName);
 			nextNode = outgoingFlowNode;
@@ -104,8 +119,7 @@ public class Utils {
 			outgoingName = getNodeFlowID(first, "bpmn2:outgoing");
 			Node outgoingFlowNode = getNodeByID(doc2, outgoingName);
 			nextNode = outgoingFlowNode;
-		}
-		;
+		};
 		return nextNode;
 	}
 
@@ -195,6 +209,14 @@ public class Utils {
 		List<String> tags = Arrays.asList("bpmn2:task", "bpmn2:userTask", "bpmn2:manualTask", "bpmn2:scriptTask", "bpmn2:businessRuleTask", "bpmn2:serviceTask", "bpmn2:sendTask", "bpmn2:receiveTask");
 		return tags.contains(tag);
 	}
+	
+	public static boolean isStartEvent(String tag) {
+		return tag.equals("bpmn2:startEvent");
+	}
+	
+	public static boolean isEndEvent(String tag) {
+		return tag.contains("bpmn2:endEvent");
+	}
 
 	public static boolean isSequenceFlow(String tag) {
 		List<String> tags = Arrays.asList("bpmn2:sequenceFlow");
@@ -230,10 +252,33 @@ public class Utils {
 			Node outgoingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow", Utils.getNodeFlowID(nodo, "bpmn2:outgoing"));
 			Utils.setFlowNode(nodo, Utils.getTAGID(incomingNode) + RENAME_SALT, "bpmn2:incoming");
 			Utils.setFlowNode(nodo, Utils.getTAGID(outgoingNode) + RENAME_SALT, "bpmn2:outgoing");
+		} else if (isStartEvent(nodo.getNodeName())) {
+			Node outgoingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow", Utils.getNodeFlowID(nodo, "bpmn2:outgoing"));
+			Utils.setFlowNode(nodo, Utils.getTAGID(outgoingNode) + RENAME_SALT, "bpmn2:outgoing");
+		} else if (isEndEvent(nodo.getNodeName())) {
+			Node incomingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow", Utils.getNodeFlowID(nodo, "bpmn2:incoming"));
+			Utils.setFlowNode(nodo, Utils.getTAGID(incomingNode) + RENAME_SALT, "bpmn2:incoming");
 		}
 		return nodo;
 	}
+	
+	public static Document insertSubTree(Document doc, Node parentNode, List<Node> nodos) {
+		LogUtils.log("insertSubTree", "Insertando nodos en el nuevo documento: " + nodos);
 
+		for (Node node : nodos) {
+			Node newNode = doc.importNode(node, true);
+			parentNode.appendChild(newNode);
+			if (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
+				LogUtils.logNext("insertSubTree", "Insertamos " + getTAGID(newNode));
+				LogUtils.back();
+			}
+		}
+
+		LogUtils.log("insertSubTree", "Fin Insertando nodos en el nuevo documento: " + nodos);
+		return doc;
+	}
+
+	/* VIEJO
 	public static Document insertSubTree(Document doc, Node first, List<Node> nodos) {
 		LogUtils.log("insertSubTree", "Insertando nodos en el nuevo documento: " + nodos);
 		//printTree(nodos);
@@ -251,7 +296,8 @@ public class Utils {
 		LogUtils.log("insertSubTree", "Fin Insertando nodos en el nuevo documento: " + nodos);
 		return doc;
 	}
-
+	*/
+	
 	public static void changeBPMNEdgeTarget(Document doc, String elementId, String newRefElement, String ref) {
 		NodeList bpmnEdges = doc.getElementsByTagName("bpmndi:BPMNEdge");
 		int length = bpmnEdges.getLength();
