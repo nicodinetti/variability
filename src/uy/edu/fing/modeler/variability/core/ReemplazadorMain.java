@@ -34,10 +34,17 @@ public class ReemplazadorMain {
             Map<String, String> selectedVariants = new HashMap<>();
             // String basePath =
             // "/Users/ndinetti/Desarrollo/sourcecode/variability/test/reemplazador";
-            String basePath = "/home/ibetancurt/repo/variability/test/desa2";
+            String basePath = "/home/ibetancurt/repo/variability/test/desa";
             String baseProcessFileName = "compra.bpmn";
-            selectedVariants.put("Pagar", "PagoEfectivo.bpmn");
-            selectedVariants.put("ProcesoDePago", "Visa.bpmn");
+
+            // selectedVariants.put("Pagar", "PagoEfectivo.bpmn");
+
+            // selectedVariants.put("Pagar", "PagarConCredito/PagarConCredito.bpmn");
+            // selectedVariants.put("ProcesoDePago", "Visa.bpmn");
+
+            selectedVariants.put("Pagar", "PagarConCredito/PagarConCredito.bpmn");
+            selectedVariants.put("ProcesoDePago", "AmericanExpress/AmericanExpress.bpmn");
+            selectedVariants.put("Pais", "Uruguay.bpmn");
             /*
              * String basePath = "/home/abrusco/git/variability/test/pruebas/p4"; String baseProcessFileName = "p4.bpmn"; selectedVariants.put("p4.bpmn/Task_1",
              * "Lane_3");
