@@ -2,6 +2,8 @@ package uy.edu.fing.modeler.variability.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.stream.Collectors;
@@ -21,110 +23,114 @@ import uy.edu.fing.modeler.variability.utils.Utils;
 
 public class LaneSubstitution {
 
-	public static void laneSubstitution(String basePath, String baseProcessFileName, Map<String, String> selectedVariants, String resultFileName)
-			throws IOException, Exception, SAXException, TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
+    public static void laneSubstitution(String basePath, String baseProcessFileName, Map<String, String> selectedVariants, String resultFileName)
+        throws IOException, Exception, SAXException, TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
 
-		Map<String, String> filterSelecteds = filterSelecteds(selectedVariants);
+        Map<String, String> filterSelecteds = filterSelecteds(selectedVariants);
 
-		Document doc = Utils.getDocument(basePath, baseProcessFileName);
-		
-		if (filterSelecteds.isEmpty()) {
-			LogUtils.log(baseProcessFileName, "No hay Lanes para sustituir");
-			Utils.saveResult(baseProcessFileName, doc, basePath, resultFileName);
-			return;
-		}
+        Document doc = Utils.getDocument(basePath, baseProcessFileName);
 
-		String activity = filterSelecteds.keySet().iterator().next();
-		LogUtils.log(baseProcessFileName, "Actividad: " + activity);
+        if (filterSelecteds.isEmpty()) {
+            LogUtils.log(baseProcessFileName, "No hay Lanes para sustituir");
+            Utils.saveResult(baseProcessFileName, doc, basePath, resultFileName);
+            return;
+        }
 
-		String variante = filterSelecteds.get(activity) + ".bpmn";
-		Document doc2 = Utils.getDocument(basePath + File.separatorChar + activity, variante);
-		
-		Node nodoLane = getVariabilityLane(doc2);
-		String lane = Utils.getTAGID(nodoLane);
-		LogUtils.log(baseProcessFileName, "Lane: " + lane);
+        String activity = filterSelecteds.keySet().iterator().next();
+        LogUtils.log(baseProcessFileName, "Actividad: " + activity);
 
-		NodeList lanes = doc.getElementsByTagName("bpmn2:lane");
+        String variante = filterSelecteds.get(activity) + ".bpmn";
+        Path path = Paths.get(basePath + File.separatorChar + variante);
+        String newBasePath = path.getParent().toString();
+        String newFileName = path.getFileName().toString();
+        Document doc2 = Utils.getDocument(newBasePath, newFileName);
 
-		// Buscar y eliminar la actividad
-		Node searchActivity = null;
-		for (int it = 0; it < lanes.getLength(); it++) {
-			Node nodo = lanes.item(it);
-			NodeList flowNodeRefs = nodo.getChildNodes();
-			for (int j = 0; j < flowNodeRefs.getLength(); j++) {
-				Node flowNodeRef = flowNodeRefs.item(j);
-				String attr = flowNodeRef.getTextContent();
-				System.out.println(j + " - " + attr);
-				if (attr.equals(activity)) {
-					searchActivity = flowNodeRef;
-					break;
-				}
-			}
+        Node nodoLane = getVariabilityLane(doc2);
+        String lane = Utils.getTAGID(nodoLane);
+        LogUtils.log(baseProcessFileName, "Lane: " + lane);
 
-			if (searchActivity != null) {
-				Utils.deleteNode(searchActivity);
-				LogUtils.log(baseProcessFileName, "Actividad encontrada y eliminada");
-				break;
-			}
+        NodeList lanes = doc.getElementsByTagName("bpmn2:lane");
 
-		}
-		if (searchActivity == null) {
-			LogUtils.log(baseProcessFileName, "ERROR: No existe esa Actividad !!!");
-			return;
-		}
-		
-		// Buscar el lane y agregarle la actividad
-		Element nodoLaneBuscado = null;
-		int lane_index = getLaneIndex(lane, lanes);
-		if (lane_index != -1) {
-			nodoLaneBuscado = (Element) lanes.item(lane_index);
-		} else {
-			nodoLaneBuscado = createLane(doc, nodoLane, lanes.item(0).getParentNode());
-			LogUtils.log(baseProcessFileName, "No existía el Lane. Creado el Lane !");
-		}
-		nodoLaneBuscado.appendChild(searchActivity);
-		
-		LogUtils.log(baseProcessFileName, "Agregada la actividad al Lane seleccionado");
+        // Buscar y eliminar la actividad
+        Node searchActivity = null;
+        for (int it = 0; it < lanes.getLength(); it++) {
+            Node nodo = lanes.item(it);
+            NodeList flowNodeRefs = nodo.getChildNodes();
+            for (int j = 0; j < flowNodeRefs.getLength(); j++) {
+                Node flowNodeRef = flowNodeRefs.item(j);
+                String attr = flowNodeRef.getTextContent();
+                System.out.println(j + " - " + attr);
+                if (attr.equals(activity)) {
+                    searchActivity = flowNodeRef;
+                    break;
+                }
+            }
 
-		Utils.saveResult(baseProcessFileName, doc, basePath, resultFileName);
-		
-		Map<String, String> selectedVariants2 = new HashMap<>();
-		selectedVariants2.put(activity, variante);
-		System.out.println("--- Activity: " + activity);
-		System.out.println("--- Variante: " + variante);
-		LogUtils.logNext(baseProcessFileName, "LANE SUBSTITUTION: Ini laneSubstitution");
-		ActivitySubstitution.activitySubstitution(basePath, resultFileName, selectedVariants2, resultFileName);
-		LogUtils.logNext(baseProcessFileName, "LANE SUBSTITUTION: FIN laneSubstitution");
-	}
-	
-	private static Node getVariabilityLane(Document doc) {
-		return doc.getElementsByTagName("bpmn2:lane").item(0);
-	}
+            if (searchActivity != null) {
+                Utils.deleteNode(searchActivity);
+                LogUtils.log(baseProcessFileName, "Actividad encontrada y eliminada");
+                break;
+            }
 
-	private static Element createLane(Document doc, Node nodoLane, Node parentNode) {
-		Element newLane = doc.createElement("bpmn2:lane");
-		newLane.setAttribute("id", Utils.getTAGID(nodoLane));
-		newLane.setAttribute("name", Utils.getTAGName(nodoLane));
-		doc.importNode(newLane, true);
-		parentNode.appendChild(newLane);
-		return newLane;
-	}
+        }
+        if (searchActivity == null) {
+            LogUtils.log(baseProcessFileName, "ERROR: No existe esa Actividad !!!");
+            return;
+        }
 
-	private static int getLaneIndex(String lane, NodeList lanes) {
-		for (int it = 0; it < lanes.getLength(); it++) {
-			Node nodoLane = lanes.item(it);
-			String laneID = Utils.getTAGID(nodoLane);
-			if (laneID.equals(lane)) {
-				return it;
-			}
-		}
-		return -1;
-	}
+        // Buscar el lane y agregarle la actividad
+        Element nodoLaneBuscado = null;
+        int lane_index = getLaneIndex(lane, lanes);
+        if (lane_index != -1) {
+            nodoLaneBuscado = (Element) lanes.item(lane_index);
+        } else {
+            nodoLaneBuscado = createLane(doc, nodoLane, lanes.item(0).getParentNode());
+            LogUtils.log(baseProcessFileName, "No existía el Lane. Creado el Lane !");
+        }
+        nodoLaneBuscado.appendChild(searchActivity);
 
-	private static Map<String, String> filterSelecteds(Map<String, String> selectedVariants) {
-		Map<String, String> result = selectedVariants.keySet().stream().filter(x -> !selectedVariants.get(x).equals(ReemplazadorMain.DELETE) && !selectedVariants.get(x).endsWith("bpmn"))
-				.collect(Collectors.toMap(x -> x, x -> selectedVariants.get(x)));
-		return result;
-	}
+        LogUtils.log(baseProcessFileName, "Agregada la actividad al Lane seleccionado");
+
+        Utils.saveResult(baseProcessFileName, doc, basePath, resultFileName);
+
+        Map<String, String> selectedVariants2 = new HashMap<>();
+        selectedVariants2.put(activity, variante);
+        System.out.println("--- Activity: " + activity);
+        System.out.println("--- Variante: " + variante);
+        LogUtils.logNext(baseProcessFileName, "LANE SUBSTITUTION: Ini laneSubstitution");
+        ActivitySubstitution.activitySubstitution(basePath, resultFileName, selectedVariants2, resultFileName);
+        LogUtils.logNext(baseProcessFileName, "LANE SUBSTITUTION: FIN laneSubstitution");
+    }
+
+    private static Node getVariabilityLane(Document doc) {
+        return doc.getElementsByTagName("bpmn2:lane").item(0);
+    }
+
+    private static Element createLane(Document doc, Node nodoLane, Node parentNode) {
+        Element newLane = doc.createElement("bpmn2:lane");
+        newLane.setAttribute("id", Utils.getTAGID(nodoLane));
+        newLane.setAttribute("name", Utils.getTAGName(nodoLane));
+        doc.importNode(newLane, true);
+        parentNode.appendChild(newLane);
+        return newLane;
+    }
+
+    private static int getLaneIndex(String lane, NodeList lanes) {
+        for (int it = 0; it < lanes.getLength(); it++) {
+            Node nodoLane = lanes.item(it);
+            String laneID = Utils.getTAGID(nodoLane);
+            if (laneID.equals(lane)) {
+                return it;
+            }
+        }
+        return -1;
+    }
+
+    private static Map<String, String> filterSelecteds(Map<String, String> selectedVariants) {
+        Map<String, String> result = selectedVariants.keySet().stream()
+            .filter(x -> !selectedVariants.get(x).equals(ReemplazadorMain.DELETE) && !selectedVariants.get(x).endsWith("bpmn"))
+            .collect(Collectors.toMap(x -> x, x -> selectedVariants.get(x)));
+        return result;
+    }
 
 }
