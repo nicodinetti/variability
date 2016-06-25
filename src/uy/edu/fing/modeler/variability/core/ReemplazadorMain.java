@@ -25,43 +25,30 @@ public class ReemplazadorMain {
 
     public static final boolean IMPRIMIR_LOG_SUBPROCESS = false;
     public static final boolean PRINT_LOGS = false;
-
     public static final String DELETE = "DELETE";
+    public static final String USUARIO = "ale";
 
     public static void main(String[] args) throws Exception {
         try {
 
-        	String usuario = "ale";
             String resultFileName = "result.bpmn";
             Map<String, String> selectedVariants = new HashMap<>();
             String basePath = "";
             String baseProcessFileName = "compra.bpmn";
             
-            if (usuario.equals("ale")) {
+            if (USUARIO.equals("ale")) {
             	basePath = "/home/abrusco/git/variability/test/desa";
-            	selectedVariants.put(basePath + "/compra.bpmn/Pagar",
-            			"PagarConCredito/PagarConCredito.bpmn");
-            	selectedVariants.put(basePath + "/varPoint (Pagar)/PagarConCredito/PagarConCredito.bpmn/ProcesoDePago",
-            			"AmericanExpress/AmericanExpress.bpmn");
-            	selectedVariants.put(basePath + "/varPoint (Pagar)/PagarConCredito/varPoint (ProcesoDePago)/AmericanExpress/AmericanExpress.bpmn/Pais",
-            			"Uruguay.bpmn");
-            } else if (usuario.equals("nacho")) {
+            } else if (USUARIO.equals("nacho")) {
             	basePath = "/home/ibetancurt/repo/variability/test/desa";
-            	selectedVariants.put(basePath + "/compra.bpmn/Pagar",
-            			"PagarConCredito/PagarConCredito.bpmn");
-            	selectedVariants.put(basePath + "/varPoint (Pagar)/PagarConCredito/PagarConCredito.bpmn/ProcesoDePago",
-            			"AmericanExpress/AmericanExpress.bpmn");
-            	selectedVariants.put(basePath + "/varPoint (Pagar)/PagarConCredito/varPoint (ProcesoDePago)/AmericanExpress/AmericanExpress.bpmn/Pais",
-            			"Uruguay.bpmn");
-            } else if (usuario.equals("nico")) {
+            } else if (USUARIO.equals("nico")) {
             	basePath = "/Users/ndinetti/Desarrollo/sourcecode/variability/test/desa";
-            	selectedVariants.put(basePath + "/compra.bpmn/Pagar",
-            			"PagarConCredito/PagarConCredito.bpmn");
-            	selectedVariants.put(basePath + "/varPoint (Pagar)/PagarConCredito/PagarConCredito.bpmn/ProcesoDePago",
-            			"AmericanExpress/AmericanExpress.bpmn");
-            	selectedVariants.put(basePath + "/varPoint (Pagar)/PagarConCredito/varPoint (ProcesoDePago)/AmericanExpress/AmericanExpress.bpmn/Pais",
-            			"Uruguay.bpmn");
             }
+            selectedVariants.put(basePath + "/compra.bpmn/Pagar",
+            		"PagarConCredito/PagarConCredito.bpmn");
+            selectedVariants.put(basePath + "/varPoint (Pagar)/PagarConCredito/PagarConCredito.bpmn/ProcesoDePago",
+            		"AmericanExpress/AmericanExpress.bpmn");
+            selectedVariants.put(basePath + "/varPoint (Pagar)/PagarConCredito/varPoint (ProcesoDePago)/AmericanExpress/AmericanExpress.bpmn/Pais",
+            		"Uruguay.bpmn");
 
             replace(basePath, baseProcessFileName, selectedVariants, resultFileName);
 
