@@ -7,6 +7,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
 import java.util.Map;
+import java.util.Set;
 
 import javax.xml.parsers.ParserConfigurationException;
 import javax.xml.transform.TransformerConfigurationException;
@@ -42,9 +43,12 @@ public class ReemplazadorMain {
             // selectedVariants.put("Pagar", "PagarConCredito/PagarConCredito.bpmn");
             // selectedVariants.put("ProcesoDePago", "Visa.bpmn");
 
-            selectedVariants.put("Pagar", "PagarConCredito/PagarConCredito.bpmn");
-            selectedVariants.put("ProcesoDePago", "AmericanExpress/AmericanExpress.bpmn");
-            selectedVariants.put("Pais", "Uruguay.bpmn");
+            selectedVariants.put("/home/ibetancurt/repo/variability/test/desa/compra.bpmn/Pagar", "PagarConCredito/PagarConCredito.bpmn");
+            selectedVariants.put("/home/ibetancurt/repo/variability/test/desa/varPoint (Pagar)/PagarConCredito/PagarConCredito.bpmn/ProcesoDePago",
+                "AmericanExpress/AmericanExpress.bpmn");
+            selectedVariants.put(
+                "/home/ibetancurt/repo/variability/test/desa/varPoint (Pagar)/PagarConCredito/varPoint (ProcesoDePago)/AmericanExpress/AmericanExpress.bpmn/Pais",
+                "Uruguay.bpmn");
             /*
              * String basePath = "/home/abrusco/git/variability/test/pruebas/p4"; String baseProcessFileName = "p4.bpmn"; selectedVariants.put("p4.bpmn/Task_1",
              * "Lane_3");
@@ -107,7 +111,6 @@ public class ReemplazadorMain {
     private static void substitution(int i, String basePath, String baseProcessFileName, Map<String, String> allSelecteds, String resultFileName)
         throws IOException, Exception, SAXException, TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
 
-        Map<String, String> selectedVariants = allSelecteds;
 
         // selectedVariants.put("SubProcess_1", "Sub_A.bpmn");
 
@@ -119,10 +122,20 @@ public class ReemplazadorMain {
         // }
 
         LogUtils.logNext(baseProcessFileName, "Ini activitySupression");
-        ActivitySupression.activitySupression(basePath, baseProcessFileName, selectedVariants, resultFileName);
+        ActivitySupression.activitySupression(basePath, baseProcessFileName, allSelecteds, resultFileName);
         LogUtils.logBack(baseProcessFileName, "Fin activitySupression");
 
+        Set<String> selectedVariantsKeySet = allSelecteds.keySet();
+        Map<String, String> selectedVariants = new HashMap<>();
+        for (String key : selectedVariantsKeySet) {
+            String value = allSelecteds.get(key);
+            String newKey = key.replace(basePath + File.separatorChar + baseProcessFileName, basePath + File.separatorChar + resultFileName);
+            selectedVariants.put(newKey, value);
+        }
+
         LogUtils.logNext(baseProcessFileName, "Ini laneSubstitution");
+        // TODO - Nacho - 24 de jun. de 2016 - REVISAR PORQUE ME PARECE QUE HAy Q HACERLO DE NUEVO YA QUE PUEDEN HABER DOS VARIANTES IGUALES PARA DISTINTOS
+        // ARCHIVOS Y VA A CONSIDERAR LOS DOS PARA UNO SOLO
         LaneSubstitution.laneSubstitution(basePath, resultFileName, selectedVariants, resultFileName);
         LogUtils.logBack(baseProcessFileName, "Fin laneSubstitution");
 
@@ -139,7 +152,7 @@ public class ReemplazadorMain {
                 .get(basePath + File.separatorChar + "varPoint (" + subProcessName + ")" + File.separatorChar + subProcessFileRelativePath);
             String newBasePath = subProcessFileAbsolutePath.getParent().toString();
             String subProcessFileName = subProcessFileAbsolutePath.getFileName().toString();
-            substitution(i + 1, newBasePath, subProcessFileName, allSelecteds, "temp.bpmn");
+            substitution(i + 1, newBasePath, subProcessFileName, allSelecteds, resultFileName);
             LogUtils.logBack(baseProcessFileName, "Fin " + "temp.bpmn");
         }
         LogUtils.logBack(baseProcessFileName, "Fin recursión sobre subprocesos");
@@ -153,7 +166,7 @@ public class ReemplazadorMain {
                 .get(basePath + File.separatorChar + "varPoint (" + subProcessName + ")" + File.separatorChar + subProcessFileRelativePath);
             String subProcessFileName = subProcessFileAbsolutePath.getFileName().toString();
             String replace = subProcessFileRelativePath.replace(subProcessFileName, "");
-            SubprocessInsertion.subprocessInsertion(basePath, resultFileName, subProcessName, replace + "temp.bpmn", resultFileName);
+            SubprocessInsertion.subprocessInsertion(basePath, resultFileName, subProcessName, replace + resultFileName, resultFileName);
             LogUtils.logBack(baseProcessFileName, "Fin " + subProcessFileRelativePath);
         }
 

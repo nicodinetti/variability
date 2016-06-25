@@ -1,5 +1,6 @@
 package uy.edu.fing.modeler.variability.core;
 
+import java.io.File;
 import java.io.IOException;
 import java.util.List;
 import java.util.Map;
@@ -18,66 +19,67 @@ import uy.edu.fing.modeler.variability.utils.Utils;
 
 public class ActivitySupression {
 
-	public static void activitySupression(String basePath, String baseProcessFileName, Map<String, String> selectedVariants, String resultFileName)
-			throws IOException, Exception, SAXException, TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
+    public static void activitySupression(String basePath, String baseProcessFileName, Map<String, String> selectedVariants, String resultFileName)
+        throws IOException, Exception, SAXException, TransformerFactoryConfigurationError, TransformerConfigurationException, TransformerException {
 
-		Document doc = Utils.getDocument(basePath, baseProcessFileName);
+        Document doc = Utils.getDocument(basePath, baseProcessFileName);
 
-		List<Node> vPNodes = Utils.getVPListByType(doc, "bpmn2:task", "VPTask");
-		vPNodes.addAll(Utils.getVPListByType(doc, "bpmn2:subProcess", "VPSubProcess"));
+        List<Node> vPNodes = Utils.getVPListByType(doc, "bpmn2:task", "VPTask");
+        vPNodes.addAll(Utils.getVPListByType(doc, "bpmn2:subProcess", "VPSubProcess"));
 
-		LogUtils.log(baseProcessFileName, "VPs a suprimir: " + vPNodes);
+        LogUtils.log(baseProcessFileName, "VPs a suprimir: " + vPNodes);
 
-		for (Node vPNode : vPNodes) {
+        for (Node vPNode : vPNodes) {
 
-			String vPID = vPNode.getAttributes().getNamedItem("id").getNodeValue();
+            String vPID = vPNode.getAttributes().getNamedItem("id").getNodeValue();
 
-			String selectedVariant = selectedVariants.get(vPID);
+            String key = basePath + File.separatorChar + baseProcessFileName + File.separatorChar + vPID;
+            String selectedVariant = selectedVariants.get(key);
 
-			if (ReemplazadorMain.DELETE.equals(selectedVariant)) {
+            if (ReemplazadorMain.DELETE.equals(selectedVariant)) {
 
-				LogUtils.logNext(baseProcessFileName, "Suprimir: " + vPID);
+                LogUtils.logNext(baseProcessFileName, "Suprimir: " + vPID);
 
-				String incomingFlow = Utils.getNodeFlowID(vPNode, "bpmn2:incoming");
-				String outgoingFlow = Utils.getNodeFlowID(vPNode, "bpmn2:outgoing");
+                String incomingFlow = Utils.getNodeFlowID(vPNode, "bpmn2:incoming");
+                String outgoingFlow = Utils.getNodeFlowID(vPNode, "bpmn2:outgoing");
 
-				Node incomingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow", incomingFlow);
-				Node outgoingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow", outgoingFlow);
+                Node incomingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow", incomingFlow);
+                Node outgoingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow", outgoingFlow);
 
-				String targetRefFinal = ((Element) outgoingNode).getAttribute("targetRef");
-				((Element) incomingNode).setAttribute("targetRef", targetRefFinal);
+                String targetRefFinal = ((Element) outgoingNode).getAttribute("targetRef");
+                ((Element) incomingNode).setAttribute("targetRef", targetRefFinal);
 
-				Node targetRefFinalNode = Utils.getTargetRefFinalNode(doc, targetRefFinal);
+                Node targetRefFinalNode = Utils.getTargetRefFinalNode(doc, targetRefFinal);
 
-				Node targetRefFinalNodeIncoming = ((Element) targetRefFinalNode).getElementsByTagName("bpmn2:incoming").item(0);
-				targetRefFinalNodeIncoming.setTextContent(Utils.getTAGID(incomingNode));
+                Node targetRefFinalNodeIncoming = ((Element) targetRefFinalNode).getElementsByTagName("bpmn2:incoming").item(0);
+                targetRefFinalNodeIncoming.setTextContent(Utils.getTAGID(incomingNode));
 
-				Node outgoingFlowNodeEdge = Utils.getNodeByTag(doc, "bpmndi:BPMNEdge", outgoingFlow);
-				Node incomingFlowNodeEdge = Utils.getNodeByTag(doc, "bpmndi:BPMNEdge", incomingFlow);
-				Node vPIDNodeShape = Utils.getNodeByTag(doc, "bpmndi:BPMNShape", vPID);
-				Node targetRefFinalNodeShape = Utils.getNodeByTag(doc, "bpmndi:BPMNShape", targetRefFinal);
+                Node outgoingFlowNodeEdge = Utils.getNodeByTag(doc, "bpmndi:BPMNEdge", outgoingFlow);
+                Node incomingFlowNodeEdge = Utils.getNodeByTag(doc, "bpmndi:BPMNEdge", incomingFlow);
+                Node vPIDNodeShape = Utils.getNodeByTag(doc, "bpmndi:BPMNShape", vPID);
+                Node targetRefFinalNodeShape = Utils.getNodeByTag(doc, "bpmndi:BPMNShape", targetRefFinal);
 
-				// Eliminacion del FIGURE a borrar
-				Utils.figureSupression(doc, Utils.getTAGID(vPIDNodeShape), "bpmndi:BPMNShape");
-				Utils.figureSupression(doc, Utils.getTAGID(vPIDNodeShape), "bpmndi:BPMNShape");
-				Utils.figureSupression(doc, Utils.getTAGID(outgoingFlowNodeEdge), "bpmndi:BPMNEdge");
-				Utils.changeBPMNEdgeTarget(doc, Utils.getTAGID(incomingFlowNodeEdge), Utils.getTAGID(targetRefFinalNodeShape), "targetElement");
+                // Eliminacion del FIGURE a borrar
+                Utils.figureSupression(doc, Utils.getTAGID(vPIDNodeShape), "bpmndi:BPMNShape");
+                Utils.figureSupression(doc, Utils.getTAGID(vPIDNodeShape), "bpmndi:BPMNShape");
+                Utils.figureSupression(doc, Utils.getTAGID(outgoingFlowNodeEdge), "bpmndi:BPMNEdge");
+                Utils.changeBPMNEdgeTarget(doc, Utils.getTAGID(incomingFlowNodeEdge), Utils.getTAGID(targetRefFinalNodeShape), "targetElement");
 
-				// Eliminacion del TAG a borrar
-				Node nodoPadre = vPNode.getParentNode();
-				nodoPadre.removeChild(vPNode);
+                // Eliminacion del TAG a borrar
+                Node nodoPadre = vPNode.getParentNode();
+                nodoPadre.removeChild(vPNode);
 
-				nodoPadre = outgoingNode.getParentNode();
-				nodoPadre.removeChild(outgoingNode);
+                nodoPadre = outgoingNode.getParentNode();
+                nodoPadre.removeChild(outgoingNode);
 
-			} else {
-				LogUtils.logNext(baseProcessFileName, "NO suprimir: " + vPID);
-			}
+            } else {
+                LogUtils.logNext(baseProcessFileName, "NO suprimir: " + vPID);
+            }
 
-			LogUtils.back();
-		}
+            LogUtils.back();
+        }
 
-		Utils.saveResult(baseProcessFileName, doc, basePath, resultFileName);
-	}
+        Utils.saveResult(baseProcessFileName, doc, basePath, resultFileName);
+    }
 
 }

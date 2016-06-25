@@ -36,10 +36,12 @@ public class LaneSubstitution {
             return;
         }
 
-        String activity = filterSelecteds.keySet().iterator().next();
-        LogUtils.log(baseProcessFileName, "Actividad: " + activity);
+        String key = filterSelecteds.keySet().iterator().next();
+        String activity = key.substring(key.lastIndexOf(File.separatorChar) + 1, key.length());
 
-        String variante = filterSelecteds.get(activity) + ".bpmn";
+        LogUtils.log(baseProcessFileName, "Actividad: " + key);
+
+        String variante = filterSelecteds.get(key) + ".bpmn";
         Path path = Paths.get(basePath + File.separatorChar + variante);
         String newBasePath = path.getParent().toString();
         String newFileName = path.getFileName().toString();
@@ -73,6 +75,7 @@ public class LaneSubstitution {
             }
 
         }
+        // TODO - Nacho - 24 de jun. de 2016 - REVISAR ME PARECE Q ESTE IF TENDRIA Q IR ADENTRO.. IGUAL ES SOLO UN LOGUEO
         if (searchActivity == null) {
             LogUtils.log(baseProcessFileName, "ERROR: No existe esa Actividad !!!");
             return;
@@ -94,8 +97,8 @@ public class LaneSubstitution {
         Utils.saveResult(baseProcessFileName, doc, basePath, resultFileName);
 
         Map<String, String> selectedVariants2 = new HashMap<>();
-        selectedVariants2.put(activity, variante);
-        System.out.println("--- Activity: " + activity);
+        selectedVariants2.put(key, variante);
+        System.out.println("--- Activity: " + key);
         System.out.println("--- Variante: " + variante);
         LogUtils.logNext(baseProcessFileName, "LANE SUBSTITUTION: Ini laneSubstitution");
         ActivitySubstitution.activitySubstitution(basePath, resultFileName, selectedVariants2, resultFileName);
