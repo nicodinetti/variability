@@ -2,6 +2,7 @@ package uy.edu.fing.modeler.variability.core;
 
 import java.io.File;
 import java.io.IOException;
+import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.HashMap;
@@ -42,67 +43,71 @@ public class LaneSubstitution {
         LogUtils.log(baseProcessFileName, "Actividad: " + key);
 
         String variante = filterSelecteds.get(key) + ".bpmn";
-        Path path = Paths.get(basePath + File.separatorChar + "varPoint (" + activity + ")" + File.separatorChar + variante);
-        String newBasePath = path.getParent().toString();
-        String newFileName = path.getFileName().toString();
-        Document doc2 = Utils.getDocument(newBasePath, newFileName);
+        Path path = Paths.get(basePath + File.separatorChar + "varPoint(" + activity + ")" + File.separatorChar + variante);
 
-        Node nodoLane = getVariabilityLane(doc2);
-        String lane = Utils.getTAGID(nodoLane);
-        LogUtils.log(baseProcessFileName, "Lane: " + lane);
+        if (Files.exists(path)) {
 
-        NodeList lanes = doc.getElementsByTagName("bpmn2:lane");
+            String newBasePath = path.getParent().toString();
+            String newFileName = path.getFileName().toString();
+            Document doc2 = Utils.getDocument(newBasePath, newFileName);
 
-        // Buscar y eliminar la actividad
-        Node searchActivity = null;
-        for (int it = 0; it < lanes.getLength(); it++) {
-            Node nodo = lanes.item(it);
-            NodeList flowNodeRefs = nodo.getChildNodes();
-            for (int j = 0; j < flowNodeRefs.getLength(); j++) {
-                Node flowNodeRef = flowNodeRefs.item(j);
-                String attr = flowNodeRef.getTextContent();
-                System.out.println(j + " - " + attr);
-                if (attr.equals(activity)) {
-                    searchActivity = flowNodeRef;
+            Node nodoLane = getVariabilityLane(doc2);
+            String lane = Utils.getTAGID(nodoLane);
+            LogUtils.log(baseProcessFileName, "Lane: " + lane);
+
+            NodeList lanes = doc.getElementsByTagName("bpmn2:lane");
+
+            // Buscar y eliminar la actividad
+            Node searchActivity = null;
+            for (int it = 0; it < lanes.getLength(); it++) {
+                Node nodo = lanes.item(it);
+                NodeList flowNodeRefs = nodo.getChildNodes();
+                for (int j = 0; j < flowNodeRefs.getLength(); j++) {
+                    Node flowNodeRef = flowNodeRefs.item(j);
+                    String attr = flowNodeRef.getTextContent();
+                    System.out.println(j + " - " + attr);
+                    if (attr.equals(activity)) {
+                        searchActivity = flowNodeRef;
+                        break;
+                    }
+                }
+
+                if (searchActivity != null) {
+                    Utils.deleteNode(searchActivity);
+                    LogUtils.log(baseProcessFileName, "Actividad encontrada y eliminada");
                     break;
                 }
+
+            }
+            // TODO - Nacho - 24 de jun. de 2016 - REVISAR ME PARECE Q ESTE IF TENDRIA Q IR ADENTRO.. IGUAL ES SOLO UN LOGUEO
+            if (searchActivity == null) {
+                LogUtils.log(baseProcessFileName, "ERROR: No existe esa Actividad !!!");
+                return;
             }
 
-            if (searchActivity != null) {
-                Utils.deleteNode(searchActivity);
-                LogUtils.log(baseProcessFileName, "Actividad encontrada y eliminada");
-                break;
+            // Buscar el lane y agregarle la actividad
+            Element nodoLaneBuscado = null;
+            int lane_index = getLaneIndex(lane, lanes);
+            if (lane_index != -1) {
+                nodoLaneBuscado = (Element) lanes.item(lane_index);
+            } else {
+                nodoLaneBuscado = createLane(doc, nodoLane, lanes.item(0).getParentNode());
+                LogUtils.log(baseProcessFileName, "No existía el Lane. Creado el Lane !");
             }
+            nodoLaneBuscado.appendChild(searchActivity);
 
+            LogUtils.log(baseProcessFileName, "Agregada la actividad al Lane seleccionado");
+
+            Utils.saveResult(baseProcessFileName, doc, basePath, resultFileName);
+
+            Map<String, String> selectedVariants2 = new HashMap<>();
+            selectedVariants2.put(key, variante);
+            System.out.println("--- Activity: " + key);
+            System.out.println("--- Variante: " + variante);
+            LogUtils.logNext(baseProcessFileName, "LANE SUBSTITUTION: Ini laneSubstitution");
+            ActivitySubstitution.activitySubstitution(basePath, resultFileName, selectedVariants2, resultFileName);
+            LogUtils.logNext(baseProcessFileName, "LANE SUBSTITUTION: FIN laneSubstitution");
         }
-        // TODO - Nacho - 24 de jun. de 2016 - REVISAR ME PARECE Q ESTE IF TENDRIA Q IR ADENTRO.. IGUAL ES SOLO UN LOGUEO
-        if (searchActivity == null) {
-            LogUtils.log(baseProcessFileName, "ERROR: No existe esa Actividad !!!");
-            return;
-        }
-
-        // Buscar el lane y agregarle la actividad
-        Element nodoLaneBuscado = null;
-        int lane_index = getLaneIndex(lane, lanes);
-        if (lane_index != -1) {
-            nodoLaneBuscado = (Element) lanes.item(lane_index);
-        } else {
-            nodoLaneBuscado = createLane(doc, nodoLane, lanes.item(0).getParentNode());
-            LogUtils.log(baseProcessFileName, "No existía el Lane. Creado el Lane !");
-        }
-        nodoLaneBuscado.appendChild(searchActivity);
-
-        LogUtils.log(baseProcessFileName, "Agregada la actividad al Lane seleccionado");
-
-        Utils.saveResult(baseProcessFileName, doc, basePath, resultFileName);
-
-        Map<String, String> selectedVariants2 = new HashMap<>();
-        selectedVariants2.put(key, variante);
-        System.out.println("--- Activity: " + key);
-        System.out.println("--- Variante: " + variante);
-        LogUtils.logNext(baseProcessFileName, "LANE SUBSTITUTION: Ini laneSubstitution");
-        ActivitySubstitution.activitySubstitution(basePath, resultFileName, selectedVariants2, resultFileName);
-        LogUtils.logNext(baseProcessFileName, "LANE SUBSTITUTION: FIN laneSubstitution");
     }
 
     private static Node getVariabilityLane(Document doc) {
