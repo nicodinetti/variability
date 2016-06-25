@@ -25,42 +25,30 @@ public class ReemplazadorMain {
 
     public static final boolean IMPRIMIR_LOG_SUBPROCESS = false;
     public static final boolean PRINT_LOGS = false;
-
     public static final String DELETE = "DELETE";
+    public static final String USUARIO = "ale";
 
     public static void main(String[] args) throws Exception {
         try {
 
             String resultFileName = "result.bpmn";
             Map<String, String> selectedVariants = new HashMap<>();
-            // String basePath =
-            // "/Users/ndinetti/Desarrollo/sourcecode/variability/test/reemplazador";
-            String basePath = "/home/ibetancurt/repo/variability/test/desa";
+            String basePath = "";
             String baseProcessFileName = "compra.bpmn";
-
-            // selectedVariants.put("Pagar", "PagoEfectivo.bpmn");
-
-            // selectedVariants.put("Pagar", "PagarConCredito/PagarConCredito.bpmn");
-            // selectedVariants.put("ProcesoDePago", "Visa.bpmn");
-
-            selectedVariants.put("/home/ibetancurt/repo/variability/test/desa/compra.bpmn/Pagar", "PagarConCredito/PagarConCredito.bpmn");
-            selectedVariants.put("/home/ibetancurt/repo/variability/test/desa/varPoint (Pagar)/PagarConCredito/PagarConCredito.bpmn/ProcesoDePago",
-                "AmericanExpress/AmericanExpress.bpmn");
-            selectedVariants.put(
-                "/home/ibetancurt/repo/variability/test/desa/varPoint (Pagar)/PagarConCredito/varPoint (ProcesoDePago)/AmericanExpress/AmericanExpress.bpmn/Pais",
-                "Uruguay.bpmn");
-            /*
-             * String basePath = "/home/abrusco/git/variability/test/pruebas/p4"; String baseProcessFileName = "p4.bpmn"; selectedVariants.put("p4.bpmn/Task_1",
-             * "Lane_3");
-             */
-            // de un lane
-            // selectedVariants.put("Task_2", "Sub_B.bpmn"); // Ejemplo de
-            // sustitucion de
-            // una tarea //
-            // Poniendo "A.bpmn"
-            // funciona, todavia
-            // no con
-            // Subprocesos
+            
+            if (USUARIO.equals("ale")) {
+            	basePath = "/home/abrusco/git/variability/test/desa";
+            } else if (USUARIO.equals("nacho")) {
+            	basePath = "/home/ibetancurt/repo/variability/test/desa";
+            } else if (USUARIO.equals("nico")) {
+            	basePath = "/Users/ndinetti/Desarrollo/sourcecode/variability/test/desa";
+            }
+            selectedVariants.put(basePath + "/compra.bpmn/Pagar",
+            		"PagarConCredito/PagarConCredito.bpmn");
+            selectedVariants.put(basePath + "/varPoint (Pagar)/PagarConCredito/PagarConCredito.bpmn/ProcesoDePago",
+            		"AmericanExpress/AmericanExpress.bpmn");
+            selectedVariants.put(basePath + "/varPoint (Pagar)/PagarConCredito/varPoint (ProcesoDePago)/AmericanExpress/AmericanExpress.bpmn/Pais",
+            		"Uruguay.bpmn");
 
             replace(basePath, baseProcessFileName, selectedVariants, resultFileName);
 
