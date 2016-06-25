@@ -81,7 +81,7 @@ public class MyPageThree extends WizardPage {
 
 		try (BufferedWriter writer = Files.newBufferedWriter(filepathResult, Charset.defaultCharset())) {
 			for (String key : myWizard.getSelectedVariants().keySet()) {
-				String newKey = key.replace(basePath, "");
+				String newKey = key.replace(basePath + java.io.File.separatorChar, "");
 				writer.append(newKey + "=" + myWizard.getSelectedVariants().get(key) + "\n");
 			}
 		} catch (IOException e) {

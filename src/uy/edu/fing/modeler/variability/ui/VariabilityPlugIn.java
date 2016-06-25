@@ -97,9 +97,9 @@ public class VariabilityPlugIn extends AbstractHandler {
 				Reader reader = new FileReader(pPath);
 				Properties prop = new Properties();
 				prop.load(reader);
-				fix(prop);
+				Properties newProp = fix(path.toString(), prop);
 				String configName = p.getFileName().toString();
-				res.put(configName, prop);
+				res.put(configName, newProp);
 				LogUtils.log(this.getClass().getSimpleName(), "Configuración cargada: " + configName);
 			}
 		}
@@ -107,8 +107,14 @@ public class VariabilityPlugIn extends AbstractHandler {
 		return res;
 	}
 
-	private void fix(Properties prop) {
-
+	private Properties fix(String path, Properties prop) {
+		Properties newProp = new Properties();
+		for (Object okey : prop.keySet()) {
+			String key = (String) okey;
+			String value = prop.getProperty(key);
+			newProp.put(path + java.io.File.separatorChar + key, value);
+		}
+		return newProp;
 	}
 
 	private ModelVariant searchVPOptions(String folder, String file) throws SAXException, IOException, ParserConfigurationException {
