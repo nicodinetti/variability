@@ -26,7 +26,7 @@ public class ReemplazadorMain {
 	public static final boolean IMPRIMIR_LOG_SUBPROCESS = false;
 	public static final boolean PRINT_LOGS = false;
 	public static final String DELETE = "DELETE";
-	public static final String USUARIO = "ale";
+	public static final String USUARIO = "nacho";
 
 	public static void main(String[] args) throws Exception {
 		try {
@@ -44,7 +44,11 @@ public class ReemplazadorMain {
 				selectedVariants.put(basePath + "/p5.bpmn/Task_1", "Lane_2");
 				selectedVariants.put(basePath + "/p5.bpmn/Task_2", "Sub_B.bpmn");
 			} else if (USUARIO.equals("nacho")) {
-				basePath = "/home/ibetancurt/repo/variability/test/desa";
+				basePath = "/home/ibetancurt/repo/variability/test/pruebas/p5";
+				baseProcessFileName = "p5.bpmn";
+				resultFileName = "r17.bpmn";
+				selectedVariants.put(basePath + "/p5.bpmn/Task_1", "Lane_2");
+				selectedVariants.put(basePath + "/p5.bpmn/Task_2", "Sub_B.bpmn");
 			} else if (USUARIO.equals("nico")) {
 				basePath = "/Users/ndinetti/Desarrollo/sourcecode/variability/test/desa";
 			}
@@ -146,7 +150,7 @@ public class ReemplazadorMain {
 		for (String subProcessName : subprocessResult.keySet()) {
 			String subProcessFileRelativePath = subprocessResult.get(subProcessName);
 			LogUtils.logNext(baseProcessFileName, "Ini " + subProcessFileRelativePath);
-			Path subProcessFileAbsolutePath = Paths.get(basePath + File.separatorChar + "varPoint(" + subProcessName + ")" + File.separatorChar + subProcessFileRelativePath);
+			Path subProcessFileAbsolutePath = Paths.get(basePath + File.separatorChar + "varPoint (" + subProcessName + ")" + File.separatorChar + subProcessFileRelativePath);
 			String newBasePath = subProcessFileAbsolutePath.getParent().toString();
 			String subProcessFileName = subProcessFileAbsolutePath.getFileName().toString();
 			substitution(i + 1, newBasePath, subProcessFileName, allSelecteds, resultFileName);
@@ -159,7 +163,7 @@ public class ReemplazadorMain {
 		for (String subProcessName : subprocessResult.keySet()) {
 			String subProcessFileRelativePath = subprocessResult.get(subProcessName);
 			LogUtils.logNext(baseProcessFileName, "Ini " + subProcessFileRelativePath);
-			Path subProcessFileAbsolutePath = Paths.get(basePath + File.separatorChar + "varPoint(" + subProcessName + ")" + File.separatorChar + subProcessFileRelativePath);
+			Path subProcessFileAbsolutePath = Paths.get(basePath + File.separatorChar + "varPoint (" + subProcessName + ")" + File.separatorChar + subProcessFileRelativePath);
 			String subProcessFileName = subProcessFileAbsolutePath.getFileName().toString();
 			String replace = subProcessFileRelativePath.replace(subProcessFileName, "");
 			SubprocessInsertion.subprocessInsertion(basePath, resultFileName, subProcessName, replace + resultFileName, resultFileName);
