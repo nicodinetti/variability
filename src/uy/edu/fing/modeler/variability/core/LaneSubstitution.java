@@ -42,7 +42,7 @@ public class LaneSubstitution {
         LogUtils.log(baseProcessFileName, "Actividad: " + key);
 
         String variante = filterSelecteds.get(key) + ".bpmn";
-        Path path = Paths.get(basePath + File.separatorChar + "varPoint(" + activity + ")" + File.separatorChar + variante);
+        Path path = Paths.get(basePath + File.separatorChar + "varPoint (" + activity + ")" + File.separatorChar + variante);
         String newBasePath = path.getParent().toString();
         String newFileName = path.getFileName().toString();
         Document doc2 = Utils.getDocument(newBasePath, newFileName);
