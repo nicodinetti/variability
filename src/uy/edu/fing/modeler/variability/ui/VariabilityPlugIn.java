@@ -61,7 +61,7 @@ public class VariabilityPlugIn extends AbstractHandler {
 
 					String fileName = file.getName();
 					String folder = file.getParent().getRawLocation().toString();
-					ModelVariant variant = searchVPOptions(folder, fileName.replace(".bpmn", ""));
+					ModelVariant variant = searchVPOptions(folder, folder, fileName.replace(".bpmn", ""));
 
 					Map<String, Properties> configs = searchConfigs(file);
 					LogUtils.log(this.getClass().getSimpleName(), "Abriendo Wizard...");
@@ -117,10 +117,11 @@ public class VariabilityPlugIn extends AbstractHandler {
 		return newProp;
 	}
 
-	private ModelVariant searchVPOptions(String folder, String file) throws SAXException, IOException, ParserConfigurationException {
+	private ModelVariant searchVPOptions(String basePath, String folder, String file) throws SAXException, IOException, ParserConfigurationException {
 		ModelVariant res = new ModelVariant();
 		res.setVarpointName(file);
 		res.setFileName(folder + java.io.File.separatorChar + file + ".bpmn");
+		res.setLabel(res.getFileName().replace(basePath + java.io.File.separatorChar, ""));
 
 		LogUtils.log(this.getClass().getSimpleName(), "Buscando VPs en " + file);
 
@@ -139,6 +140,7 @@ public class VariabilityPlugIn extends AbstractHandler {
 
 			ModelVariant varPoint = new ModelVariant();
 			varPoint.setVarpointName(vpName);
+			varPoint.setLabel(vpFolder.replace(basePath + java.io.File.separatorChar, "") + java.io.File.separatorChar + vpName);
 			LogUtils.log(this.getClass().getSimpleName(), "Buscando variantes para el VP: " + vpName);
 
 			List<Path> paths = Files.list(folderPath).collect(Collectors.toList());
@@ -148,13 +150,14 @@ public class VariabilityPlugIn extends AbstractHandler {
 			for (Path vName : paths) {
 				LogUtils.log(this.getClass().getSimpleName(), "Variant: " + vName);
 				if (Files.isDirectory(vName)) {
-					ModelVariant variant = searchVPOptions(vpFolder + java.io.File.separatorChar + vName.getFileName().toString(), vName.getFileName().toString());
+					ModelVariant variant = searchVPOptions(folder, vpFolder + java.io.File.separatorChar + vName.getFileName().toString(), vName.getFileName().toString());
 					varPoint.getModelVariants().add(variant);
 
 				} else {
 					ModelVariant variant = new ModelVariant();
 					variant.setVarpointName(vName.getFileName().toString());
 					variant.setFileName(vName.toString());
+					variant.setLabel(res.getFileName().replace(basePath + java.io.File.separatorChar, ""));
 					varPoint.getModelVariants().add(variant);
 				}
 			}

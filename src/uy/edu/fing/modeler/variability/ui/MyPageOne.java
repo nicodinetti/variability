@@ -170,7 +170,7 @@ public class MyPageOne extends WizardPage {
 			String varName = varPoint.getVarpointName();
 
 			Label label = new Label(container, SWT.NONE);
-			label.setText(variant.getFileName() + "/" + varName + ": ");
+			label.setText(varPoint.getLabel());
 			label.setVisible(visible);
 
 			ComboVariant resCombo = new ComboVariant(container, SWT.DEFAULT, label);
