@@ -12,6 +12,7 @@ import javax.xml.transform.TransformerFactoryConfigurationError;
 import org.w3c.dom.Document;
 import org.w3c.dom.Element;
 import org.w3c.dom.Node;
+import org.w3c.dom.NodeList;
 import org.xml.sax.SAXException;
 
 import uy.edu.fing.modeler.variability.log.LogUtils;
@@ -53,6 +54,29 @@ public class ActivitySupression {
 
                 Node targetRefFinalNodeIncoming = ((Element) targetRefFinalNode).getElementsByTagName("bpmn2:incoming").item(0);
                 targetRefFinalNodeIncoming.setTextContent(Utils.getTAGID(incomingNode));
+
+                // Eliminar la tarea si estaba dentro de un lane
+                NodeList lanes = doc.getElementsByTagName("bpmn2:lane");
+
+                Node searchActivity = null;
+                for (int it = 0; it < lanes.getLength(); it++) {
+                    Node nodo = lanes.item(it);
+                    NodeList flowNodeRefs = nodo.getChildNodes();
+                    for (int j = 0; j < flowNodeRefs.getLength(); j++) {
+                        Node flowNodeRef = flowNodeRefs.item(j);
+                        String attr = flowNodeRef.getTextContent();
+                        if (attr.equals(vPID)) {
+                            searchActivity = flowNodeRef;
+                            break;
+                        }
+                    }
+
+                    if (searchActivity != null) {
+                        Utils.deleteNode(searchActivity);
+                        LogUtils.log(baseProcessFileName, "Actividad encontrada y eliminada");
+                        break;
+                    }
+                }
 
                 Node outgoingFlowNodeEdge = Utils.getNodeByTag(doc, "bpmndi:BPMNEdge", outgoingFlow);
                 Node incomingFlowNodeEdge = Utils.getNodeByTag(doc, "bpmndi:BPMNEdge", incomingFlow);
