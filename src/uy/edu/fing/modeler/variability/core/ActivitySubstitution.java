@@ -50,7 +50,7 @@ public class ActivitySubstitution {
 
 		for (Node vPNode : vPNodes) {
 
-			LogUtils.logNext(baseProcessFileName, "A reemplazar: " + vPNode);
+			LogUtils.logNext(baseProcessFileName, "A reemplazar: " + Utils.getTAGID(vPNode));
 
 			Node vNode = getVariant(docBuilder, basePath, baseProcessFileName, vPNode, Arrays.asList("bpmn2:startEvent"), selectedVariants);
 			// Es un subProcess
