@@ -37,15 +37,27 @@ public class ReemplazadorMain {
 			String baseProcessFileName = "compra.bpmn";
 
 			if (USUARIO.equals("ale")) {
-				basePath = "/home/abrusco/git/variability/test/desa";
+				// basePath = "/home/abrusco/git/variability/test/desa";
+				basePath = "/home/abrusco/git/variability/test/pruebas/p5";
+				baseProcessFileName = "p5.bpmn";
+				resultFileName = "r17.bpmn";
+				selectedVariants.put(basePath + "/p5.bpmn/Task_1", "Lane_2");
+				selectedVariants.put(basePath + "/p5.bpmn/Task_2", "Sub_B.bpmn");
 			} else if (USUARIO.equals("nacho")) {
 				basePath = "/home/ibetancurt/repo/variability/test/desa";
 			} else if (USUARIO.equals("nico")) {
 				basePath = "/Users/ndinetti/Desarrollo/sourcecode/variability/test/desa";
 			}
-			selectedVariants.put(basePath + "/compra.bpmn/Pagar", "PagarConCredito/PagarConCredito.bpmn");
-			selectedVariants.put(basePath + "/varPoint(Pagar)/PagarConCredito/PagarConCredito.bpmn/ProcesoDePago", "AmericanExpress/AmericanExpress.bpmn");
-			selectedVariants.put(basePath + "/varPoint(Pagar)/PagarConCredito/varPoint(ProcesoDePago)/AmericanExpress/AmericanExpress.bpmn/Pais", "Uruguay.bpmn");
+			/*
+			 * selectedVariants.put(basePath + "/compra.bpmn/Pagar",
+			 * "PagarConCredito/PagarConCredito.bpmn");
+			 * selectedVariants.put(basePath +
+			 * "/varPoint (Pagar)/PagarConCredito/PagarConCredito.bpmn/ProcesoDePago"
+			 * , "AmericanExpress/AmericanExpress.bpmn");
+			 * selectedVariants.put(basePath +
+			 * "/varPoint (Pagar)/PagarConCredito/varPoint (ProcesoDePago)/AmericanExpress/AmericanExpress.bpmn/Pais"
+			 * , "Uruguay.bpmn");
+			 */
 
 			replace(basePath, baseProcessFileName, selectedVariants, resultFileName);
 
@@ -134,7 +146,7 @@ public class ReemplazadorMain {
 		for (String subProcessName : subprocessResult.keySet()) {
 			String subProcessFileRelativePath = subprocessResult.get(subProcessName);
 			LogUtils.logNext(baseProcessFileName, "Ini " + subProcessFileRelativePath);
-			Path subProcessFileAbsolutePath = Paths.get(basePath + File.separatorChar + "varPoint(" + subProcessName + ")" + File.separatorChar + subProcessFileRelativePath);
+			Path subProcessFileAbsolutePath = Paths.get(basePath + File.separatorChar + "varPoint (" + subProcessName + ")" + File.separatorChar + subProcessFileRelativePath);
 			String newBasePath = subProcessFileAbsolutePath.getParent().toString();
 			String subProcessFileName = subProcessFileAbsolutePath.getFileName().toString();
 			substitution(i + 1, newBasePath, subProcessFileName, allSelecteds, resultFileName);
@@ -147,7 +159,7 @@ public class ReemplazadorMain {
 		for (String subProcessName : subprocessResult.keySet()) {
 			String subProcessFileRelativePath = subprocessResult.get(subProcessName);
 			LogUtils.logNext(baseProcessFileName, "Ini " + subProcessFileRelativePath);
-			Path subProcessFileAbsolutePath = Paths.get(basePath + File.separatorChar + "varPoint(" + subProcessName + ")" + File.separatorChar + subProcessFileRelativePath);
+			Path subProcessFileAbsolutePath = Paths.get(basePath + File.separatorChar + "varPoint (" + subProcessName + ")" + File.separatorChar + subProcessFileRelativePath);
 			String subProcessFileName = subProcessFileAbsolutePath.getFileName().toString();
 			String replace = subProcessFileRelativePath.replace(subProcessFileName, "");
 			SubprocessInsertion.subprocessInsertion(basePath, resultFileName, subProcessName, replace + resultFileName, resultFileName);
