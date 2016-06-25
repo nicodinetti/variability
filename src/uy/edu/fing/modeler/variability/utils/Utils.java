@@ -31,8 +31,9 @@ import uy.edu.fing.modeler.variability.log.LogUtils;
 
 public class Utils {
 
-	private static final String RENAME_SALT = "_0";
 	private static final boolean PRINT_LOGS = ReemplazadorMain.PRINT_LOGS;
+	private static int RENAME_SALT_NUMBER = 0;
+	private static String RENAME_SALT = "_0";
 
 	public static Document getDocument(String path, String processFileName) throws ParserConfigurationException, SAXException, IOException {
 		Path filepathBase = Paths.get(path + File.separatorChar + processFileName);
@@ -48,6 +49,8 @@ public class Utils {
 	}
 
 	public static List<Node> getSubTree(Document doc) {
+		RENAME_SALT_NUMBER ++;
+		RENAME_SALT = "_" + RENAME_SALT_NUMBER;
 		System.out.println("--- ARMADO DEL ARBOL A EXPORTAR ---");
 		List<Node> result = new ArrayList<Node>();
 		Node aux = getStartEvent(doc);
