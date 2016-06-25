@@ -1,0 +1,39 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!-- origin at X=0.0 Y=0.0 --><bpmn2:definitions xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ext="http://www.fing.edu.uy/bpmn2-variability/ext" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" exporter="org.eclipse.bpmn2.modeler.core" exporterVersion="1.2.2.201512032052" id="Definitions_1" name="Definitions 1" targetNamespace="http://www.fing.edu.uy/bpmn2-variability">
+  <bpmn2:process id="process_1" isExecutable="false" name="Default Process">
+    <bpmn2:startEvent id="StartEvent_1" name="Start Event 1">
+      <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:endEvent id="EndEvent_1" name="End Event 1">
+      <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:subProcess id="Pagar" name="Default Process">
+      <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
+    <bpmn2:startEvent id="StartEvent_1_0" name="Start Event 1">
+      <bpmn2:outgoing>SequenceFlow_1_0</bpmn2:outgoing>
+    </bpmn2:startEvent><bpmn2:sequenceFlow id="SequenceFlow_1_0" sourceRef="StartEvent_1_0" targetRef="ProcesoDePago_0"/><bpmn2:subProcess id="ProcesoDePago_0" name="Default Process">
+      <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
+    <bpmn2:startEvent id="StartEvent_1_0" name="Start Event 1">
+      <bpmn2:outgoing>SequenceFlow_1_0</bpmn2:outgoing>
+    </bpmn2:startEvent><bpmn2:sequenceFlow id="SequenceFlow_1_0" sourceRef="StartEvent_1_0" targetRef="Task_1_0"/><bpmn2:task id="Task_1_0" name="Elegir">
+      <bpmn2:incoming>SequenceFlow_1_0</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_2_0</bpmn2:outgoing>
+    </bpmn2:task><bpmn2:sequenceFlow id="SequenceFlow_2_0" sourceRef="Task_1_0" targetRef="Pais_0"/><bpmn2:task id="Pais_0" name="PagarEnUruguay">
+      <bpmn2:incoming>SequenceFlow_2_0</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_4_0</bpmn2:outgoing>
+    </bpmn2:task><bpmn2:sequenceFlow id="SequenceFlow_4_0" sourceRef="Pais_0" targetRef="EndEvent_1_0"/><bpmn2:endEvent id="EndEvent_1_0" name="End Event 1">
+      <bpmn2:incoming>SequenceFlow_4_0</bpmn2:incoming>
+    </bpmn2:endEvent></bpmn2:subProcess><bpmn2:sequenceFlow id="SequenceFlow_4_0" sourceRef="ProcesoDePago_0" targetRef="EndEvent_1_0"/><bpmn2:endEvent id="EndEvent_1_0" name="End Event 1">
+      <bpmn2:incoming>SequenceFlow_4_0</bpmn2:incoming>
+    </bpmn2:endEvent></bpmn2:subProcess>
+    <bpmn2:sequenceFlow id="SequenceFlow_1" sourceRef="StartEvent_1" targetRef="Task_1"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_4" sourceRef="Pagar" targetRef="EndEvent_1"/>
+    <bpmn2:task id="Task_1" name="Elegir">
+      <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
+    </bpmn2:task>
+    <bpmn2:sequenceFlow id="SequenceFlow_2" sourceRef="Task_1" targetRef="Pagar"/>
+  </bpmn2:process>
+  
+</bpmn2:definitions>

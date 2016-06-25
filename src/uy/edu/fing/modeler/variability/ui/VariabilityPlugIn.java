@@ -61,7 +61,7 @@ public class VariabilityPlugIn extends AbstractHandler {
 
 					String fileName = file.getName();
 					String folder = file.getParent().getRawLocation().toString();
-					ModelVariant variant = searchVPOptions(folder, fileName);
+					ModelVariant variant = searchVPOptions(folder, fileName.replace(".bpmn", ""));
 
 					Map<String, Properties> configs = searchConfigs(file);
 					LogUtils.log(this.getClass().getSimpleName(), "Abriendo Wizard...");
@@ -106,17 +106,16 @@ public class VariabilityPlugIn extends AbstractHandler {
 		return res;
 	}
 
-	@SuppressWarnings("resource")
 	private ModelVariant searchVPOptions(String folder, String file) throws SAXException, IOException, ParserConfigurationException {
 		ModelVariant res = new ModelVariant();
 		res.setVarpointName(file);
-		res.setFileName(folder + java.io.File.separatorChar + file);
+		res.setFileName(folder + java.io.File.separatorChar + file + ".bpmn");
 
 		LogUtils.log(this.getClass().getSimpleName(), "Buscando VPs en " + file);
 
 		DocumentBuilderFactory docFactory = DocumentBuilderFactory.newInstance();
 		DocumentBuilder docBuilder = docFactory.newDocumentBuilder();
-		Document variantDoc = docBuilder.parse(folder + java.io.File.separatorChar + file);
+		Document variantDoc = docBuilder.parse(folder + java.io.File.separatorChar + file + ".bpmn");
 
 		List<Node> vpList = getVPListByType(variantDoc, "bpmn2:task", "bpmn2:subProcess");
 		LogUtils.log(this.getClass().getSimpleName(), "Cantidad de VPs:" + vpList.size());
@@ -138,7 +137,7 @@ public class VariabilityPlugIn extends AbstractHandler {
 			for (Path vName : paths) {
 				LogUtils.log(this.getClass().getSimpleName(), "Variant: " + vName);
 				if (Files.isDirectory(vName)) {
-					ModelVariant variant = searchVPOptions(vpFolder + java.io.File.separatorChar + vName.getFileName().toString(), vName.getFileName().toString() + ".bpmn");
+					ModelVariant variant = searchVPOptions(vpFolder + java.io.File.separatorChar + vName.getFileName().toString(), vName.getFileName().toString());
 					varPoint.getModelVariants().add(variant);
 
 				} else {

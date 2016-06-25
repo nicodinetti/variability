@@ -1,5 +1,6 @@
 package uy.edu.fing.modeler.variability.ui;
 
+import java.io.File;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
@@ -173,7 +174,13 @@ public class MyPageOne extends WizardPage {
 
 			ComboVariant resCombo = new ComboVariant(container, SWT.DEFAULT, label);
 			resCombo.setVarName(variant.getFileName() + "/" + varName);
-			varPoint.getModelVariants().stream().forEach(x -> resCombo.add(x.getVarpointName()));
+			varPoint.getModelVariants().stream().forEach(x -> {
+				if (x.getVarpointName().endsWith(".bpmn")) {
+					resCombo.add(x.getVarpointName());
+				} else {
+					resCombo.add(x.getVarpointName() + File.separatorChar + x.getVarpointName() + ".bpmn");
+				}
+			});
 			resCombo.add(DELETE);
 			resCombo.setLayoutData(gd);
 			resCombo.select(0);
@@ -184,11 +191,10 @@ public class MyPageOne extends WizardPage {
 				public void widgetSelected(SelectionEvent arg0) {
 
 					ComboVariant source = (ComboVariant) arg0.getSource();
-					String selected = source.getVarName() + "/" + source.getText();
 
 					source.getComboVariants().stream().forEach(x -> {
-						System.out.println(selected + " - " + x.getVarName());
-						if (x.getVarName().startsWith(selected)) {
+						System.out.println(source.getText() + " - " + x.getVarName());
+						if (x.getVarName().contains(source.getText())) {
 							x.setVisible(true);
 						} else {
 							x.setVisible(false);
@@ -204,7 +210,7 @@ public class MyPageOne extends WizardPage {
 			});
 
 			for (ModelVariant variantRec : varPoint.getModelVariants()) {
-				List<ComboVariant> cvs = addOptions(gd, variantRec, true);
+				List<ComboVariant> cvs = addOptions(gd, variantRec, false);
 				resCombo.getComboVariants().addAll(cvs);
 			}
 
