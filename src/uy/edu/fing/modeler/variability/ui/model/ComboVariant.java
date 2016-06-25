@@ -4,6 +4,7 @@ import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Properties;
 
 import org.eclipse.swt.events.SelectionEvent;
 import org.eclipse.swt.events.SelectionListener;
@@ -66,17 +67,23 @@ public class ComboVariant extends Combo implements SelectionListener {
 		return "ComboVariant [varName=" + varName + ", comboVariants=" + comboVariants + "]";
 	}
 
-	public boolean selectVariant(String key, String value) {
+	public boolean selectVariant(String key, Properties properties) {
 
 		if (varName.equals(key)) {
-			this.setText(value);
-			return true;
-		}
+			this.setVisible(true);
+			this.setText(properties.getProperty(key));
+			this.widgetSelected(null);
 
-		for (ComboVariant comboVariant : comboVariants) {
-			if (comboVariant.selectVariant(key, value)) {
-				return true;
-			}
+			comboVariants.stream().forEach(x -> {
+				System.out.println(this.getText() + " - " + x.getVarName());
+				if (x.getVarName().contains(this.getText())) {
+					x.selectVariant(x.getVarName(), properties);
+				} else {
+					x.setVisible(false);
+				}
+			});
+
+			return true;
 		}
 
 		return false;

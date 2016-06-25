@@ -98,17 +98,18 @@ public class MyPageOne extends WizardPage {
 
 					Properties configFile = myWizard.getConfigs().get(selectedConfig);
 					if (configFile != null) {
+						boolean anyMatch = false;
 						for (Object value : configFile.keySet()) {
 							String valueString = value.toString();
 
-							boolean anyMatch = comboVariants.stream().anyMatch(x -> x.selectVariant(valueString, configFile.getProperty(valueString)));
-							if (!anyMatch) {
-								VariabilityPlugIn.failMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Archivo de configuración inválido");
-								cleanSelection();
-								break;
-							}
+							anyMatch = anyMatch || comboVariants.stream().anyMatch(x -> x.selectVariant(valueString, configFile));
+						}
+
+						if (!anyMatch) {
+							VariabilityPlugIn.failMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Archivo de configuración incompleto");
 						}
 					}
+
 				} else {
 					cleanSelection();
 				}

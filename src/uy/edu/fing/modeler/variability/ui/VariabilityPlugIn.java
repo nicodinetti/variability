@@ -122,7 +122,7 @@ public class VariabilityPlugIn extends AbstractHandler {
 
 		for (Node node : vpList) {
 			String vpName = node.getAttributes().getNamedItem("id").getNodeValue();
-			String vpFolder = folder + java.io.File.separatorChar + "varPoint (" + vpName + ")";
+			String vpFolder = folder + java.io.File.separatorChar + "varPoint(" + vpName + ")";
 
 			Path folderPath = getFolder(vpName, vpFolder);
 
