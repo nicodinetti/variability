@@ -18,7 +18,7 @@
         <bpmn2:flowNodeRef>Realizar_Evaluacion</bpmn2:flowNodeRef>
         <bpmn2:flowNodeRef>Realizar_Priorizacion</bpmn2:flowNodeRef>
         <bpmn2:flowNodeRef>Negociar_Cupos</bpmn2:flowNodeRef>
-        <bpmn2:flowNodeRef>SubProcess_2</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Adjudicar_Movilidad</bpmn2:flowNodeRef>
         <bpmn2:flowNodeRef>ExclusiveGateway_8</bpmn2:flowNodeRef>
         <bpmn2:flowNodeRef>ExclusiveGateway_24</bpmn2:flowNodeRef>
         <bpmn2:flowNodeRef>ExclusiveGateway_25</bpmn2:flowNodeRef>
@@ -58,7 +58,7 @@
       <bpmn2:outgoing>SequenceFlow_69</bpmn2:outgoing>
     </bpmn2:task>
     <bpmn2:sequenceFlow id="SequenceFlow_13" sourceRef="Realizar_Evaluacion" targetRef="Realizar_Priorizacion"/>
-    <bpmn2:subProcess id="SubProcess_2" ext:variability="VPSubProcess" name="Adjudicar Movilidad">
+    <bpmn2:subProcess id="Adjudicar_Movilidad" ext:variability="VPSubProcess" name="Adjudicar Movilidad">
       <bpmn2:incoming>SequenceFlow_31</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_65</bpmn2:outgoing>
       <bpmn2:multiInstanceLoopCharacteristics id="MultiInstanceLoopCharacteristics_3" behavior="None"/>
@@ -115,7 +115,7 @@
       <bpmn2:incoming>SequenceFlow_68</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_31</bpmn2:outgoing>
     </bpmn2:task>
-    <bpmn2:sequenceFlow id="SequenceFlow_31" sourceRef="Negociar_Cupos" targetRef="SubProcess_2"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_31" sourceRef="Negociar_Cupos" targetRef="Adjudicar_Movilidad"/>
     <bpmn2:sendTask id="SendTask_4" name="Comunicar Adjudicación de Movilidades">
       <bpmn2:incoming>SequenceFlow_66</bpmn2:incoming>
       <bpmn2:outgoing>SequenceFlow_71</bpmn2:outgoing>
@@ -129,7 +129,7 @@
       <bpmn2:outgoing>SequenceFlow_66</bpmn2:outgoing>
       <bpmn2:outgoing>SequenceFlow_67</bpmn2:outgoing>
     </bpmn2:exclusiveGateway>
-    <bpmn2:sequenceFlow id="SequenceFlow_65" sourceRef="SubProcess_2" targetRef="ExclusiveGateway_8"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_65" sourceRef="Adjudicar_Movilidad" targetRef="ExclusiveGateway_8"/>
     <bpmn2:sequenceFlow id="SequenceFlow_66" name="SI" sourceRef="ExclusiveGateway_8" targetRef="SendTask_4"/>
     <bpmn2:exclusiveGateway id="ExclusiveGateway_24" name="necesita reasignar cupos?" gatewayDirection="Diverging">
       <bpmn2:incoming>SequenceFlow_67</bpmn2:incoming>
@@ -176,7 +176,7 @@
           <dc:Bounds height="55.0" width="13.0" x="106.0" y="514.0"/>
         </bpmndi:BPMNLabel>
       </bpmndi:BPMNShape>
-      <bpmndi:BPMNShape id="BPMNShape_SubProcess_2" bpmnElement="SubProcess_2" isExpanded="true">
+      <bpmndi:BPMNShape id="BPMNShape_Adjudicar_Movilidad" bpmnElement="Adjudicar_Movilidad" isExpanded="true">
         <dc:Bounds height="283.0" width="364.0" x="735.0" y="353.0"/>
         <bpmndi:BPMNLabel id="BPMNLabel_96">
           <dc:Bounds height="13.0" width="91.0" x="741.0" y="356.0"/>
@@ -340,7 +340,7 @@
         <di:waypoint xsi:type="dc:Point" x="450.0" y="428.0"/>
         <bpmndi:BPMNLabel id="BPMNLabel_89"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_31" bpmnElement="SequenceFlow_31" sourceElement="BPMNShape_Negociar_Cupos" targetElement="BPMNShape_SubProcess_2">
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_31" bpmnElement="SequenceFlow_31" sourceElement="BPMNShape_Negociar_Cupos" targetElement="BPMNShape_Adjudicar_Movilidad">
         <di:waypoint xsi:type="dc:Point" x="681.0" y="428.0"/>
         <di:waypoint xsi:type="dc:Point" x="708.0" y="428.0"/>
         <di:waypoint xsi:type="dc:Point" x="708.0" y="494.0"/>
@@ -401,7 +401,7 @@
         <di:waypoint xsi:type="dc:Point" x="825.0" y="410.0"/>
         <bpmndi:BPMNLabel id="BPMNLabel_114"/>
       </bpmndi:BPMNEdge>
-      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_65" bpmnElement="SequenceFlow_65" sourceElement="BPMNShape_SubProcess_2" targetElement="BPMNShape_ExclusiveGateway_8">
+      <bpmndi:BPMNEdge id="BPMNEdge_SequenceFlow_65" bpmnElement="SequenceFlow_65" sourceElement="BPMNShape_Adjudicar_Movilidad" targetElement="BPMNShape_ExclusiveGateway_8">
         <di:waypoint xsi:type="dc:Point" x="1099.0" y="494.0"/>
         <di:waypoint xsi:type="dc:Point" x="1132.0" y="494.0"/>
         <di:waypoint xsi:type="dc:Point" x="1165.0" y="494.0"/>
