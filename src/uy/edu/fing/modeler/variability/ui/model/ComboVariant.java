@@ -19,6 +19,7 @@ public class ComboVariant extends Combo implements SelectionListener {
 	private String varName;
 	private List<ComboVariant> comboVariants = new ArrayList<>();
 	private Label label;
+	private String internalText;
 
 	public ComboVariant(Composite parent, int style, Label label) {
 		super(parent, style);
@@ -71,7 +72,14 @@ public class ComboVariant extends Combo implements SelectionListener {
 
 		if (varName.equals(key)) {
 			this.setVisible(true);
-			this.setText(properties.getProperty(key));
+			internalText = properties.getProperty(key);
+
+			if (!internalText.endsWith(".bpmn") && !internalText.equals("DELETE")) {
+				setText(internalText + ".bpmn");
+			} else {
+				setText(internalText);
+			}
+
 			this.widgetSelected(null);
 
 			comboVariants.stream().forEach(x -> {
@@ -108,7 +116,7 @@ public class ComboVariant extends Combo implements SelectionListener {
 
 		if (!getText().equals(ELEGIR)) {
 
-			collect.put(varName, getText());
+			collect.put(varName, internalText);
 
 			for (ComboVariant cv : comboVariants) {
 				Map<String, String> comboSelectedsImpl = cv.getComboSelecteds();

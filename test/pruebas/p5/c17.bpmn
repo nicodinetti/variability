@@ -1,0 +1,180 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!-- origin at X=0.0 Y=0.0 -->
+<bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ext="http://www.fing.edu.uy/bpmn2-variability/ext" xmlns:tns="http://www.fing.edu.uy/bpmn2-variability" xmlns:xs="http://www.w3.org/2001/XMLSchema" xmlns:yaoqiang="http://bpmn.sourceforge.net" xsi:schemaLocation="http://www.omg.org/spec/BPMN/20100524/MODEL http://bpmn.sourceforge.net/schemas/BPMN20.xsd http://www.omg.org/spec/BPMN/20100524/DI http://www.omg.org/spec/BPMN/20100524/DI-XMI http://www.omg.org/spec/DD/20100524/DC http://www.omg.org/spec/DD/20100524/DC-XMI http://www.omg.org/spec/DD/20100524/DI http://www.omg.org/spec/DD/20100524/DI-XMI" id="Definitions_1" exporter="org.eclipse.bpmn2.modeler.core" exporterVersion="1.2.2.201512032052" name="c17.bpmn" targetNamespace="http://www.fing.edu.uy/bpmn2-variability">
+  <bpmn2:collaboration id="Collaboration_1" name="Default Collaboration">
+    <bpmn2:participant id="Participant_1" name="Initiating Pool" processRef="Process_1">
+      <bpmn2:participantMultiplicity id="ParticipantMultiplicity_1"/>
+    </bpmn2:participant>
+  </bpmn2:collaboration>
+  <bpmn2:process id="Process_1" name="Initiating Process" definitionalCollaborationRef="Collaboration_1" isExecutable="false">
+    <bpmn2:laneSet id="LaneSet_1" name="Lane Set 1">
+      <bpmn2:lane id="Lane_1" name="Lane 1">
+        <bpmn2:flowNodeRef>EndEvent_1</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>StartEvent_1</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+      <bpmn2:lane id="Lane_2" name="Lane 2">
+        <bpmn2:flowNodeRef>Task_2</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Task_1</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+    </bpmn2:laneSet>
+    <bpmn2:startEvent id="StartEvent_1" name="Start Event 1">
+      <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:endEvent id="EndEvent_1" name="End Event 1">
+      <bpmn2:incoming>SequenceFlow_5</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:task id="Task_1" name="Task Lane 2 Nuevo">
+      <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
+    </bpmn2:task>
+    <bpmn2:subProcess id="Task_2" name="Default Process">
+      <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_5</bpmn2:outgoing>
+      <bpmn2:startEvent id="StartEvent_1_1" name="Start Event 1">
+        <bpmn2:outgoing>SequenceFlow_2_1</bpmn2:outgoing>
+      </bpmn2:startEvent>
+      <bpmn2:sequenceFlow id="SequenceFlow_2_1" sourceRef="StartEvent_1_1" targetRef="Task_S1B_1"/>
+      <bpmn2:task id="Task_S1B_1" name="Task S1B">
+        <bpmn2:incoming>SequenceFlow_2_1</bpmn2:incoming>
+        <bpmn2:outgoing>SequenceFlow_3_1</bpmn2:outgoing>
+      </bpmn2:task>
+      <bpmn2:sequenceFlow id="SequenceFlow_3_1" sourceRef="Task_S1B_1" targetRef="Task_S2B_1"/>
+      <bpmn2:task id="Task_S2B_1" name="Task S2B">
+        <bpmn2:incoming>SequenceFlow_3_1</bpmn2:incoming>
+        <bpmn2:outgoing>SequenceFlow_4_1</bpmn2:outgoing>
+      </bpmn2:task>
+      <bpmn2:sequenceFlow id="SequenceFlow_4_1" sourceRef="Task_S2B_1" targetRef="Task_S3B_1"/>
+      <bpmn2:task id="Task_S3B_1" name="Task S3B">
+        <bpmn2:incoming>SequenceFlow_4_1</bpmn2:incoming>
+        <bpmn2:outgoing>SequenceFlow_5_1</bpmn2:outgoing>
+      </bpmn2:task>
+      <bpmn2:sequenceFlow id="SequenceFlow_5_1" sourceRef="Task_S3B_1" targetRef="EndEvent_1_1"/>
+      <bpmn2:endEvent id="EndEvent_1_1" name="End Event 1">
+        <bpmn2:incoming>SequenceFlow_5_1</bpmn2:incoming>
+      </bpmn2:endEvent>
+    </bpmn2:subProcess>
+    <bpmn2:sequenceFlow id="SequenceFlow_1" sourceRef="StartEvent_1" targetRef="Task_1"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_2" sourceRef="Task_1" targetRef="Task_2"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_5" sourceRef="Task_2" targetRef="EndEvent_1"/>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="NOSEQUENOSECUANTO-_1" name="newDiagram" resolution="96.0">
+    <bpmndi:BPMNPlane id="BPMNPlane_Collaboration_1" bpmnElement="Collaboration_1">
+      <bpmndi:BPMNShape id="NOSEQUENOSECUANTO-Participant_1" bpmnElement="Participant_1" isExpanded="true" isHorizontal="true">
+        <dc:Bounds height="419.0" width="821.0" x="0.0" y="50.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_1" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="56.0" width="11.0" x="6.0" y="231.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NOSEQUENOSECUANTO-Lane_1" bpmnElement="Lane_1" isExpanded="true" isHorizontal="true">
+        <dc:Bounds height="200.0" width="791.0" x="30.0" y="50.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_2" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="28.0" width="11.0" x="36.0" y="136.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NOSEQUENOSECUANTO-Lane_2" bpmnElement="Lane_2" isExpanded="true" isHorizontal="true">
+        <dc:Bounds height="220.0" width="791.0" x="30.0" y="249.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_3" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="28.0" width="11.0" x="36.0" y="345.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NOSEQUENOSECUANTO-Task_2" bpmnElement="Task_2" isExpanded="true">
+        <dc:Bounds height="200.0" width="579.0" x="210.0" y="259.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_6">
+          <dc:Bounds height="11.0" width="66.0" x="216.0" y="262.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NOSEQUENOSECUANTO-EndEvent_1" bpmnElement="EndEvent_1">
+        <dc:Bounds height="32.0" width="32.0" x="80.0" y="134.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_4" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="11.0" width="51.0" x="71.0" y="166.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NOSEQUENOSECUANTO-StartEvent_1" bpmnElement="StartEvent_1">
+        <dc:Bounds height="32.0" width="32.0" x="80.0" y="90.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_5" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="11.0" width="55.0" x="69.0" y="122.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NOSEQUENOSECUANTO-Task_1" bpmnElement="Task_1">
+        <dc:Bounds height="55.0" width="85.0" x="65.0" y="331.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_7" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="11.0" width="80.0" x="67.0" y="353.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NOSEQUENOSECUANTO-EndEvent_1_1" bpmnElement="EndEvent_1_1">
+        <dc:Bounds height="32.0" width="32.0" x="747.0" y="356.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_8" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="11.0" width="51.0" x="738.0" y="388.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NOSEQUENOSECUANTO-Task_S3B_1" bpmnElement="Task_S3B_1">
+        <dc:Bounds height="55.0" width="85.0" x="602.0" y="344.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_9" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="11.0" width="40.0" x="624.0" y="366.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NOSEQUENOSECUANTO-Task_S2B_1" bpmnElement="Task_S2B_1">
+        <dc:Bounds height="55.0" width="85.0" x="457.0" y="344.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_10" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="11.0" width="40.0" x="479.0" y="366.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NOSEQUENOSECUANTO-Task_S1B_1" bpmnElement="Task_S1B_1">
+        <dc:Bounds height="55.0" width="85.0" x="312.0" y="344.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_11" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="11.0" width="40.0" x="334.0" y="366.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="NOSEQUENOSECUANTO-StartEvent_1_1" bpmnElement="StartEvent_1_1">
+        <dc:Bounds height="32.0" width="32.0" x="220.0" y="356.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_12" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="11.0" width="55.0" x="209.0" y="388.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge id="NOSEQUENOSECUANTO-SequenceFlow_5" bpmnElement="SequenceFlow_5" sourceElement="NOSEQUENOSECUANTO-Task_2" targetElement="NOSEQUENOSECUANTO-EndEvent_1">
+        <di:waypoint xsi:type="dc:Point" x="499.0" y="259.0"/>
+        <di:waypoint xsi:type="dc:Point" x="499.0" y="150.0"/>
+        <di:waypoint xsi:type="dc:Point" x="112.0" y="150.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_13"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="NOSEQUENOSECUANTO-SequenceFlow_2" bpmnElement="SequenceFlow_2" sourceElement="NOSEQUENOSECUANTO-Task_1" targetElement="NOSEQUENOSECUANTO-Task_2">
+        <di:waypoint xsi:type="dc:Point" x="150.0" y="358.0"/>
+        <di:waypoint xsi:type="dc:Point" x="180.0" y="358.0"/>
+        <di:waypoint xsi:type="dc:Point" x="210.0" y="359.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_14">
+          <dc:Bounds height="18.0" width="6.0" x="197.0" y="201.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="NOSEQUENOSECUANTO-SequenceFlow_1" bpmnElement="SequenceFlow_1" sourceElement="NOSEQUENOSECUANTO-StartEvent_1" targetElement="NOSEQUENOSECUANTO-Task_1">
+        <di:waypoint xsi:type="dc:Point" x="80.0" y="106.0"/>
+        <di:waypoint xsi:type="dc:Point" x="55.0" y="106.0"/>
+        <di:waypoint xsi:type="dc:Point" x="55.0" y="358.0"/>
+        <di:waypoint xsi:type="dc:Point" x="65.0" y="358.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_15"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="NOSEQUENOSECUANTO-SequenceFlow_2_1" bpmnElement="SequenceFlow_2_1" sourceElement="NOSEQUENOSECUANTO-StartEvent_1_1" targetElement="NOSEQUENOSECUANTO-Task_S1B_1">
+        <di:waypoint xsi:type="dc:Point" x="251.0" y="356.0"/>
+        <di:waypoint xsi:type="dc:Point" x="312.0" y="344.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_16"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="NOSEQUENOSECUANTO-SequenceFlow_4_1" bpmnElement="SequenceFlow_4_1" sourceElement="NOSEQUENOSECUANTO-Task_S2B_1" targetElement="NOSEQUENOSECUANTO-Task_S3B_1">
+        <di:waypoint xsi:type="dc:Point" x="542.0" y="344.0"/>
+        <di:waypoint xsi:type="dc:Point" x="602.0" y="344.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_17"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="NOSEQUENOSECUANTO-SequenceFlow_3_1" bpmnElement="SequenceFlow_3_1" sourceElement="NOSEQUENOSECUANTO-Task_S1B_1" targetElement="NOSEQUENOSECUANTO-Task_S2B_1">
+        <di:waypoint xsi:type="dc:Point" x="397.0" y="344.0"/>
+        <di:waypoint xsi:type="dc:Point" x="457.0" y="344.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_18"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge id="NOSEQUENOSECUANTO-SequenceFlow_5_1" bpmnElement="SequenceFlow_5_1" sourceElement="NOSEQUENOSECUANTO-Task_S3B_1" targetElement="NOSEQUENOSECUANTO-EndEvent_1_1">
+        <di:waypoint xsi:type="dc:Point" x="687.0" y="344.0"/>
+        <di:waypoint xsi:type="dc:Point" x="747.0" y="356.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_19"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+    <bpmndi:BPMNLabelStyle id="BPMNLabelStyle_1">
+      <dc:Font name="arial" size="9.0"/>
+    </bpmndi:BPMNLabelStyle>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>
