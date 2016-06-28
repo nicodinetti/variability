@@ -1,6 +1,6 @@
 #!/bin/bash
 
-PRINCIPIO_NOMBRE_SALIDA=o # EJEMPLO: Si los archivos de salida son: o1.bpmn, o2.bpmn, ...; poner "o".
+PRINCIPIO_NOMBRE_SALIDA=c # EJEMPLO: Si los archivos de salida son: o1.bpmn, o2.bpmn, ...; poner "o".
 
 for j in p1 p2 p3 p4 p5 p6 ; do
 	UBICACION=$j

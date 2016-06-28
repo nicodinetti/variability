@@ -40,9 +40,9 @@ public class ReemplazadorMain {
                 // basePath = "/home/abrusco/git/variability/test/desa";
                 basePath = "/home/abrusco/git/variability/test/pruebas/p5";
                 baseProcessFileName = "p5.bpmn";
-                selectedVariants.put(basePath + "/p5.bpmn/Task_1", "Lane_2");
+                selectedVariants.put(basePath + "/p5.bpmn/Task_1", DELETE);
                 selectedVariants.put(basePath + "/p5.bpmn/Task_2", "Lane_1");
-                resultFileName = "r16.bpmn";
+                resultFileName = "r14.bpmn";
             } else if (USUARIO.equals("nacho")) {
                 basePath = "/home/ibetancurt/repo/variability/test/desa";
             } else if (USUARIO.equals("nico")) {
