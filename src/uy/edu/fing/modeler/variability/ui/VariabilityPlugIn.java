@@ -140,7 +140,7 @@ public class VariabilityPlugIn extends AbstractHandler {
 
 			ModelVariant varPoint = new ModelVariant();
 			varPoint.setVarpointName(vpName);
-			varPoint.setLabel(vpFolder.replace(basePath + java.io.File.separatorChar, "") + java.io.File.separatorChar + vpName);
+			varPoint.setLabel(file + java.io.File.separatorChar + vpName);
 			LogUtils.log(this.getClass().getSimpleName(), "Buscando variantes para el VP: " + vpName);
 
 			List<Path> paths = Files.list(folderPath).collect(Collectors.toList());

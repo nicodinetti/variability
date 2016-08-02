@@ -22,7 +22,6 @@ import org.eclipse.swt.widgets.Event;
 import org.eclipse.swt.widgets.Label;
 import org.eclipse.swt.widgets.Listener;
 import org.eclipse.swt.widgets.Text;
-import org.eclipse.ui.PlatformUI;
 
 import uy.edu.fing.modeler.variability.ui.model.ComboVariant;
 import uy.edu.fing.modeler.variability.ui.model.ModelVariant;
@@ -98,15 +97,9 @@ public class MyPageOne extends WizardPage {
 
 					Properties configFile = myWizard.getConfigs().get(selectedConfig);
 					if (configFile != null) {
-						boolean allMatch = true;
 						for (Object value : configFile.keySet()) {
 							String valueString = value.toString();
-
-							allMatch = allMatch && comboVariants.stream().anyMatch(x -> x.selectVariant(valueString, configFile));
-						}
-
-						if (!allMatch) {
-							VariabilityPlugIn.failMessage(PlatformUI.getWorkbench().getActiveWorkbenchWindow().getShell(), "Archivo de configuración incompleto");
+							comboVariants.stream().anyMatch(x -> x.selectVariant(valueString, configFile));
 						}
 					}
 
@@ -179,7 +172,8 @@ public class MyPageOne extends WizardPage {
 				if (x.getVarpointName().endsWith(".bpmn")) {
 					resCombo.add(x.getVarpointName());
 				} else {
-					resCombo.add(x.getVarpointName() + File.separatorChar + x.getVarpointName() + ".bpmn");
+					String taskName = x.getVarpointName() + File.separatorChar + x.getVarpointName();
+					resCombo.add(taskName + ".bpmn");
 				}
 			});
 			resCombo.add(DELETE);
