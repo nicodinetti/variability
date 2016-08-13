@@ -30,17 +30,20 @@ public class BPMNLayout extends mxGraphLayout {
 	protected boolean invert;
 
 	/**
-	 * If the parent should be resized to match the width/height of the tree. Default is true.
+	 * If the parent should be resized to match the width/height of the tree.
+	 * Default is true.
 	 */
 	protected boolean resizeParent = true;
 
 	/**
-	 * Specifies if the tree should be moved to the top, left corner if it is inside a top-level layer. Default is true.
+	 * Specifies if the tree should be moved to the top, left corner if it is
+	 * inside a top-level layer. Default is true.
 	 */
 	protected boolean moveTree = true;
 
 	/**
-	 * Specifies if all edge points of traversed edges should be removed. Default is true.
+	 * Specifies if all edge points of traversed edges should be removed.
+	 * Default is true.
 	 */
 	protected boolean resetEdges = true;
 
@@ -84,21 +87,22 @@ public class BPMNLayout extends mxGraphLayout {
 		this.invert = invert;
 	}
 
+	@Override
 	public Graph getGraph() {
 		return (Graph) graph;
 	}
-	
+
 	/**
-	 * Returns a boolean indicating if the given <mxCell> should be ignored as a vertex. This returns true if the cell
-	 * has no connections.
+	 * Returns a boolean indicating if the given <mxCell> should be ignored as a
+	 * vertex. This returns true if the cell has no connections.
 	 * 
 	 * @param vertex
 	 *            Object that represents the vertex to be tested.
 	 * @return Returns true if the vertex should be ignored.
 	 */
+	@Override
 	public boolean isVertexIgnored(Object vertex) {
-		return super.isVertexIgnored(vertex) || graph.isSwimlane(vertex) || graph.getModel().getGeometry(vertex).isRelative()
-				|| graph.getConnections(vertex).length == 0;
+		return super.isVertexIgnored(vertex) || graph.isSwimlane(vertex) || graph.getModel().getGeometry(vertex).isRelative() || graph.getConnections(vertex).length == 0;
 	}
 
 	/**
@@ -206,6 +210,7 @@ public class BPMNLayout extends mxGraphLayout {
 		this.nodeDistance = nodeDistance;
 	}
 
+	@Override
 	public void execute(Object parent) {
 		GraphModel model = (GraphModel) graph.getModel();
 		List<Object> roots = graph.findTreeRoots(parent, true, invert);
@@ -244,7 +249,7 @@ public class BPMNLayout extends mxGraphLayout {
 					if (horizontal) {
 						bounds = horizontalLayout(node, x0, y0, null);
 					} else {
-						bounds = verticalLayout(node, null, x0, y0, null);
+						bounds = verticalLayout(node, x0, y0, null);
 					}
 
 					if (bounds != null) {
@@ -320,8 +325,8 @@ public class BPMNLayout extends mxGraphLayout {
 	}
 
 	/**
-	 * Does a depth first search starting at the specified cell. Makes sure the specified swimlane is never left by the
-	 * algorithm.
+	 * Does a depth first search starting at the specified cell. Makes sure the
+	 * specified swimlane is never left by the algorithm.
 	 */
 	protected TreeNode dfs(Object cell, Object parent, Set<Object> visited) {
 		if (visited == null) {
@@ -408,19 +413,19 @@ public class BPMNLayout extends mxGraphLayout {
 		return bounds;
 	}
 
-	protected mxRectangle verticalLayout(TreeNode node, Object parent, double x0, double y0, mxRectangle bounds) {
+	protected mxRectangle verticalLayout(TreeNode node, double x0, double y0, mxRectangle bounds) {
 		node.x += x0 + node.offsetY;
 		node.y += y0 + node.offsetX;
 		bounds = apply(node, bounds);
 		TreeNode child = node.child;
 
 		if (child != null) {
-			bounds = verticalLayout(child, node, node.x, node.y, bounds);
+			bounds = verticalLayout(child, node.x, node.y, bounds);
 			double siblingOffset = node.x + child.offsetY;
 			TreeNode s = child.next;
 
 			while (s != null) {
-				bounds = verticalLayout(s, node, siblingOffset, node.y + child.offsetX, bounds);
+				bounds = verticalLayout(s, siblingOffset, node.y + child.offsetX, bounds);
 				siblingOffset += s.offsetY;
 				s = s.next;
 			}
@@ -623,8 +628,8 @@ public class BPMNLayout extends mxGraphLayout {
 			if (bounds == null) {
 				bounds = new mxRectangle(g.getX(), g.getY(), g.getWidth(), g.getHeight());
 			} else {
-				bounds = new mxRectangle(Math.min(bounds.getX(), g.getX()), Math.min(bounds.getY(), g.getY()), Math.max(bounds.getX() + bounds.getWidth(),
-						g.getX() + g.getWidth()), Math.max(bounds.getY() + bounds.getHeight(), g.getY() + g.getHeight()));
+				bounds = new mxRectangle(Math.min(bounds.getX(), g.getX()), Math.min(bounds.getY(), g.getY()), Math.max(bounds.getX() + bounds.getWidth(), g.getX() + g.getWidth()),
+						Math.max(bounds.getY() + bounds.getHeight(), g.getY() + g.getHeight()));
 			}
 		}
 

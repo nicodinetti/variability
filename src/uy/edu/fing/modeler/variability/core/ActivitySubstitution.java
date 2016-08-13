@@ -39,7 +39,7 @@ public class ActivitySubstitution {
 		Map<String, String> res = new HashMap<>();
 
 		Document doc = Utils.getDocument(basePath, baseProcessFileName);
-		DocumentBuilder docBuilder = Utils.getDocumentBuilder(basePath, baseProcessFileName);
+		DocumentBuilder docBuilder = Utils.getDocumentBuilder();
 
 		List<Node> vPNodes = Utils.getVPListByType(doc, "bpmn2:task", "VPTask");
 		vPNodes.addAll(Utils.getVPListByType(doc, "bpmn2:subProcess", "VPSubProcess"));
@@ -63,9 +63,7 @@ public class ActivitySubstitution {
 
 			// Es una Task
 			if (vNode == null) {
-				vNode = getVariant(docBuilder, basePath, baseProcessFileName, vPNode,
-						Arrays.asList("bpmn2:task", "bpmn2:userTask", "bpmn2:manualTask", "bpmn2:scriptTask", "bpmn2:businessRuleTask", "bpmn2:serviceTask", "bpmn2:sendTask", "bpmn2:receiveTask"),
-						selectedVariants);
+				vNode = getVariant(docBuilder, basePath, baseProcessFileName, vPNode, Utils.tasks, selectedVariants);
 				if (PRINT_LOGS) {
 					LogUtils.log(baseProcessFileName, "Se reemplaza por una tarea: " + vNode);
 				}
@@ -75,7 +73,7 @@ public class ActivitySubstitution {
 				String vTagName = ((Element) vNode).getTagName();
 				if (vTagName.equals("bpmn2:process")) {
 
-					LogUtils.log(baseProcessFileName, "Copiar el archivo correspondiente al subproceso " + vNode);
+					LogUtils.log(baseProcessFileName, "No se reemplaza por Task. Copiar el archivo correspondiente al subproceso " + vNode.getNodeName());
 
 					String vPID = vPNode.getAttributes().getNamedItem("id").getNodeValue();
 					String key = basePath + File.separatorChar + baseProcessFileName + File.separatorChar + vPID;

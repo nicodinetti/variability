@@ -1,0 +1,199 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?><!-- origin at X=0.0 Y=0.0 --><bpmn2:definitions xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ext="http://www.fing.edu.uy/bpmn2-variability/ext" xmlns:tl="http://www.w3.org/2001/XMLSchema" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" exporter="org.eclipse.bpmn2.modeler.core" exporterVersion="1.2.2.201512032052" id="Definitions_1" targetNamespace="http://www.fing.edu.uy/bpmn2-variability">
+  <bpmn2:message id="Message_1" name="Message 1"/>
+  <bpmn2:process id="Process_2" isExecutable="false" name="DGRC Process">
+    <bpmn2:laneSet id="LaneSet_4" name="Lane Set 4">
+      <bpmn2:lane id="Lane_2" name="Secretaría">
+        <bpmn2:flowNodeRef>Recibir_Postulaciones</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>BoundaryEvent_1</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>StartEvent_1</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Controlar_Documentacion</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+      <bpmn2:lane id="Lane_5" name="Movilidades">
+        <bpmn2:flowNodeRef>ExclusiveGateway_25</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>ExclusiveGateway_8</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>ExclusiveGateway_24</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>EndEvent_7</bpmn2:flowNodeRef>
+        <bpmn2:flowNodeRef>Adjudicar_Movilidad</bpmn2:flowNodeRef>
+      </bpmn2:lane>
+    </bpmn2:laneSet>
+    <bpmn2:userTask id="Controlar_Documentacion" name="Controlar Documentación">
+      <bpmn2:incoming>SequenceFlow_2</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_1</bpmn2:outgoing>
+    </bpmn2:userTask>
+    <bpmn2:userTask id="Recibir_Postulaciones" name="Recibir Postulaciones">
+      <bpmn2:incoming>SequenceFlow_11</bpmn2:incoming>
+      <bpmn2:ioSpecification id="InputOutputSpecification_1">
+        <bpmn2:inputSet id="InputSet_1" name="Input Set 1"/>
+        <bpmn2:outputSet id="OutputSet_1" name="Output Set 1"/>
+      </bpmn2:ioSpecification>
+      <bpmn2:standardLoopCharacteristics id="StandardLoopCharacteristics_2">
+        <bpmn2:loopCondition id="FormalExpression_6" xsi:type="bpmn2:tFormalExpression">while true;</bpmn2:loopCondition>
+      </bpmn2:standardLoopCharacteristics>
+    </bpmn2:userTask>
+    <bpmn2:startEvent id="StartEvent_1" name="Start Event">
+      <bpmn2:outgoing>SequenceFlow_11</bpmn2:outgoing>
+    </bpmn2:startEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_11" sourceRef="StartEvent_1" targetRef="Recibir_Postulaciones"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_1" sourceRef="Controlar_Documentacion" targetRef="ExclusiveGateway_25"/>
+    <bpmn2:exclusiveGateway gatewayDirection="Diverging" id="ExclusiveGateway_8" name="hubo adjudicación?">
+      <bpmn2:incoming>SequenceFlow_4</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_67</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:exclusiveGateway gatewayDirection="Diverging" id="ExclusiveGateway_24" name="necesita reasignar cupos?">
+      <bpmn2:incoming>SequenceFlow_67</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_73</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:sequenceFlow id="SequenceFlow_67" name="NO" sourceRef="ExclusiveGateway_8" targetRef="ExclusiveGateway_24"/>
+    <bpmn2:exclusiveGateway gatewayDirection="Converging" id="ExclusiveGateway_25">
+      <bpmn2:incoming>SequenceFlow_1</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_3</bpmn2:outgoing>
+    </bpmn2:exclusiveGateway>
+    <bpmn2:endEvent id="EndEvent_7">
+      <bpmn2:incoming>SequenceFlow_73</bpmn2:incoming>
+    </bpmn2:endEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_73" name="NO" sourceRef="ExclusiveGateway_24" targetRef="EndEvent_7"/>
+    <bpmn2:boundaryEvent attachedToRef="Recibir_Postulaciones" id="BoundaryEvent_1" name="fecha límite postulaciones">
+      <bpmn2:outgoing>SequenceFlow_2</bpmn2:outgoing>
+      <bpmn2:timerEventDefinition id="TimerEventDefinition_1">
+        <bpmn2:timeDate id="FormalExpression_1" xsi:type="bpmn2:tFormalExpression">12/12/2016</bpmn2:timeDate>
+      </bpmn2:timerEventDefinition>
+    </bpmn2:boundaryEvent>
+    <bpmn2:sequenceFlow id="SequenceFlow_2" sourceRef="BoundaryEvent_1" targetRef="Controlar_Documentacion"/>
+    <bpmn2:subProcess id="Adjudicar_Movilidad" name="Default Process">
+      <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
+      <bpmn2:outgoing>SequenceFlow_4</bpmn2:outgoing>
+    </bpmn2:subProcess>
+    <bpmn2:sequenceFlow id="SequenceFlow_3" sourceRef="ExclusiveGateway_25" targetRef="Adjudicar_Movilidad"/>
+    <bpmn2:sequenceFlow id="SequenceFlow_4" sourceRef="Adjudicar_Movilidad" targetRef="ExclusiveGateway_8"/>
+  </bpmn2:process>
+  <bpmndi:BPMNDiagram id="BPMNDiagram_1" name="Default Process Diagram">
+    <bpmndi:BPMNPlane bpmnElement="Process_2" id="BPMNPlane_1">
+      <bpmndi:BPMNShape bpmnElement="Lane_2" id="BPMNShape_Lane_2" isHorizontal="true">
+        <dc:Bounds height="206.0" width="1220.0" x="100.0" y="140.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_80" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="43.0" width="11.0" x="106.0" y="221.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Lane_5" id="BPMNShape_Lane_5" isHorizontal="true">
+        <dc:Bounds height="235.0" width="1220.0" x="100.0" y="346.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_82" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="48.0" width="11.0" x="106.0" y="439.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_Participant_3" isHorizontal="true">
+        <dc:Bounds height="691.0" width="1485.0" x="70.0" y="47.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_81">
+          <dc:Bounds height="32.0" width="13.0" x="76.0" y="376.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="StartEvent_1" id="BPMNShape_StartEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="150.0" y="189.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_2" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="11.0" width="47.0" x="145.0" y="225.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Recibir_Postulaciones" id="BPMNShape_Recibir_Postulaciones">
+        <dc:Bounds height="54.0" width="96.0" x="230.0" y="180.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_3">
+          <dc:Bounds height="11.0" width="89.0" x="233.0" y="201.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Controlar_Documentacion" id="BPMNShape_Controlar_Documentacion">
+        <dc:Bounds height="50.0" width="110.0" x="366.0" y="182.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_5">
+          <dc:Bounds height="11.0" width="103.0" x="369.0" y="201.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape id="BPMNShape_BoundaryEvent_2">
+        <dc:Bounds height="36.0" width="36.0" x="308.0" y="103.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_4">
+          <dc:Bounds height="26.0" width="65.0" x="294.0" y="139.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ExclusiveGateway_8" id="BPMNShape_ExclusiveGateway_8" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="990.0" y="403.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_117" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="11.0" width="79.0" x="976.0" y="453.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ExclusiveGateway_24" id="BPMNShape_ExclusiveGateway_24" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="1110.0" y="403.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_120" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="22.0" width="73.0" x="1099.0" y="453.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="ExclusiveGateway_25" id="BPMNShape_ExclusiveGateway_25" isMarkerVisible="true">
+        <dc:Bounds height="50.0" width="50.0" x="535.0" y="495.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_122" labelStyle="BPMNLabelStyle_1"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="EndEvent_7" id="BPMNShape_EndEvent_7">
+        <dc:Bounds height="36.0" width="36.0" x="1230.0" y="410.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_129" labelStyle="BPMNLabelStyle_1"/>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="BoundaryEvent_1" id="BPMNShape_BoundaryEvent_1">
+        <dc:Bounds height="36.0" width="36.0" x="308.0" y="216.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_1">
+          <dc:Bounds height="22.0" width="58.0" x="297.0" y="252.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNShape bpmnElement="Adjudicar_Movilidad" id="BPMNShape_Task_1">
+        <dc:Bounds height="50.0" width="110.0" x="735.0" y="421.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_7" labelStyle="BPMNLabelStyle_1">
+          <dc:Bounds height="11.0" width="79.0" x="750.0" y="440.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNShape>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_11" id="BPMNEdge_SequenceFlow_11" sourceElement="BPMNShape_StartEvent_1" targetElement="BPMNShape_Recibir_Postulaciones">
+        <di:waypoint x="186.0" xsi:type="dc:Point" y="207.0"/>
+        <di:waypoint x="206.0" xsi:type="dc:Point" y="207.0"/>
+        <di:waypoint x="230.0" xsi:type="dc:Point" y="207.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_21"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_1" id="BPMNEdge_SequenceFlow_1" sourceElement="BPMNShape_Controlar_Documentacion" targetElement="BPMNShape_ExclusiveGateway_25">
+        <di:waypoint x="476.0" xsi:type="dc:Point" y="207.0"/>
+        <di:waypoint x="512.0" xsi:type="dc:Point" y="207.0"/>
+        <di:waypoint x="512.0" xsi:type="dc:Point" y="520.0"/>
+        <di:waypoint x="535.0" xsi:type="dc:Point" y="520.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_85"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_67" id="BPMNEdge_SequenceFlow_67" sourceElement="BPMNShape_ExclusiveGateway_8" targetElement="BPMNShape_ExclusiveGateway_24">
+        <di:waypoint x="1040.0" xsi:type="dc:Point" y="428.0"/>
+        <di:waypoint x="1100.0" xsi:type="dc:Point" y="428.0"/>
+        <di:waypoint x="1100.0" xsi:type="dc:Point" y="428.0"/>
+        <di:waypoint x="1110.0" xsi:type="dc:Point" y="428.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_121">
+          <dc:Bounds height="11.0" width="13.0" x="1109.0" y="440.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_73" id="BPMNEdge_SequenceFlow_73" sourceElement="BPMNShape_ExclusiveGateway_24" targetElement="BPMNShape_EndEvent_7">
+        <di:waypoint x="1160.0" xsi:type="dc:Point" y="428.0"/>
+        <di:waypoint x="1195.0" xsi:type="dc:Point" y="428.0"/>
+        <di:waypoint x="1230.0" xsi:type="dc:Point" y="428.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_130">
+          <dc:Bounds height="11.0" width="13.0" x="1189.0" y="429.0"/>
+        </bpmndi:BPMNLabel>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_2" id="BPMNEdge_SequenceFlow_2" sourceElement="BPMNShape_BoundaryEvent_1" targetElement="BPMNShape_Controlar_Documentacion">
+        <di:waypoint x="344.0" xsi:type="dc:Point" y="234.0"/>
+        <di:waypoint x="421.0" xsi:type="dc:Point" y="234.0"/>
+        <di:waypoint x="421.0" xsi:type="dc:Point" y="232.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_6"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_3" id="BPMNEdge_SequenceFlow_3" sourceElement="BPMNShape_ExclusiveGateway_25" targetElement="BPMNShape_Task_1">
+        <di:waypoint x="560.0" xsi:type="dc:Point" y="495.0"/>
+        <di:waypoint x="560.0" xsi:type="dc:Point" y="446.0"/>
+        <di:waypoint x="735.0" xsi:type="dc:Point" y="446.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_8"/>
+      </bpmndi:BPMNEdge>
+      <bpmndi:BPMNEdge bpmnElement="SequenceFlow_4" id="BPMNEdge_SequenceFlow_4" sourceElement="BPMNShape_Task_1" targetElement="BPMNShape_ExclusiveGateway_8">
+        <di:waypoint x="845.0" xsi:type="dc:Point" y="446.0"/>
+        <di:waypoint x="917.0" xsi:type="dc:Point" y="446.0"/>
+        <di:waypoint x="917.0" xsi:type="dc:Point" y="428.0"/>
+        <di:waypoint x="990.0" xsi:type="dc:Point" y="428.0"/>
+        <bpmndi:BPMNLabel id="BPMNLabel_9"/>
+      </bpmndi:BPMNEdge>
+    </bpmndi:BPMNPlane>
+    <bpmndi:BPMNLabelStyle id="BPMNLabelStyle_1">
+      <dc:Font name="arial" size="9.0"/>
+    </bpmndi:BPMNLabelStyle>
+  </bpmndi:BPMNDiagram>
+</bpmn2:definitions>

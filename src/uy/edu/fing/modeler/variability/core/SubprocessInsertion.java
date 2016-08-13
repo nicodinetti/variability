@@ -2,7 +2,6 @@ package uy.edu.fing.modeler.variability.core;
 
 import java.io.File;
 import java.io.IOException;
-import java.nio.file.Files;
 import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
@@ -25,7 +24,7 @@ public class SubprocessInsertion {
 		Document doc = Utils.getDocument(basePath, baseProcessFileName);
 		Document doc2 = Utils.getDocument(basePath + File.separatorChar + "varPoint(" + subProcessID + ")", subProcessFilePath);
 
-		Node subProcessNode = Utils.getTAGNodeByID(doc, "bpmn2:subProcess", subProcessID);
+		Node subProcessNode = Utils.getNodeByID(doc, subProcessID);
 		/*
 		 * String incomingFlowID = Utils.getNodeFlowID(subProcessNode,
 		 * "bpmn2:incoming"); Node incomingNode = Utils.getTAGNodeByID(doc,
@@ -71,7 +70,7 @@ public class SubprocessInsertion {
 
 		Path target = Paths.get(basePath + File.separatorChar + "varPoint(" + subProcessID + ")" + File.separatorChar + subProcessFilePath);
 		System.out.println("-------------- VAMOS A BORRAR EL ARCHIVO " + target + " !!!");
-		Files.delete(target);
+		// Files.delete(target);
 	}
 
 }
