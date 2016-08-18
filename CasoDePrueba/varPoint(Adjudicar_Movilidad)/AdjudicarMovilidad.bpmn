@@ -1,14 +1,7 @@
 <?xml version="1.0" encoding="UTF-8"?>
 <!-- origin at X=0.0 Y=0.0 -->
 <bpmn2:definitions xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xmlns:bpmn2="http://www.omg.org/spec/BPMN/20100524/MODEL" xmlns:bpmndi="http://www.omg.org/spec/BPMN/20100524/DI" xmlns:dc="http://www.omg.org/spec/DD/20100524/DC" xmlns:di="http://www.omg.org/spec/DD/20100524/DI" xmlns:ext="http://org.eclipse.bpmn2/ext" xmlns:xs="http://www.w3.org/2001/XMLSchema" id="Definitions_1" exporter="org.eclipse.bpmn2.modeler.core" exporterVersion="1.2.2.201512032052" name="Definitions 1" targetNamespace="http://org.eclipse.bpmn2/default/process">
-  <bpmn2:itemDefinition id="_ItemDefinition_24" isCollection="false" structureRef="xs:int"/>
-  <bpmn2:itemDefinition id="ItemDefinition_314" isCollection="false" structureRef="xs:integer"/>
-  <bpmn2:itemDefinition id="ItemDefinition_698" isCollection="false" structureRef="xs:byte"/>
-  <bpmn2:message id="Message_1" itemRef="ItemDefinition_698" name="Message 1">
-    <bpmn2:extensionElements>
-      <ext:style/>
-    </bpmn2:extensionElements>
-  </bpmn2:message>
+  
   <bpmn2:process id="process_1" name="Default Process" isExecutable="false">
     <bpmn2:exclusiveGateway id="ExclusiveGateway_1" gatewayDirection="Converging">
       <bpmn2:incoming>SequenceFlow_3</bpmn2:incoming>
@@ -168,4 +161,12 @@
       <dc:Font name="arial" size="9.0"/>
     </bpmndi:BPMNLabelStyle>
   </bpmndi:BPMNDiagram>
+  <bpmn2:itemDefinition id="_ItemDefinition_24" isCollection="false" structureRef="xs:int"/>
+  <bpmn2:itemDefinition id="ItemDefinition_314" isCollection="false" structureRef="xs:integer"/>
+  <bpmn2:itemDefinition id="ItemDefinition_698" isCollection="false" structureRef="xs:byte"/>
+  <bpmn2:message id="Message_1" itemRef="ItemDefinition_698" name="Message 1">
+    <bpmn2:extensionElements>
+      <ext:style/>
+    </bpmn2:extensionElements>
+  </bpmn2:message>
 </bpmn2:definitions>

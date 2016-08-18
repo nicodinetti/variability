@@ -25,44 +25,17 @@ public class SubprocessInsertion {
 		Document doc2 = Utils.getDocument(basePath + File.separatorChar + "varPoint(" + subProcessID + ")", subProcessFilePath);
 
 		Node subProcessNode = Utils.getNodeByID(doc, subProcessID);
-		/*
-		 * String incomingFlowID = Utils.getNodeFlowID(subProcessNode,
-		 * "bpmn2:incoming"); Node incomingNode = Utils.getTAGNodeByID(doc,
-		 * "bpmn2:sequenceFlow", incomingFlowID); String outgoingFlowID =
-		 * Utils.getNodeFlowID(subProcessNode, "bpmn2:outgoing"); Node
-		 * outgoingNode = Utils.getTAGNodeByID(doc, "bpmn2:sequenceFlow",
-		 * outgoingFlowID);
-		 */
+
 		List<Node> nodos = Utils.getSubTree(doc2);
 		// nodos = Utils.removeFirstAndLastNode(nodos);
 		if (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
 			System.out.println("-- Tamaño subTree: " + nodos.size() + " --");
 			System.out.println("--- FIN ARMADO DEL ARBOL A EXPORTAR ---\n");
 		}
-		/*
-		 * Utils.setFlowRef(incomingNode, Utils.getTAGID(nodos.get(0)),
-		 * "targetRef"); Utils.setFlowNode(nodos.get(0),
-		 * Utils.getTAGID(incomingNode), "bpmn2:incoming"); Node
-		 * ultNodoSubprocess = nodos.get(nodos.size() - 1);
-		 * Utils.setFlowNode(ultNodoSubprocess, outgoingFlowID,
-		 * "bpmn2:outgoing"); Utils.setFlowRef(outgoingNode,
-		 * Utils.getTAGID(ultNodoSubprocess), "sourceRef");
-		 * 
-		 * Node incomingFlowNodeEdge = Utils.getNodeByTag(doc,
-		 * "bpmndi:BPMNEdge", incomingFlowID); Utils.changeBPMNEdgeTarget(doc,
-		 * Utils.getTAGID(incomingFlowNodeEdge), Utils.getTAGID(nodos.get(0)),
-		 * "targetElement"); Node outgoingFlowNodeEdge = Utils.getNodeByTag(doc,
-		 * "bpmndi:BPMNEdge", outgoingFlowID); Utils.changeBPMNEdgeTarget(doc,
-		 * Utils.getTAGID(outgoingFlowNodeEdge),
-		 * Utils.getTAGID(ultNodoSubprocess), "sourceElement"); Node
-		 * vPIDNodeShape = Utils.getNodeByTag(doc, "bpmndi:BPMNShape",
-		 * Utils.getTAGID(subProcessNode)); Utils.figureSupression(doc,
-		 * Utils.getTAGID(vPIDNodeShape), "bpmndi:BPMNShape");
-		 * 
-		 * doc = Utils.insertSubTree(doc, incomingNode, nodos);
-		 * Utils.deleteNode(subProcessNode);
-		 */
+
 		doc = Utils.insertSubTree(doc, subProcessNode, nodos);
+
+		doc = Utils.insertExtras(doc, doc2);
 
 		System.out.println("-------------- Ya copie todo el subProcess !!!");
 

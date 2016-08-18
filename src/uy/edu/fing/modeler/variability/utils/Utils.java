@@ -35,7 +35,9 @@ public class Utils {
 			"bpmn2:receiveTask", "bpmn2:startEvent", "bpmn2:endEvent", "bpmn2:sequenceFlow", "bpmn2:subProcess", "bpmn2:process", "bpmndi:BPMNDiagram", "bpmndi:BPMNShape", "bpmndi:BPMNEdge",
 			"bpmn2:inclusiveGateway", "bpmn2:exclusiveGateway", "bpmn2:intermediateCatchEvent");
 	public static List<String> tasks = Arrays.asList("bpmn2:task", "bpmn2:userTask", "bpmn2:manualTask", "bpmn2:scriptTask", "bpmn2:businessRuleTask", "bpmn2:serviceTask", "bpmn2:sendTask",
-			"bpmn2:receiveTask");
+			"bpmn2:receiveTask", "bpmn2:intermediateCatchEvent");
+
+	public static List<String> excludedTags = Arrays.asList("bpmn2:process", "bpmndi:BPMNDiagram");
 
 	private static final boolean PRINT_LOGS = ReemplazadorMain.PRINT_LOGS;
 	private static int RENAME_SALT_NUMBER = 0;
@@ -60,18 +62,25 @@ public class Utils {
 		System.out.println("--- ARMADO DEL ARBOL A EXPORTAR ---");
 
 		Node start = getStartEvent(doc);
-		List<Node> result = getSubTreeImpl(doc, start, new ArrayList<>());
+		ArrayList<String> visiteds = new ArrayList<>();
+		visiteds.add(getTAGID(start));
+		List<Node> result = getSubTreeImpl(doc, start, visiteds);
 		return result;
 	}
 
 	public static List<Node> getSubTreeImpl(Document doc, Node node, List<String> visiteds) {
+		System.out.println("----> " + visiteds);
 		List<Node> res = new ArrayList<>();
 
-		visiteds.add(getTAGID(node));
-		Node nodeChanged = changeNodeID(doc, node.cloneNode(true));
+		Node nodeChanged = changeNodeID(node.cloneNode(true));
 		res.add(nodeChanged);
 
 		List<Node> nextNodes = getNextNode(doc, node, visiteds);
+
+		for (Node next : nextNodes) {
+			visiteds.add(getTAGID(next));
+		}
+
 		for (Node next : nextNodes) {
 			List<Node> rec = getSubTreeImpl(doc, next, visiteds);
 			res.addAll(rec);
@@ -126,27 +135,23 @@ public class Utils {
 	public static List<Node> getNextNode(Document doc2, Node first, List<String> visiteds) {
 		List<Node> res = new ArrayList<>();
 
-		if (isEndEvent(getNodeTAG(doc2, getTAGID(first)))) {
+		String id = getTAGID(first);
+		if (isEndEvent(getNodeTAG(doc2, id))) {
 			return res;
 		}
 
-		if (isSequenceFlow(getNodeTAG(doc2, getTAGID(first)))) {
+		if (isSequenceFlow(getNodeTAG(doc2, id))) {
 			String outgoingName = ((Element) first).getAttribute("targetRef");
-			Node outgoingFlowNode = getNodeByID(doc2, outgoingName);
-			res.add(outgoingFlowNode);
-			return res;
-		}
-
-		if (isTask(getNodeTAG(doc2, getTAGID(first)))) {
-			String outgoingName = getNodeFlowID(first, "bpmn2:outgoing").get(0);
-			Node outgoingFlowNode = getNodeByID(doc2, outgoingName);
-			res.add(outgoingFlowNode);
+			if (!visiteds.contains(outgoingName)) {
+				Node outgoingFlowNode = getNodeByID(doc2, outgoingName);
+				res.add(outgoingFlowNode);
+			}
 			return res;
 		}
 
 		List<String> outgoings = getNodeFlowID(first, "bpmn2:outgoing");
 		for (String outgoing : outgoings) {
-			if (visiteds.contains(outgoing)) {
+			if (!visiteds.contains(outgoing)) {
 				Node outgoingFlowNode = getNodeByID(doc2, outgoing);
 				res.add(outgoingFlowNode);
 			}
@@ -189,7 +194,8 @@ public class Utils {
 
 	private static Node getNodeByID(Document doc, String tag, String idTarget) {
 
-		System.out.println("************Buscando " + tag + " con ID= " + idTarget);
+		// System.out.println("************Buscando " + tag + " con ID= " +
+		// idTarget);
 		NodeList tagsList = doc.getElementsByTagName(tag);
 		int length = tagsList.getLength();
 		for (int it = 0; it < length; it++) {
@@ -200,7 +206,8 @@ public class Utils {
 				 * if (PRINT_LOGS) LogUtils.log("getTAGNodeByID",
 				 * "Nodo encontrado " + getTAGID(node));
 				 */
-				System.out.println("******************************** Encontrado encontrado " + tag + " con ID= " + idTarget);
+				// System.out.println("********************************
+				// Encontrado encontrado " + tag + " con ID= " + idTarget);
 				return node;
 			}
 		}
@@ -232,12 +239,15 @@ public class Utils {
 	}
 
 	public static boolean isEndEvent(String tag) {
-		return tag.contains("bpmn2:endEvent");
+		return tag.equals("bpmn2:endEvent");
 	}
 
 	public static boolean isSequenceFlow(String tag) {
-		List<String> tags = Arrays.asList("bpmn2:sequenceFlow");
-		return tags.contains(tag);
+		return tag.equals("bpmn2:sequenceFlow");
+	}
+
+	public static boolean isGateway(String tag) {
+		return Arrays.asList("bpmn2:inclusiveGateway", "bpmn2:exclusiveGateway").contains(tag);
 	}
 
 	public static void setFlowNode(Node source, String flowID, String tag) {
@@ -256,25 +266,35 @@ public class Utils {
 		}
 	}
 
-	public static Node changeNodeID(Document doc, Node nodo) {
+	public static Node changeNodeID(Node nodo) {
 		String nuevoNodoID = getTAGID(nodo) + RENAME_SALT;
+		System.out.println("nuevoNodoID = " + nuevoNodoID);
 		((Element) nodo).setAttribute("id", nuevoNodoID);
 		if (isSequenceFlow(nodo.getNodeName())) {
 			// Si el nodo es SequenceFlow, también le agrego un SALT al
 			// sourceRef y targetRef
 			((Element) nodo).setAttribute("sourceRef", ((Element) nodo).getAttribute("sourceRef") + RENAME_SALT);
 			((Element) nodo).setAttribute("targetRef", ((Element) nodo).getAttribute("targetRef") + RENAME_SALT);
-		} else if (isTask(nodo.getNodeName())) {
-			Node incomingNode = getNodeByID(doc, "bpmn2:sequenceFlow", getNodeFlowID(nodo, "bpmn2:incoming").get(0));
-			Node outgoingNode = getNodeByID(doc, "bpmn2:sequenceFlow", getNodeFlowID(nodo, "bpmn2:outgoing").get(0));
-			setFlowNode(nodo, getTAGID(incomingNode) + RENAME_SALT, "bpmn2:incoming");
-			setFlowNode(nodo, getTAGID(outgoingNode) + RENAME_SALT, "bpmn2:outgoing");
-		} else if (isStartEvent(nodo.getNodeName())) {
-			Node outgoingNode = getNodeByID(doc, "bpmn2:sequenceFlow", getNodeFlowID(nodo, "bpmn2:outgoing").get(0));
-			setFlowNode(nodo, getTAGID(outgoingNode) + RENAME_SALT, "bpmn2:outgoing");
-		} else if (isEndEvent(nodo.getNodeName())) {
-			Node incomingNode = getNodeByID(doc, "bpmn2:sequenceFlow", getNodeFlowID(nodo, "bpmn2:incoming").get(0));
-			setFlowNode(nodo, getTAGID(incomingNode) + RENAME_SALT, "bpmn2:incoming");
+			System.out.println("isSequenceFlow");
+
+		} else {
+
+			NodeList inc = ((Element) nodo).getElementsByTagName("bpmn2:incoming");
+			for (int i = 0; i < inc.getLength(); i++) {
+				Node item = inc.item(i);
+				String id = item.getTextContent();
+				item.setTextContent(id + RENAME_SALT);
+				System.out.println("incoming=" + id + RENAME_SALT);
+			}
+
+			NodeList out = ((Element) nodo).getElementsByTagName("bpmn2:outgoing");
+			for (int i = 0; i < out.getLength(); i++) {
+				Node item = out.item(i);
+				String id = item.getTextContent();
+				item.setTextContent(id + RENAME_SALT);
+				System.out.println("outgoing=" + id + RENAME_SALT);
+			}
+
 		}
 		return nodo;
 	}
@@ -284,10 +304,7 @@ public class Utils {
 		printTree(nodos);
 
 		for (Node node : nodos) {
-			System.out.println("TAG");
-			System.out.println(node.getNodeName());
 			Node newNode = doc.importNode(node, true);
-			System.out.println(newNode.getNodeName());
 			parentNode.appendChild(newNode);
 			if (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
 				LogUtils.logNext("insertSubTree", "Insertamos " + getTAGID(newNode));
@@ -298,21 +315,6 @@ public class Utils {
 		LogUtils.log("insertSubTree", "Fin Insertando nodos en el nuevo documento: " + nodos);
 		return doc;
 	}
-
-	/*
-	 * VIEJO public static Document insertSubTree(Document doc, Node first,
-	 * List<Node> nodos) { LogUtils.log("insertSubTree",
-	 * "Insertando nodos en el nuevo documento: " + nodos); //printTree(nodos);
-	 * 
-	 * Node parentNode = first.getParentNode(); for (Node node : nodos) { Node
-	 * newNode = doc.importNode(node, true); parentNode.appendChild(newNode); if
-	 * (ReemplazadorMain.IMPRIMIR_LOG_SUBPROCESS) {
-	 * LogUtils.logNext("insertSubTree", "Insertamos " + getTAGID(newNode));
-	 * LogUtils.back(); } }
-	 * 
-	 * LogUtils.log("insertSubTree",
-	 * "Fin Insertando nodos en el nuevo documento: " + nodos); return doc; }
-	 */
 
 	public static void changeBPMNEdgeTarget(Document doc, String elementId, String newRefElement, String ref) {
 		NodeList bpmnEdges = doc.getElementsByTagName("bpmndi:BPMNEdge");
@@ -388,6 +390,27 @@ public class Utils {
 		nodoPadre.removeChild(nodo);
 		if (PRINT_LOGS)
 			LogUtils.log("deleteNode", "Eliminado nodo " + getTAGID(nodo));
+	}
+
+	public static Document insertExtras(Document doc, Document tmp) {
+
+		Node parentNode = doc.getElementsByTagName("bpmn2:definitions").item(0);
+
+		Node item = tmp.getElementsByTagName("bpmn2:definitions").item(0);
+		NodeList childNodes = item.getChildNodes();
+		for (int j = 0; j < childNodes.getLength(); j++) {
+			Node item2 = childNodes.item(j);
+			String tagName = item2.getNodeName();
+			if (!excludedTags.contains(tagName)) {
+				// Copiar el nodo a doc
+				Node newNode = doc.importNode(item2, true);
+				parentNode.appendChild(newNode);
+				System.out.println("AGREGADO " + tagName);
+			}
+		}
+
+		return doc;
+
 	}
 
 }
