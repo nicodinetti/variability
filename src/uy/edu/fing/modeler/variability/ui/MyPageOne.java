@@ -40,7 +40,7 @@ public class MyPageOne extends WizardPage {
 
 	public MyPageOne() {
 		super("Configuración");
-		setTitle("Configuration y selección de variantes");
+		setTitle("Configuración y selección de variantes");
 		setDescription("Seleccione las variantes a utilizar para cada tipo de punto de variación del proceso base seleccionado.");
 	}
 
@@ -51,6 +51,7 @@ public class MyPageOne extends WizardPage {
 
 		GridLayout layout = new GridLayout();
 		layout.numColumns = 2;
+		layout.verticalSpacing = 12;
 
 		container = new Composite(parent, SWT.NONE);
 		container.setLayout(layout);
@@ -73,7 +74,7 @@ public class MyPageOne extends WizardPage {
 
 		configOptions = new ComboVariant(container, SWT.DEFAULT, lConfigName);
 		myWizard.getConfigs().keySet().stream().forEach(x -> configOptions.add(x));
-		configOptions.add("Nueva configuración...");
+		configOptions.add("Nueva configuración");
 		configOptions.setLayoutData(gd);
 		configOptions.select(0);
 		configOptions.addSelectionListener(new SelectionListener() {
@@ -84,7 +85,7 @@ public class MyPageOne extends WizardPage {
 
 				Combo configOptions = (Combo) arg0.getSource();
 				String selectedConfig = configOptions.getText();
-				newConfig = selectedConfig.equals("Nueva configuración...");
+				newConfig = selectedConfig.equals("Nueva configuración");
 				newConfigName.setVisible(newConfig);
 				lNewConfigName.setVisible(newConfig);
 				setPageComplete(allSelected());
