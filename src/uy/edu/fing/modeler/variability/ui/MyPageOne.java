@@ -168,7 +168,7 @@ public class MyPageOne extends WizardPage {
 			label.setVisible(visible);
 
 			ComboVariant resCombo = new ComboVariant(container, SWT.DEFAULT, label);
-			resCombo.setVarName(variant.getFileName() + "/" + varName);
+			resCombo.setVarName(variant.getFileName() + File.separatorChar + varName);
 			varPoint.getModelVariants().stream().forEach(x -> {
 				if (x.getVarpointName().endsWith(".bpmn")) {
 					resCombo.add(x.getVarpointName());
