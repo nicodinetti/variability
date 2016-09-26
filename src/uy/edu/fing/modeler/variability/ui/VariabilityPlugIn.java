@@ -112,7 +112,7 @@ public class VariabilityPlugIn extends AbstractHandler {
 		for (Object okey : prop.keySet()) {
 			String key = (String) okey;
 			String value = prop.getProperty(key);
-			newProp.put(path + java.io.File.separatorChar + key, value);
+			newProp.put(path + java.io.File.separatorChar + key.replaceAll("#", java.io.File.separatorChar + ""), value);
 		}
 		return newProp;
 	}
