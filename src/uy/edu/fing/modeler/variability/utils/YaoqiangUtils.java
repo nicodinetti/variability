@@ -327,6 +327,10 @@ public class YaoqiangUtils extends BPMNCodec {
 		try {
 			String xsdDir = new File(YaoqiangUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath())
 					.getAbsolutePath() + File.separatorChar + "resources" + File.separatorChar;
+			
+			if (!new File(xsdDir + "BPMN20.xsd").exists()) {
+				xsdDir = YaoqiangUtils.class.getResource("/resources/").getPath().toString();
+			}
 
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 			docBuilderFactory.setValidating(true);
