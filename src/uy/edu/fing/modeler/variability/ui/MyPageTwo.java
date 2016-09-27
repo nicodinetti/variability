@@ -22,8 +22,8 @@ public class MyPageTwo extends WizardPage {
 
 	public MyPageTwo() {
 		super("Ejecutor");
-		setTitle("Ejecutar generación");
-		setDescription("Se ejecutará la generación de la variante en base a la selección anterior, y se persistirá la configuración para futuras generaciones de forma más sencilla");
+		setTitle("Ejecutar generacion");
+		setDescription("Se ejecutara la generacion de la variante en base a la seleccion anterior, y se persistira la configuracion para futuras generaciones de forma mas sencilla");
 	}
 
 	@Override
@@ -36,7 +36,7 @@ public class MyPageTwo extends WizardPage {
 		container.setLayout(layout);
 
 		lConfigName = new Label(container, NONE);
-		lConfigName.setText("Nombre de la configuración: ");
+		lConfigName.setText("Nombre de la configuracion: ");
 		configSelection = new Label(container, NONE);
 
 		new Label(container, NONE);
@@ -66,11 +66,11 @@ public class MyPageTwo extends WizardPage {
 					basePath = basePath.replaceAll("/", replacement);
 
 					ReemplazadorMain.replace(basePath, baseProcessFileName, selectedVariants, resultFileName);
-					result.setText("Se generó la variante correctamente");
+					result.setText("Se genero la variante correctamente");
 					setPageComplete(true);
 
 				} catch (Exception e) {
-					result.setText("Falló el proceso de generación: " + e.getMessage());
+					result.setText("Fallo el proceso de generacion: " + e.getMessage());
 					setPageComplete(false);
 				}
 

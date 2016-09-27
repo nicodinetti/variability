@@ -24,9 +24,9 @@ public class MyPageThree extends WizardPage {
 	private Label lresultFile2;
 
 	public MyPageThree() {
-		super("Finalización");
-		setTitle("Guardado del resultado y la configuración.");
-		setDescription("Guardado del resultado y la configuración.");
+		super("Finalizacion");
+		setTitle("Guardado del resultado y la configuracion.");
+		setDescription("Guardado del resultado y la configuracion.");
 	}
 
 	@Override

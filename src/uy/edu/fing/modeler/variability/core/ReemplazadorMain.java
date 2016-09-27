@@ -91,7 +91,7 @@ public class ReemplazadorMain {
 			try {
 				YaoqiangUtils.run(basePath, resultFileName);
 			} catch (Exception e) {
-				LogUtils.log(baseProcessFileName, "Yaoqiang falló");
+				LogUtils.log(baseProcessFileName, "Yaoqiang fallo");
 				e.printStackTrace();
 			}
 			LogUtils.log(baseProcessFileName, "Fin Yaoqiang AutoLayout");
@@ -142,7 +142,7 @@ public class ReemplazadorMain {
 		LogUtils.logBack(baseProcessFileName, "Fin activitySubstitution");
 
 		// Recursión sobre subprocesos
-		LogUtils.logNext(baseProcessFileName, "Ini recursión sobre subprocesos");
+		LogUtils.logNext(baseProcessFileName, "Ini recursion sobre subprocesos");
 		for (String subProcessName : subprocessResult.keySet()) {
 			String subProcessFileRelativePath = subprocessResult.get(subProcessName);
 			LogUtils.logNext(baseProcessFileName, "Ini " + subProcessFileRelativePath);
@@ -152,7 +152,7 @@ public class ReemplazadorMain {
 			substitution(i + 1, newBasePath, subProcessFileName, allSelecteds, resultFileName);
 			LogUtils.logBack(baseProcessFileName, "Fin " + "temp.bpmn");
 		}
-		LogUtils.logBack(baseProcessFileName, "Fin recursión sobre subprocesos");
+		LogUtils.logBack(baseProcessFileName, "Fin recursion sobre subprocesos");
 
 		// Meter todos los subprocesos en el archivo final
 		LogUtils.logNext(baseProcessFileName, "Ini armado de archivo XML final");
