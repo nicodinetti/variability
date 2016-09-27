@@ -104,7 +104,7 @@ public class VariabilityPlugIn extends AbstractHandler {
 				Properties newProp = fix(path.toString(), prop);
 				String configName = p.getFileName().toString();
 				res.put(configName, newProp);
-				LogUtils.log(this.getClass().getSimpleName(), "Configuración cargada: " + configName);
+				LogUtils.log(this.getClass().getSimpleName(), "Configuracion cargada: " + configName);
 			}
 		}
 

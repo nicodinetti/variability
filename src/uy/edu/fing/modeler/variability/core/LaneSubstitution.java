@@ -102,7 +102,7 @@ public class LaneSubstitution {
 					nodoLaneBuscado = (Element) lanes.item(lane_index);
 				} else {
 					nodoLaneBuscado = createLane(doc, nodoLane, lanes.item(0).getParentNode());
-					LogUtils.log(baseProcessFileName, "No existía el Lane. Creado el Lane !");
+					LogUtils.log(baseProcessFileName, "No existia el Lane. Creado el Lane !");
 				}
 				nodoLaneBuscado.appendChild(searchActivity);
 

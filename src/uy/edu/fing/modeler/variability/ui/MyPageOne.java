@@ -39,9 +39,9 @@ public class MyPageOne extends WizardPage {
 	private ComboVariant configOptions;
 
 	public MyPageOne() {
-		super("Configuración");
-		setTitle("Configuración y selección de variantes");
-		setDescription("Seleccione las variantes a utilizar para cada tipo de punto de variación del proceso base seleccionado.");
+		super("Configuracion");
+		setTitle("Configuracion y seleccion de variantes");
+		setDescription("Seleccione las variantes a utilizar para cada tipo de punto de variacion del proceso base seleccionado.");
 	}
 
 	@Override
@@ -70,11 +70,11 @@ public class MyPageOne extends WizardPage {
 		new Label(container, SWT.NONE);
 
 		Label lConfigName = new Label(container, SWT.NONE);
-		lConfigName.setText("Configuración: ");
+		lConfigName.setText("Configuracion: ");
 
 		configOptions = new ComboVariant(container, SWT.DEFAULT, lConfigName);
 		myWizard.getConfigs().keySet().stream().forEach(x -> configOptions.add(x));
-		configOptions.add("Nueva configuración");
+		configOptions.add("Nueva configuracion");
 		configOptions.setLayoutData(gd);
 		configOptions.select(0);
 		configOptions.addSelectionListener(new SelectionListener() {
@@ -85,7 +85,7 @@ public class MyPageOne extends WizardPage {
 
 				Combo configOptions = (Combo) arg0.getSource();
 				String selectedConfig = configOptions.getText();
-				newConfig = selectedConfig.equals("Nueva configuración");
+				newConfig = selectedConfig.equals("Nueva configuracion");
 				newConfigName.setVisible(newConfig);
 				lNewConfigName.setVisible(newConfig);
 				setPageComplete(allSelected());
@@ -117,7 +117,7 @@ public class MyPageOne extends WizardPage {
 		});
 
 		lNewConfigName = new Label(container, SWT.NONE);
-		lNewConfigName.setText("Nombre de la configuración: ");
+		lNewConfigName.setText("Nombre de la configuracion: ");
 		lNewConfigName.setVisible(false);
 
 		newConfigName = new Text(container, SWT.NONE);
