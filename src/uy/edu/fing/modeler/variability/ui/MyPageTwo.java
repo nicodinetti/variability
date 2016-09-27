@@ -61,6 +61,10 @@ public class MyPageTwo extends WizardPage {
 					configSelection.setText(configName + ".conf");
 					result.setText("");
 
+					//parche para windows
+					String replacement = java.io.File.separator.equals("\\") ? "\\\\": java.io.File.separator;
+					basePath = basePath.replaceAll("/", replacement);
+
 					ReemplazadorMain.replace(basePath, baseProcessFileName, selectedVariants, resultFileName);
 					result.setText("Se generó la variante correctamente");
 					setPageComplete(true);

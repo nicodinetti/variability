@@ -79,11 +79,17 @@ public class MyPageThree extends WizardPage {
 		Files.deleteIfExists(filepathResult);
 		Files.createFile(filepathResult);
 
+		//parche para windows
+		basePath = filepathResult.getParent().toString();
+		
 		try (BufferedWriter writer = Files.newBufferedWriter(filepathResult, Charset.defaultCharset())) {
 			for (String key : myWizard.getSelectedVariants().keySet()) {
-				String newKey = key.replace(basePath + java.io.File.separatorChar, "").replaceAll(java.io.File.separatorChar + "", "#");
+			    //parche para windows
+				String keyReplacement = java.io.File.separator.equals("\\") ? "\\\\": java.io.File.separator;
+				String newKey = key.replace(basePath + java.io.File.separatorChar, "").replaceAll(keyReplacement, "#");
 				writer.append(newKey + "=" + myWizard.getSelectedVariants().get(key) + "\n");
 			}
+			writer.close();
 		} catch (IOException e) {
 			throw e;
 		}

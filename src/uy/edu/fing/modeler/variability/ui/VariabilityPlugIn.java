@@ -61,6 +61,10 @@ public class VariabilityPlugIn extends AbstractHandler {
 
 					String fileName = file.getName();
 					String folder = file.getParent().getRawLocation().toString();
+					//parche para windows
+					String replacement = java.io.File.separator.equals("\\") ? "\\\\": java.io.File.separator;
+					folder = folder.replaceAll("/", replacement);
+					
 					ModelVariant variant = searchVPOptions(folder, folder, fileName.replace(".bpmn", ""));
 
 					Map<String, Properties> configs = searchConfigs(file);
@@ -112,7 +116,11 @@ public class VariabilityPlugIn extends AbstractHandler {
 		for (Object okey : prop.keySet()) {
 			String key = (String) okey;
 			String value = prop.getProperty(key);
-			newProp.put(path + java.io.File.separatorChar + key.replaceAll("#", java.io.File.separatorChar + ""), value);
+
+			//parche para windows
+			String keyReplacement = java.io.File.separator.equals("\\") ? "\\\\": java.io.File.separator;
+
+			newProp.put(path + java.io.File.separatorChar + key.replaceAll("#", keyReplacement), value);
 		}
 		return newProp;
 	}
