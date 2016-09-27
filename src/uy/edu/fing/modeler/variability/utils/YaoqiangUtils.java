@@ -329,7 +329,9 @@ public class YaoqiangUtils extends BPMNCodec {
 					.getAbsolutePath() + File.separatorChar + "resources" + File.separatorChar;
 			
 			if (!new File(xsdDir + "BPMN20.xsd").exists()) {
-				xsdDir = YaoqiangUtils.class.getResource("/resources/").getPath().toString();
+				LogUtils.log("Yaoqiang","File doesnt exists: " + xsdDir);
+				xsdDir = "classpath:/resources/";
+				LogUtils.log("Yaoqiang","Getting file from JAR: " + xsdDir);
 			}
 
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
