@@ -30,28 +30,6 @@
 			type="SubProcess">
 				<property name="variability" value="VPSubProcess" />
 		</customTask>
-		<!-- 
-		<customTask
-			category="VarPoints"
-			featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-			icon="VPLane.png"
-			id="VPLane"
-			name="VPLane"
-			runtimeId="uy.edu.fing.modeler.variability"
-			type="Lane">
-				<property name="variability" value="VPLane" />
-	 	</customTask>
-		<customTask
-			category="VarPoints"
-			featureContainer="uy.edu.fing.modeler.variability.container.VariabilityFeatureContainer"
-			icon="VPParticipant.png"
-			id="VPParticipant"
-			name="VPParticipant"
-			runtimeId="uy.edu.fing.modeler.variability"
-			type="Participant">
-				<property name="variability" value="VPParticipant" />
-		</customTask>
-		-->
 	</extension>
    
    
