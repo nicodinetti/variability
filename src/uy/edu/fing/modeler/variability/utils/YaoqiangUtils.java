@@ -6,10 +6,15 @@ import java.awt.print.PageFormat;
 import java.awt.print.Paper;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.FileOutputStream;
 import java.io.IOException;
 import java.io.InputStream;
+import java.io.OutputStream;
 import java.io.StringReader;
 import java.net.URL;
+import java.nio.file.Files;
+import java.nio.file.Path;
+import java.nio.file.Paths;
 import java.util.ArrayList;
 import java.util.Collection;
 import java.util.Collections;
@@ -325,23 +330,17 @@ public class YaoqiangUtils extends BPMNCodec {
 		Document document = null;
 
 		try {
-			String xsdDir = new File(YaoqiangUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath())
-					.getAbsolutePath() + File.separatorChar + "resources" + File.separatorChar;
-			
-			if (!new File(xsdDir + "BPMN20.xsd").exists()) {
-				LogUtils.log("Yaoqiang","File doesnt exists: " + xsdDir);
-				xsdDir = "classpath:/resources/";
-				LogUtils.log("Yaoqiang","Getting file from JAR: " + xsdDir);
-			}
 
+			String path = copyTempXSD();
+			
 			DocumentBuilderFactory docBuilderFactory = DocumentBuilderFactory.newInstance();
 			docBuilderFactory.setValidating(true);
 			docBuilderFactory.setNamespaceAware(true);
 			docBuilderFactory.setAttribute("http://java.sun.com/xml/jaxp/properties/schemaLanguage",
 					"http://www.w3.org/2001/XMLSchema");
-			docBuilderFactory.setAttribute("http://java.sun.com/xml/jaxp/properties/schemaSource",
-					xsdDir + "BPMN20.xsd");
-
+			  docBuilderFactory.setAttribute("http://java.sun.com/xml/jaxp/properties/schemaSource",
+					path + "/BPMN20.xsd");
+		 
 			DocumentBuilder docBuilder = docBuilderFactory.newDocumentBuilder();
 			BPMNModelParsingErrors pErrors = new BPMNModelParsingErrors();
 			docBuilder.setErrorHandler(pErrors);
@@ -387,6 +386,70 @@ public class YaoqiangUtils extends BPMNCodec {
 		return document;
 	}
 
+	private static String copyTempXSD() {
+		
+		InputStream resourceAsStreamBPMN20 = YaoqiangUtils.class.getResourceAsStream("/resources/BPMN20.xsd");
+		InputStream resourceAsStreamBPMNDI = YaoqiangUtils.class.getResourceAsStream("/resources/BPMNDI.xsd");
+		InputStream resourceAsStreamDC = YaoqiangUtils.class.getResourceAsStream("/resources/DC.xsd");
+		InputStream resourceAsStreamDI = YaoqiangUtils.class.getResourceAsStream("/resources/DI.xsd");
+		InputStream resourceAsStreamSemantic = YaoqiangUtils.class.getResourceAsStream("/resources/Semantic.xsd");
+		
+		String xsdDir = new File(YaoqiangUtils.class.getProtectionDomain().getCodeSource().getLocation().getPath())
+				.getParent() + "/temp/resources";
+		
+		saveInputStream(resourceAsStreamBPMN20,xsdDir + "/BPMN20.xsd");
+		saveInputStream(resourceAsStreamBPMNDI,xsdDir + "/BPMNDI.xsd");
+		saveInputStream(resourceAsStreamDC,xsdDir + "/DC.xsd");
+		saveInputStream(resourceAsStreamDI,xsdDir + "/DI.xsd");
+		saveInputStream(resourceAsStreamSemantic,xsdDir + "/Semantic.xsd");
+		
+		return xsdDir;
+		
+	}
+	
+	private static void saveInputStream(InputStream resource, String pathStr) {
+
+		OutputStream outputStream = null;
+	
+		try {
+			Path parentPath = Paths.get(pathStr).getParent();
+			if (!Files.exists(parentPath)){
+				Files.createDirectories(parentPath);
+			}
+			
+			Files.deleteIfExists(Paths.get(pathStr));
+		
+			// write the inputStream to a FileOutputStream
+			outputStream = new FileOutputStream(new File(pathStr));
+	
+			int read = 0;
+			byte[] bytes = new byte[1024];
+	
+			while ((read = resource.read(bytes)) != -1) {
+				outputStream.write(bytes, 0, read);
+			}
+	
+		} catch (IOException e) {
+			e.printStackTrace();
+		} finally {
+			if (resource != null) {
+				try {
+					resource.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+			
+			if (outputStream != null) {
+				try {
+					outputStream.close();
+				} catch (IOException e) {
+					e.printStackTrace();
+				}
+			}
+		}
+	}
+	
 	@Override
 	public Document encode() {
 		Document doc = mxDomUtils.createDocument();
