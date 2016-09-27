@@ -71,7 +71,7 @@ import uy.edu.fing.modeler.variability.log.LogUtils;
 
 public class YaoqiangUtils extends BPMNCodec {
 
-	private static final String NAME_PLUGIN = "NOSEQUENOSECUANTO-";
+	private static final String NAME_PLUGIN = "BPMNext-";
 
 	private double maxLaneWidth = 0D;
 
